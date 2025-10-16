@@ -1,0 +1,2156 @@
+﻿<?xml-stylesheet type='text/xsl' href='ISReport.xsl'?>
+<Gilson>
+	<InstructionSet>
+		<Devices>
+			<!-- Start of System Device definition -->
+			      <Device>
+        <DeviceName>System</DeviceName>
+        <DeviceId>-1</DeviceId>
+        <DeviceVersion>1.2.1.0</DeviceVersion>
+        <Baud>19200</Baud>
+        <SerialNumber>N99999999</SerialNumber>
+        <LeaseTimeout>600</LeaseTimeout>
+        <FullStatusInterval>200</FullStatusInterval>
+        <PostCommandStatus>False</PostCommandStatus>
+        <ContinuousStatus>False</ContinuousStatus>
+        <CommandHistorySize>5</CommandHistorySize>
+        <CommandDefinitions>
+          <CommandDefinition>
+            <CommandName>Get Instruction Set</CommandName>
+            <CommandType>sys</CommandType>
+            <CommandNotes>Gets the instruction set from the connected instrument.</CommandNotes>
+            <CommandExpression>Get Instruction Set</CommandExpression>
+          </CommandDefinition>
+          <CommandDefinition>
+            <CommandName>Delete Instruction Set</CommandName>
+            <CommandType>sys</CommandType>
+						<CommandNotes>Deletes the instruction set from the connected instrument.</CommandNotes>
+            <CommandExpression>Delete Instruction Set</CommandExpression>
+          </CommandDefinition>
+          <CommandDefinition>
+            <CommandName>Renew Lease</CommandName>
+            <CommandType>sys</CommandType>
+            <CommandNotes>Renews the lease with the connected instrument.</CommandNotes>
+            <CommandExpression>Renew Lease</CommandExpression>
+          </CommandDefinition>
+          <CommandDefinition>
+            <CommandName>Drop Lease</CommandName>
+            <CommandType>sys</CommandType>
+						<CommandNotes>Drops the lease with the connected instrument.</CommandNotes>            
+            <CommandExpression>Drop Lease</CommandExpression>
+          </CommandDefinition>
+          <CommandDefinition>
+            <CommandName>Get Firmware Version</CommandName>
+            <CommandType>sys</CommandType>
+            <CommandNotes>Gets the Firmware version of the connected instrument.</CommandNotes>
+            <CommandExpression>Get Firmware Version</CommandExpression>
+          </CommandDefinition>
+          <CommandDefinition>
+            <CommandName>Set MAC Address</CommandName>
+            <CommandType>sys</CommandType>
+            <CommandNotes>Sets the new MAC address for the connected instrument.</CommandNotes>
+            <CommandExpression>Set MAC Address</CommandExpression>
+            <Parameters>
+              <Parameter>
+                <ParameterId>0</ParameterId>
+                <ParameterName>MAC</ParameterName>
+                <ParameterType>string</ParameterType>
+              </Parameter>
+            </Parameters>
+          </CommandDefinition>
+          <CommandDefinition>
+            <CommandName>Kill</CommandName>
+            <CommandType>sys</CommandType>
+            <CommandNotes>Disconnects the specified client socket connection.</CommandNotes>
+            <CommandExpression>Kill</CommandExpression>
+            <Parameters>
+              <Parameter>
+                <ParameterId>0</ParameterId>
+                <ParameterName>SocketHandle</ParameterName>
+                <ParameterType>string</ParameterType>
+              </Parameter>
+            </Parameters>
+          </CommandDefinition>
+          <CommandDefinition>
+            <CommandName>Reset</CommandName>
+            <CommandType>sys</CommandType>
+            <CommandNotes>Resets the Ethernet module.</CommandNotes>
+            <CommandExpression>Reset</CommandExpression>
+          </CommandDefinition>
+          <CommandDefinition>
+            <CommandName>Refresh Beacon</CommandName>
+            <CommandType>sys</CommandType>
+            <CommandNotes>Requests beacon information from the connected instrument.</CommandNotes>
+            <CommandExpression>Refresh Beacon</CommandExpression>
+          </CommandDefinition>
+          <CommandDefinition>
+            <CommandName>Admin</CommandName>
+            <CommandType>sys</CommandType>
+            <CommandNotes>Requests the connected instrument for Admin privileges. NOTE: Application with admin privileges can execute any command on the instrument.</CommandNotes>
+            <CommandExpression>Admin</CommandExpression>
+          </CommandDefinition>
+          <CommandDefinition>
+            <CommandName>Get Last Response</CommandName>
+            <CommandType>sys</CommandType>
+            <CommandNotes>Gets the last response sent from the instrument.</CommandNotes>
+            <CommandExpression>Get Last Response</CommandExpression>
+          </CommandDefinition>
+          <CommandDefinition>
+            <CommandName>Status Rate</CommandName>
+            <CommandType>sys</CommandType>
+						<CommandNotes>Sets the status rate of the instrument to the specified interval.</CommandNotes>
+            <CommandExpression>Status Rate</CommandExpression>
+            <Parameters>
+              <Parameter>
+                <!-- Amount of time to wait between status messages in tick counts (1 tick count ~ 10 ms)-->
+                <ParameterId>0</ParameterId>
+                <ParameterName>Rate</ParameterName>
+                <ParameterType>number</ParameterType>
+              </Parameter>
+              <Parameter>
+                <!-- Number of times polling status will run before the complete status is sent -->
+                <ParameterId>1</ParameterId>
+                <ParameterName>Full Status Interval</ParameterName>
+                <ParameterType>number</ParameterType>
+              </Parameter>
+            </Parameters>
+          </CommandDefinition>
+          <CommandDefinition>
+            <CommandName>Get Client Connections</CommandName>
+            <CommandType>sys</CommandType>
+            <CommandNotes>Gets all the clients information connected to the instrument.</CommandNotes>
+            <CommandExpression>Get Client Connections</CommandExpression>
+          </CommandDefinition>
+          <CommandDefinition>
+            <CommandName>Get Status</CommandName>
+            <CommandType>sys</CommandType>
+            <CommandExpression>Get Status</CommandExpression>
+          </CommandDefinition>
+          <CommandDefinition>
+            <CommandName>Flash</CommandName>
+            <CommandType>sys</CommandType>
+            <CommandExpression>Flash</CommandExpression>
+            <Parameters>
+              <Parameter>
+                <ParameterId>0</ParameterId>
+                <ParameterName>UnitId</ParameterName>
+                <ParameterType>number</ParameterType>
+                <Required>True</Required>
+              </Parameter>
+              <Parameter>
+                <ParameterId>1</ParameterId>
+                <ParameterName>Action</ParameterName>
+                <ParameterType>string</ParameterType>
+                <Required>True</Required>
+              </Parameter>
+              <Parameter>
+                <ParameterId>2</ParameterId>
+                <ParameterName>Data</ParameterName>
+                <ParameterType>string</ParameterType>
+                <Required>False</Required>
+              </Parameter>
+            </Parameters>
+          </CommandDefinition>
+          <CommandDefinition>
+            <CommandName>Set NVM</CommandName>
+            <CommandType>sys</CommandType>
+            <CommandNotes>Sets the non-volatile memory value for the specified address.</CommandNotes>
+            <CommandExpression>Set NVM</CommandExpression>
+            <Parameters>
+              <Parameter>
+                <ParameterId>0</ParameterId>
+                <ParameterName>UnitId</ParameterName>
+                <ParameterType>number</ParameterType>
+              </Parameter>
+              <Parameter>
+                <ParameterId>1</ParameterId>
+                <ParameterName>Address</ParameterName>
+                <ParameterType>number</ParameterType>
+              </Parameter>
+              <Parameter>
+                <ParameterId>2</ParameterId>
+                <ParameterName>Value</ParameterName>
+                <ParameterType>string</ParameterType>
+              </Parameter>
+            </Parameters>
+          </CommandDefinition>
+          <CommandDefinition>
+            <CommandName>Get NVM</CommandName>
+            <CommandType>sys</CommandType>
+            <CommandNotes>Gets the non-volatile memory value for the specified address.</CommandNotes>
+            <CommandExpression>Get NVM</CommandExpression>
+            <Parameters>
+              <Parameter>
+                <ParameterId>0</ParameterId>
+                <ParameterName>UnitId</ParameterName>
+                <ParameterType>number</ParameterType>
+              </Parameter>
+              <Parameter>
+                <ParameterId>1</ParameterId>
+                <ParameterName>Address</ParameterName>
+                <ParameterType>number</ParameterType>
+              </Parameter>
+            </Parameters>
+          </CommandDefinition>
+        </CommandDefinitions>
+      </Device>
+      
+			<!-- Start of GX-27X Device definition -->
+			<Device>
+				<DeviceName>GX-27x</DeviceName>
+				<DeviceId>35</DeviceId>
+				<DeviceVersion>1.0.12.0</DeviceVersion>
+				<DeviceType>Ethernet</DeviceType>
+				<DeviceGroup>Liquid Handler</DeviceGroup>
+				<PriorityLevel>1</PriorityLevel>
+				<VersionCommand>
+					<CommandName>Identify</CommandName>
+				</VersionCommand>
+				<StatusDefinition>
+					<StatusCommands>
+						<StatusCommand>
+							<CommandName>Get Input Contacts</CommandName>
+							<PollingCommand>0</PollingCommand>
+						</StatusCommand>
+						
+						<StatusCommand>
+							<CommandName>Get Output Contacts</CommandName>
+							<PollingCommand>0</PollingCommand>
+						</StatusCommand>
+
+						<StatusCommand>
+							<CommandName>Get Solenoid Contacts</CommandName>
+							<PollingCommand>0</PollingCommand>
+						</StatusCommand>
+
+						<StatusCommand>
+							<CommandName>Get 24V Contacts</CommandName>
+							<PollingCommand>0</PollingCommand>
+						</StatusCommand>
+						
+						<StatusCommand>
+							<CommandName>Get Diverter Valve</CommandName>
+							<PollingCommand>0</PollingCommand>
+						</StatusCommand>
+
+						<StatusCommand>
+							<CommandName>Get Error</CommandName>
+							<PollingCommand>0</PollingCommand>
+						</StatusCommand>
+
+						<StatusCommand>
+							<CommandName>Get XY Position</CommandName>
+							<PollingCommand>1</PollingCommand>
+						</StatusCommand>
+
+						<StatusCommand>
+							<CommandName>Get Z Position</CommandName>
+							<PollingCommand>1</PollingCommand>
+						</StatusCommand>
+
+					</StatusCommands>
+				</StatusDefinition>
+				
+				<CommandDefinitions>
+				
+					<CommandDefinition>
+						<CommandName>Get Status</CommandName>
+						<CommandType>imd</CommandType>
+						<CommandNotes>Get the status of the XYZ Motor, X Position, Y Position, Z Position, Error description if any.</CommandNotes>
+						<CommandExpression>*</CommandExpression>
+						<ReturnExpression>{0} {1}/{2}/{3}/{4}</ReturnExpression>
+						<ReturnParameters>
+							<ReturnParameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>MotorStatus</ParameterName>
+								<ParameterType>String</ParameterType>
+								<ParameterNotes>XYZ Motor status ('E' for Error, ‘R’ for Running (or homing), ‘U’ for Unpowered (also Unhomed), ‘P’ for Parked)
+</ParameterNotes>
+							</ReturnParameter>
+							<ReturnParameter>
+								<ParameterId>1</ParameterId>
+								<ParameterName>X Position</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterNotes>X Position within 0-389</ParameterNotes>
+							</ReturnParameter>
+							<ReturnParameter>
+								<ParameterId>2</ParameterId>
+								<ParameterName>Y Position</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterNotes>Y Position within 0-294</ParameterNotes>
+							</ReturnParameter>
+							<ReturnParameter>
+								<ParameterId>3</ParameterId>
+								<ParameterName>Z Position</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterNotes>Z Position base on z-arm used</ParameterNotes>
+							</ReturnParameter>
+							<ReturnParameter>
+								<ParameterId>4</ParameterId>
+								<ParameterName>Error</ParameterName>
+								<ParameterType>String</ParameterType>
+								<ParameterNotes></ParameterNotes>
+							</ReturnParameter>
+						</ReturnParameters>
+					</CommandDefinition>
+					
+					
+					<CommandDefinition>
+						<CommandName>24V Contacts</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Turns output contacts on/off.</CommandNotes>
+						<CommandExpression>JXX{0}{1}</CommandExpression>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>24V Contact 1</ParameterName>
+								<ParameterType>OnOff</ParameterType>
+								<ParameterDefault>On</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+								<ParameterNotes>On/Off</ParameterNotes>
+							</Parameter>
+							<Parameter>
+								<ParameterId>1</ParameterId>
+								<ParameterName>24V Contact 2</ParameterName>
+								<ParameterType>OnOff</ParameterType>
+								<ParameterDefault>On</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+								<ParameterNotes>On/Off</ParameterNotes>
+							</Parameter>
+						</Parameters>
+					</CommandDefinition>
+
+					<CommandDefinition>
+						<CommandName>24V Contact 1</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Turns output contact-1 on/off.</CommandNotes>
+						<CommandExpression>JXX{0}X</CommandExpression>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>24V Contact 1</ParameterName>
+								<ParameterType>OnOff</ParameterType>
+								<ParameterDefault>On</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+								<ParameterNotes>On/Off</ParameterNotes>
+							</Parameter>
+						</Parameters>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>24V Contact 2</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Turns output contact-2 on/off</CommandNotes>
+           <CommandExpression>JXXX{0}</CommandExpression>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>24V Contact 2</ParameterName>
+								<ParameterType>OnOff</ParameterType>
+								<ParameterDefault>On</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+								<ParameterNotes>On/Off</ParameterNotes>
+							</Parameter>
+						</Parameters>
+					</CommandDefinition>
+
+					<CommandDefinition>
+						<CommandName>Buffered</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Legacy.</CommandNotes>
+						<CommandExpression>{0}</CommandExpression>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Command</ParameterName>
+								<ParameterType>String</ParameterType>
+								<ParameterExpression>{Value}</ParameterExpression>
+             </Parameter>
+						</Parameters>
+					</CommandDefinition>
+
+					<CommandDefinition>
+						<CommandName>Clear Error</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Clears error code.</CommandNotes>
+						<CommandExpression>e</CommandExpression>
+					</CommandDefinition>
+					<CommandDefinition>
+						<CommandName>Diverter Valve</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandExpression>F{0}</CommandExpression>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Valve State</ParameterName>
+								<ParameterType>OnOff</ParameterType>
+								<ParameterDefault>On</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+							</Parameter>
+						</Parameters>
+					</CommandDefinition>
+
+					<CommandDefinition>
+						<CommandName>Get 24V Contacts</CommandName>
+						<CommandType>imd</CommandType>
+						<CommandNotes>Reads external power contacts status.</CommandNotes>
+						<CommandExpression>J</CommandExpression>
+						<ReturnExpression>{0:1}{1:1}{2:1}{3:1}</ReturnExpression>
+						<ReturnParameters>
+							<ReturnParameter>
+								<ParameterId>2</ParameterId>
+								<ParameterName>24V Contact 1</ParameterName>
+								<ParameterType>OnOff</ParameterType>
+							</ReturnParameter>
+							<ReturnParameter>
+								<ParameterId>3</ParameterId>
+								<ParameterName>24V Contact 2</ParameterName>
+								<ParameterType>OnOff</ParameterType>
+							</ReturnParameter>
+						</ReturnParameters>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Get Output and 24V Contacts</CommandName>
+						<CommandType>imd</CommandType>
+						<CommandNotes>Reads relay output &amp; external power status</CommandNotes>
+						<CommandExpression>J</CommandExpression>
+						<ReturnExpression>{0:1}{1:1}{2:1}{3:1}</ReturnExpression>
+						<ReturnParameters>
+							<ReturnParameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Contact 1</ParameterName>
+								<ParameterType>OnOff</ParameterType>
+								<ParameterNotes>Relay output contact-1 status On/Off</ParameterNotes>
+							</ReturnParameter>
+							<ReturnParameter>
+								<ParameterId>1</ParameterId>
+								<ParameterName>Contact 2</ParameterName>
+								<ParameterType>OnOff</ParameterType>
+								<ParameterNotes>Relay output contact-2 status On/Off</ParameterNotes>
+							</ReturnParameter>
+							<ReturnParameter>
+								<ParameterId>2</ParameterId>
+								<ParameterName>24V Contact 1</ParameterName>
+								<ParameterType>OnOff</ParameterType>
+								<ParameterNotes>External 24V power contact status On/Off.</ParameterNotes>
+							</ReturnParameter>
+							<ReturnParameter>
+								<ParameterId>3</ParameterId>
+								<ParameterName>24V Contact 2</ParameterName>
+								<ParameterType>OnOff</ParameterType>
+								<ParameterNotes>External 24V power contact status On/Off</ParameterNotes>
+							</ReturnParameter>
+						</ReturnParameters>
+					</CommandDefinition>
+
+					<CommandDefinition>
+						<CommandName>Get Error</CommandName>
+						<CommandType>imd</CommandType>
+						<CommandNotes>Gets error code.  See user document for possible error codes.</CommandNotes>
+						<CommandExpression>e</CommandExpression>
+						<ReturnExpression>{0}</ReturnExpression>
+						<ReturnParameters>
+							<ReturnParameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Error</ParameterName>
+								<ParameterType>String</ParameterType>
+							</ReturnParameter>
+						</ReturnParameters>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Get Diverter Valve</CommandName>
+						<CommandType>imd</CommandType>
+						<CommandNotes>Returns On/Off status of Diverter</CommandNotes>
+            <CommandExpression>F</CommandExpression>
+						<ReturnExpression>{0:1}</ReturnExpression>
+						<ReturnParameters>
+							<ReturnParameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Valve</ParameterName>
+								<ParameterType>OnOff</ParameterType>
+								<ParameterNotes>On/Off</ParameterNotes>
+							</ReturnParameter>
+						</ReturnParameters>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Get Input Contacts</CommandName>
+						<CommandType>imd</CommandType>
+						<CommandNotes>Gets status of input contacts.</CommandNotes>
+						<CommandExpression>I</CommandExpression>
+						<ReturnExpression>{0:1}{1:1}{2:1}</ReturnExpression>
+						<ReturnParameters>
+							<ReturnParameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Contact A</ParameterName>
+								<ParameterType>OnOff</ParameterType>
+							</ReturnParameter>
+							<ReturnParameter>
+								<ParameterId>1</ParameterId>
+								<ParameterName>Contact B</ParameterName>
+								<ParameterType>OnOff</ParameterType>
+							</ReturnParameter>
+							<ReturnParameter>
+								<ParameterId>2</ParameterId>
+								<ParameterName>Safety</ParameterName>
+								<ParameterType>OnOff</ParameterType>
+							</ReturnParameter>
+						</ReturnParameters>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Get Motor Status</CommandName>
+						<CommandType>imd</CommandType>
+						<CommandNotes>Gets XYZ Motor status. ‘E’ for Error, ‘R’ for Running (or homing), ‘U’ for Unpowered (also Unhomed), ‘P’ for Parked.</CommandNotes>
+						<CommandExpression>M</CommandExpression>
+						<ReturnExpression>{0:1}{1:1}{2:1}</ReturnExpression>
+						<ReturnParameters>
+							<ReturnParameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>X Motor</ParameterName>
+								<ParameterType>String</ParameterType>
+							</ReturnParameter>
+							<ReturnParameter>
+								<ParameterId>1</ParameterId>
+								<ParameterName>Y Motor</ParameterName>
+								<ParameterType>String</ParameterType>
+							</ReturnParameter>
+							<ReturnParameter>
+								<ParameterId>2</ParameterId>
+								<ParameterName>Z Motor</ParameterName>
+								<ParameterType>String</ParameterType>
+							</ReturnParameter>
+						</ReturnParameters>
+						<ReturnValues>
+							<ReadyValues>
+								<Value>P</Value>
+							</ReadyValues>
+							<RunningValues>
+								<Value>R</Value>
+							</RunningValues>
+							<UnpoweredValues>
+								<Value>U</Value>
+							</UnpoweredValues>
+							<ErrorValues>
+								<Value>E</Value>
+							</ErrorValues>
+						</ReturnValues>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Get Output Contacts</CommandName>
+						<CommandType>imd</CommandType>
+						<CommandNotes>Gets relay output contacts status(On/Off)</CommandNotes>
+						<CommandExpression>J</CommandExpression>
+						<ReturnExpression>{0:1}{1:1}</ReturnExpression>
+						<ReturnParameters>
+							<ReturnParameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Contact 1</ParameterName>
+								<ParameterType>OnOff</ParameterType>
+							</ReturnParameter>
+							<ReturnParameter>
+								<ParameterId>1</ParameterId>
+								<ParameterName>Contact 2</ParameterName>
+								<ParameterType>OnOff</ParameterType>
+							</ReturnParameter>
+						</ReturnParameters>
+					</CommandDefinition>
+
+					<CommandDefinition>
+						<CommandName>Get Solenoid Contacts</CommandName>
+						<CommandType>imd</CommandType>
+						<CommandNotes>Gets state of solenoid contacts.</CommandNotes>
+						<CommandExpression>s</CommandExpression>
+						<ReturnExpression>{0:1}{1:1}</ReturnExpression>
+						<ReturnParameters>
+							<ReturnParameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Solenoid 1</ParameterName>
+								<ParameterType>OnOff</ParameterType>
+							</ReturnParameter>
+							<ReturnParameter>
+								<ParameterId>1</ParameterId>
+								<ParameterName>Solenoid 2</ParameterName>
+								<ParameterType>OnOff</ParameterType>
+							</ReturnParameter>
+						</ReturnParameters>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Get XY Position</CommandName>
+						<CommandType>imd</CommandType>
+						<CommandNotes>Gets X &amp; Y positions. X position ranges from 0-389. Y position ranges from 0-294.</CommandNotes>
+						<CommandExpression>X</CommandExpression>
+						<ReturnExpression>{0}/{1}</ReturnExpression>
+						<ReturnParameters>
+							<ReturnParameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>X Position</ParameterName>
+								<ParameterType>Number</ParameterType>
+							</ReturnParameter>
+							<ReturnParameter>
+								<ParameterId>1</ParameterId>
+								<ParameterName>Y Position</ParameterName>
+								<ParameterType>Number</ParameterType>
+							</ReturnParameter>
+						</ReturnParameters>
+					</CommandDefinition>
+
+					<CommandDefinition>
+						<CommandName>Get Z Position</CommandName>
+						<CommandType>imd</CommandType>
+						<CommandNotes>Gets Z-position.</CommandNotes>
+						<CommandExpression>Z</CommandExpression>
+						<ReturnExpression>{0}</ReturnExpression>
+						<ReturnParameters>
+							<ReturnParameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Z Position</ParameterName>
+								<ParameterType>Number</ParameterType>
+							</ReturnParameter>
+						</ReturnParameters>
+					</CommandDefinition>
+
+					<CommandDefinition>
+						<CommandName>Home</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Homes XYZ. Moves Z to the top of travel. XY to the park position. Any error state is cleared before homing starts.</CommandNotes>
+						<CommandExpression>H</CommandExpression>
+						<MotionCommands>
+							<CommandName>X Motor</CommandName>
+							<CommandName>Y Motor</CommandName>
+							<CommandName>Z Motor</CommandName>
+						</MotionCommands>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Identify</CommandName>
+						<CommandType>imd</CommandType>
+						<CommandNotes>The PROM instrument name and version</CommandNotes>
+						<CommandExpression>%</CommandExpression>
+						<ReturnExpression>{0}</ReturnExpression>
+						<ReturnParameters>
+							<ReturnParameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Identity</ParameterName>
+								<ParameterType>String</ParameterType>
+							</ReturnParameter>
+						</ReturnParameters>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Immediate</CommandName>
+						<CommandType>imd</CommandType>
+						<CommandNotes>Legacy</CommandNotes>
+						<CommandExpression>{0}</CommandExpression>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Command</ParameterName>
+								<ParameterType>String</ParameterType>
+								<ParameterDefault>%</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+							</Parameter>
+						</Parameters>
+						<ReturnExpression>{0}</ReturnExpression>
+						<ReturnParameters>
+							<ReturnParameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Imd Return</ParameterName>
+								<ParameterType>String</ParameterType>
+							</ReturnParameter>
+						</ReturnParameters>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Move X</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Sets the new X position.</CommandNotes>
+						<CommandExpression>X{0}</CommandExpression>
+						<MotionCommands>
+							<CommandName>X Motor</CommandName>
+						</MotionCommands>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>X Position</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>mm</ParameterUnits>
+								<ParameterDefault>0</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+                <RangeInfo>
+									<Max>389</Max>
+									<Min>0</Min>
+								</RangeInfo>
+							</Parameter>
+						</Parameters>
+					</CommandDefinition>
+										
+					<CommandDefinition>
+						<CommandName>Move X with Speed</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Sets the new X Position with the specified speed.</CommandNotes>
+						<CommandExpression>X{0}{1}</CommandExpression>
+						<MotionCommands>
+							<CommandName>X Motor</CommandName>
+						</MotionCommands>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>X Position</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>mm</ParameterUnits>
+								<ParameterDefault>0</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+                <RangeInfo>
+									<Max>389</Max>
+									<Min>0</Min>
+								</RangeInfo>
+							</Parameter>
+							<Parameter>
+								<ParameterId>1</ParameterId>
+								<ParameterName>X Speed</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>mm/sec</ParameterUnits>
+								<ParameterDefault>350</ParameterDefault>
+								<ParameterExpression>:{Value}</ParameterExpression>
+                <RangeInfo>
+									<Max>350</Max>
+									<Min>0</Min>
+								</RangeInfo>								
+							</Parameter>
+						</Parameters>
+					</CommandDefinition>
+
+					<CommandDefinition>
+						<CommandName>Move X with Speed and Current</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Moves to new X-axis position with the specified speed &amp; Drive level</CommandNotes>
+						<CommandExpression>X{0}{1}{2}</CommandExpression>
+						<MotionCommands>
+							<CommandName>X Motor</CommandName>
+						</MotionCommands>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>X Position</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>mm</ParameterUnits>
+								<ParameterDefault>0</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+                <RangeInfo>
+									<Max>389</Max>
+									<Min>0</Min>
+								</RangeInfo>								
+							</Parameter>
+							<Parameter>
+								<ParameterId>1</ParameterId>
+								<ParameterName>X Speed</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>mm/sec</ParameterUnits>
+								<ParameterDefault>350</ParameterDefault>
+								<ParameterExpression>:{Value}</ParameterExpression>
+                <RangeInfo>
+									<Max>350</Max>
+									<Min>0</Min>
+								</RangeInfo>								
+							</Parameter>
+							<Parameter>
+								<ParameterId>2</ParameterId>
+								<ParameterName>X Current</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>percentage</ParameterUnits>
+								<ParameterDefault>100</ParameterDefault>
+								<ParameterExpression>:{Value}</ParameterExpression>
+								<ParameterNotes>Drive Level</ParameterNotes>
+                <RangeInfo>
+									<Max>100%</Max>
+									<Min>0</Min>
+								</RangeInfo>								
+							</Parameter>
+						</Parameters>
+					</CommandDefinition>
+
+					<CommandDefinition>
+						<CommandName>Move XY</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Sets the new X &amp; Y position.</CommandNotes>
+						<CommandExpression>X{0}{1}</CommandExpression>
+						<MotionCommands>
+							<CommandName>X Motor</CommandName>
+							<CommandName>Y Motor</CommandName>
+						</MotionCommands>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>X Position</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>mm</ParameterUnits>
+								<ParameterDefault>0</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+                <RangeInfo>
+									<Max>389</Max>
+									<Min>0</Min>
+								</RangeInfo>								
+							</Parameter>
+							<Parameter>
+								<ParameterId>1</ParameterId>
+								<ParameterName>Y Position</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>mm</ParameterUnits>
+								<ParameterDefault>0</ParameterDefault>
+								<ParameterExpression>/{Value}</ParameterExpression>
+                <RangeInfo>
+									<Max>294</Max>
+									<Min>0</Min>
+								</RangeInfo>								
+							</Parameter>
+						</Parameters>
+					</CommandDefinition>
+
+					<CommandDefinition>			
+						<CommandName>Move XY with Speed</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Set the new X &amp; Y position with the specified speeds</CommandNotes>
+						<CommandExpression>X{0}{1}{2}{3}</CommandExpression>
+						<MotionCommands>
+							<CommandName>X Motor</CommandName>
+							<CommandName>Y Motor</CommandName>
+						</MotionCommands>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>X Position</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>mm</ParameterUnits>
+								<ParameterDefault>0</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+                <RangeInfo>
+									<Max>389</Max>
+									<Min>0</Min>
+								</RangeInfo>
+							</Parameter>
+							<Parameter>
+								<ParameterId>1</ParameterId>
+								<ParameterName>X Speed</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>mm/sec</ParameterUnits>
+								<ParameterDefault>350</ParameterDefault>
+								<ParameterExpression>:{Value}</ParameterExpression>
+                <RangeInfo>
+									<Max>350</Max>
+									<Min>0</Min>
+								</RangeInfo>
+							</Parameter>
+							<Parameter>
+								<ParameterId>2</ParameterId>
+								<ParameterName>Y Position</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>mm</ParameterUnits>
+								<ParameterDefault>0</ParameterDefault>
+								<ParameterExpression>/{Value}</ParameterExpression>
+                <RangeInfo>
+									<Max>294</Max>
+									<Min>0</Min>
+								</RangeInfo>								
+								</Parameter>
+							<Parameter>
+								<ParameterId>3</ParameterId>
+								<ParameterName>Y Speed</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>mm/sec</ParameterUnits>
+								<ParameterDefault>350</ParameterDefault>
+								<ParameterExpression>:{Value}</ParameterExpression>
+                <RangeInfo>
+									<Max>350</Max>
+									<Min>0</Min>
+								</RangeInfo>
+							</Parameter>
+						</Parameters>
+					</CommandDefinition>
+					
+					<CommandDefinition>			
+						<CommandName>Move XY with Speed and Current</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Sets the new X &amp; Y position with the specified speed and drive level.</CommandNotes>
+						<CommandExpression>X{0}{1}{2}{3}{4}{5}</CommandExpression>
+						<MotionCommands>
+							<CommandName>X Motor</CommandName>
+							<CommandName>Y Motor</CommandName>
+						</MotionCommands>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>X Position</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>mm</ParameterUnits>
+								<ParameterDefault>0</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+                <RangeInfo>
+									<Max>389</Max>
+									<Min>0</Min>
+								</RangeInfo>
+							</Parameter>
+							<Parameter>
+								<ParameterId>1</ParameterId>
+								<ParameterName>X Speed</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>mm/sec</ParameterUnits>
+								<ParameterDefault>350</ParameterDefault>
+								<ParameterExpression>:{Value}</ParameterExpression>
+                <RangeInfo>
+									<Max>350</Max>
+									<Min>0</Min>
+								</RangeInfo>
+							</Parameter>
+							<Parameter>
+								<ParameterId>2</ParameterId>
+								<ParameterName>X Current</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>percentage</ParameterUnits>
+								<ParameterDefault>100</ParameterDefault>
+								<ParameterExpression>:{Value}</ParameterExpression>
+                <RangeInfo>
+									<Max>100%</Max>
+									<Min>0</Min>
+								</RangeInfo>
+							</Parameter>
+							<Parameter>
+								<ParameterId>3</ParameterId>
+								<ParameterName>Y Position</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>mm</ParameterUnits>
+								<ParameterDefault>0</ParameterDefault>
+								<ParameterExpression>/{Value}</ParameterExpression>
+                <RangeInfo>
+									<Max>294</Max>
+									<Min>0</Min>
+								</RangeInfo>
+								</Parameter>
+							<Parameter>
+								<ParameterId>4</ParameterId>
+								<ParameterName>Y Speed</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>mm/sec</ParameterUnits>
+								<ParameterDefault>350</ParameterDefault>
+								<ParameterExpression>:{Value}</ParameterExpression>
+                <RangeInfo>
+									<Max>350</Max>
+									<Min>0</Min>
+								</RangeInfo>
+							</Parameter>
+							<Parameter>
+								<ParameterId>5</ParameterId>
+								<ParameterName>Y Current</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>percentage</ParameterUnits>
+								<ParameterDefault>100</ParameterDefault>
+								<ParameterExpression>:{Value}</ParameterExpression>
+                <RangeInfo>
+									<Max>100%</Max>
+									<Min>0</Min>
+								</RangeInfo>
+							</Parameter>
+						</Parameters>
+					</CommandDefinition>
+
+					<CommandDefinition>
+						<CommandName>Move Y</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Set the new Y position.</CommandNotes>
+						<CommandExpression>X/{0}</CommandExpression>
+						<MotionCommands>
+							<CommandName>Y Motor</CommandName>
+						</MotionCommands>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Y Position</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>mm</ParameterUnits>
+								<ParameterDefault>0</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+                <RangeInfo>
+									<Max>294</Max>
+									<Min>0</Min>
+								</RangeInfo>
+							</Parameter>
+						</Parameters>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Move Y with Speed</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Set the new Y position with the specified speed.</CommandNotes>
+						<CommandExpression>X/{0}{1}</CommandExpression>
+						<MotionCommands>
+							<CommandName>Y Motor</CommandName>
+						</MotionCommands>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Y Position</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>mm</ParameterUnits>
+								<ParameterDefault>0</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+                <RangeInfo>
+									<Max>294</Max>
+									<Min>0</Min>
+								</RangeInfo>
+							</Parameter>
+							<Parameter>
+								<ParameterId>1</ParameterId>
+								<ParameterName>Y Speed</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>mm/sec</ParameterUnits>
+								<ParameterDefault>350</ParameterDefault>
+								<ParameterExpression>:{Value}</ParameterExpression>
+                <RangeInfo>
+									<Max>350</Max>
+									<Min>0</Min>
+								</RangeInfo>
+							</Parameter>
+						</Parameters>
+					</CommandDefinition>
+
+					<CommandDefinition>
+						<CommandName>Move Y with Speed and Current</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Set the new Y position with the specified speed and drive level.</CommandNotes>
+						<CommandExpression>X{0}{1}{2}</CommandExpression>
+						<MotionCommands>
+							<CommandName>Y Motor</CommandName>
+						</MotionCommands>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Y Position</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>mm</ParameterUnits>
+								<ParameterDefault>0</ParameterDefault>
+								<ParameterExpression>/{Value}</ParameterExpression>
+                <RangeInfo>
+									<Max>294</Max>
+									<Min>0</Min>
+								</RangeInfo>
+							</Parameter>
+							<Parameter>
+								<ParameterId>1</ParameterId>
+								<ParameterName>Y Speed</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>mm/sec</ParameterUnits>
+								<ParameterDefault>350</ParameterDefault>
+								<ParameterExpression>:{Value}</ParameterExpression>
+                <RangeInfo>
+									<Max>350</Max>
+									<Min>0</Min>
+								</RangeInfo>
+							</Parameter>
+							<Parameter>
+								<ParameterId>2</ParameterId>
+								<ParameterName>Y Current</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>percentage</ParameterUnits>
+								<ParameterDefault>100</ParameterDefault>
+								<ParameterExpression>:{Value}</ParameterExpression>
+                <RangeInfo>
+									<Max>100%</Max>
+									<Min>0</Min>
+								</RangeInfo>
+							</Parameter>
+						</Parameters>
+					</CommandDefinition>
+
+					<CommandDefinition>
+						<CommandName>Move Z</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Sets the new Z position.</CommandNotes>
+						<CommandExpression>Z{0}</CommandExpression>
+						<MotionCommands>
+							<CommandName>Z Motor</CommandName>
+						</MotionCommands>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Z Position</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>mm</ParameterUnits>
+								<ParameterDefault>0</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+							</Parameter>
+						</Parameters>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Move Z with Speed</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Sets the new Z position with the specified speed.</CommandNotes>
+						<CommandExpression>Z{0}{1}</CommandExpression>
+						<MotionCommands>
+							<CommandName>Z Motor</CommandName>
+						</MotionCommands>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Z Position</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>mm</ParameterUnits>
+								<ParameterDefault>0</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+							</Parameter>
+							<Parameter>
+								<ParameterId>1</ParameterId>
+								<ParameterName>Z Speed</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>mm/sec</ParameterUnits>
+								<ParameterDefault>125</ParameterDefault>
+								<ParameterExpression>:{Value}</ParameterExpression>
+                <RangeInfo>
+									<Max>125</Max>
+									<Min>0</Min>
+								</RangeInfo>
+							</Parameter>
+						</Parameters>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Move Z with LLD</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Sets the new Z position with Liquid Level Detection. If liquid is encountered (on a downward movement) or air is encountered (on an upward movement) the movement stops immediately.  If the position is the same as the target specified it may be assumed that liquid (or air) was not encountered</CommandNotes>
+						<CommandExpression>z{0}{1}</CommandExpression>
+						<MotionCommands>
+							<CommandName>Z Motor</CommandName>
+						</MotionCommands>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Z Position</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>mm</ParameterUnits>
+								<ParameterDefault>0</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+								<ParameterNotes>Range is based on the Z-Arm used.</ParameterNotes>
+              </Parameter>
+							<Parameter>
+								<ParameterId>1</ParameterId>
+								<ParameterName>Z Speed</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>mm/sec</ParameterUnits>
+								<ParameterDefault>40</ParameterDefault>
+								<ParameterExpression>:{Value}</ParameterExpression>
+                <RangeInfo>
+									<Max>40</Max>
+									<Min>0</Min>
+								</RangeInfo>
+							</Parameter>
+						</Parameters>
+					</CommandDefinition>
+
+					<CommandDefinition>
+						<CommandName>Output Contacts</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Set the relay output contacts to On/Off</CommandNotes>
+						<CommandExpression>J{0}{1}</CommandExpression>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Contact 1</ParameterName>
+								<ParameterType>OnOff</ParameterType>
+								<ParameterDefault>On</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+							</Parameter>
+							<Parameter>
+								<ParameterId>1</ParameterId>
+								<ParameterName>Contact 2</ParameterName>
+								<ParameterType>OnOff</ParameterType>
+								<ParameterDefault>On</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+							</Parameter>
+						</Parameters>
+					</CommandDefinition>
+
+					<CommandDefinition>
+						<CommandName>Output Contact 1</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Sets the relay output contact-1 to On/Off.</CommandNotes>
+						<CommandExpression>J{0}XXX</CommandExpression>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Contact</ParameterName>
+								<ParameterType>OnOff</ParameterType>
+								<ParameterDefault>On</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+							</Parameter>
+						</Parameters>
+					</CommandDefinition>
+
+					<CommandDefinition>
+						<CommandName>Output Contact 2</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Sets the relay output contact to On/Off.</CommandNotes>
+						<CommandExpression>JX{0}XX</CommandExpression>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Contact</ParameterName>
+								<ParameterType>OnOff</ParameterType>
+								<ParameterDefault>On</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+							</Parameter>
+						</Parameters>
+					</CommandDefinition>
+
+					<CommandDefinition>
+						<CommandName>Pulse Contact</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Sets the specified relay output contact for pulse time specified. For example values 1 and 0.5 sets the relay contact 1 to be closed for 0.5 seconds.</CommandNotes>
+						<CommandExpression>j{0}{1}</CommandExpression>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Contact</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterDefault>1</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+								<ParameterNotes>Relay output contact number(1 or 2)</ParameterNotes>
+							</Parameter>
+							<Parameter>
+								<ParameterId>1</ParameterId>
+								<ParameterName>Time</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterDefault>0.1</ParameterDefault>
+								<ParameterUnits>secs</ParameterUnits>
+								<ParameterExpression>:{Value}</ParameterExpression>
+							</Parameter>
+						</Parameters>
+					</CommandDefinition>
+
+					<CommandDefinition>
+						<CommandName>Solenoid Outputs</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Sets the state of the solenoid outputs.</CommandNotes>
+						<CommandExpression>s{0}{1}</CommandExpression>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Solenoid 1</ParameterName>
+								<ParameterType>OnOff</ParameterType>
+								<ParameterDefault>On</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+							</Parameter>
+							<Parameter>
+								<ParameterId>1</ParameterId>
+								<ParameterName>Solenoid 2</ParameterName>
+								<ParameterType>OnOff</ParameterType>
+								<ParameterDefault>On</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+							</Parameter>
+						</Parameters>
+					</CommandDefinition>
+
+					<CommandDefinition>
+						<CommandName>Solenoid 1</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Sets the state of the Solenoid output 1</CommandNotes>
+						<CommandExpression>s{0}X</CommandExpression>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Solenoid</ParameterName>
+								<ParameterType>OnOff</ParameterType>
+								<ParameterDefault>On</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+							</Parameter>
+						</Parameters>
+					</CommandDefinition>
+
+					<CommandDefinition>
+						<CommandName>Solenoid 2</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Sets the state of the solenoid output 2</CommandNotes>
+						<CommandExpression>sX{0}</CommandExpression>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Solenoid</ParameterName>
+								<ParameterType>OnOff</ParameterType>
+								<ParameterDefault>On</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+							</Parameter>
+						</Parameters>
+					</CommandDefinition>
+
+					<CommandDefinition>
+						<CommandName>Wait For X</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Wait for X-Motor to come to parked position.</CommandNotes>
+						<MotionCommands>
+							<CommandName>X Motor</CommandName>
+						</MotionCommands>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Wait For XY</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Wait until X &amp; Y Motors to come to parked position.</CommandNotes>
+						<MotionCommands>
+							<CommandName>X Motor</CommandName>
+							<CommandName>Y Motor</CommandName>
+						</MotionCommands>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Wait For Y</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Wait for Y-Motor to come to parked position.</CommandNotes>
+						<MotionCommands>
+							<CommandName>Y Motor</CommandName>
+						</MotionCommands>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Wait For Z</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Wait for Z-Motor to come to parked position.</CommandNotes>
+						<MotionCommands>
+							<CommandName>Z Motor</CommandName>
+						</MotionCommands>
+					</CommandDefinition>
+					
+				</CommandDefinitions>
+			</Device>
+			
+			<!-- Start of GX Solvent System Device definition -->
+			<Device>
+				<DeviceName>GX Solvent System</DeviceName>
+				<DeviceId>8</DeviceId>
+				<DeviceVersion>1.0.8.0</DeviceVersion>
+				<DeviceType>Ethernet</DeviceType>
+				<DeviceGroup>Pump</DeviceGroup>
+				<PriorityLevel>2</PriorityLevel>
+				<VersionCommand>
+					<CommandName>Identify</CommandName>
+				</VersionCommand>
+				<StatusDefinition>
+					<IdentifyCommand>Identify</IdentifyCommand>
+					<StatusCommands>
+						<StatusCommand>
+							<CommandName>Get Error</CommandName>
+							<PollingCommand>0</PollingCommand>
+						</StatusCommand>
+
+						<StatusCommand>
+							<CommandName>Get Syringe Info</CommandName>
+							<PollingCommand>1</PollingCommand>
+						</StatusCommand>
+
+					</StatusCommands>
+				</StatusDefinition>
+
+				<CommandDefinitions>
+					<CommandDefinition>
+						<CommandName>Aspirate</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Flip valve to position specified and then aspirate specified volume with the specified flow rate.</CommandNotes>
+						<CommandExpression>P{0}{1}{2}</CommandExpression>
+						<MotionCommands>
+							<CommandName>Syringe</CommandName>
+						</MotionCommands>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Valve Position</ParameterName>
+								<ParameterType>String</ParameterType>
+								<ParameterDefault>1</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+                <ParameterNotes>
+                'N' for needle
+                'R' for reservoir
+                </ParameterNotes>
+							</Parameter>
+							<Parameter>
+								<ParameterId>1</ParameterId>
+								<ParameterName>Volume</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>ul</ParameterUnits>
+								<ParameterDefault>0</ParameterDefault>
+								<ParameterExpression>/{Value}</ParameterExpression>
+								<ParameterNotes>Volume to aspirate</ParameterNotes>
+							</Parameter>
+							<Parameter>
+								<ParameterId>2</ParameterId>
+								<ParameterName>Flow Rate</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>ml/min</ParameterUnits>
+								<ParameterDefault>10</ParameterDefault>
+								<ParameterExpression>:{Value}</ParameterExpression>
+								<ParameterNotes>Flow rate in ml/min at which to aspirate</ParameterNotes>
+							</Parameter>
+						</Parameters>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Buffered</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Legacy.</CommandNotes>
+						<CommandExpression>{0}</CommandExpression>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Command</ParameterName>
+								<ParameterType>String</ParameterType>
+								<ParameterExpression>{Value}</ParameterExpression>
+							</Parameter>
+						</Parameters>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Clear Error</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Clears error code.</CommandNotes>
+						<CommandExpression>e</CommandExpression>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Dispense</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Flip valve to position and dispense the volume specified.</CommandNotes>
+						<CommandNotes></CommandNotes>
+						<CommandExpression>P{0}{1}{2}</CommandExpression>
+						<MotionCommands>
+							<CommandName>Syringe</CommandName>
+						</MotionCommands>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Valve Position</ParameterName>
+								<ParameterType>String</ParameterType>
+								<ParameterDefault>1</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+                <ParameterNotes>
+                'N' for needle
+                'R' for reservoir
+                </ParameterNotes>
+							</Parameter>
+							<Parameter>
+								<ParameterId>1</ParameterId>
+								<ParameterName>Volume</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>ul</ParameterUnits>
+								<ParameterDefault>0</ParameterDefault>
+								<ParameterExpression>/-{Value}</ParameterExpression>
+                <ParameterNotes>Volume in ul to dispense</ParameterNotes>
+              <RangeInfo>
+              <Max>50000</Max>
+              <Min>1</Min>
+              </RangeInfo>
+							</Parameter>
+							<Parameter>
+								<ParameterId>2</ParameterId>
+								<ParameterName>Flow Rate</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>ml/min</ParameterUnits>
+								<ParameterDefault>10</ParameterDefault>
+								<ParameterExpression>:{Value}</ParameterExpression>
+								<ParameterNotes>Flow rate in ml/min at which to dispense</ParameterNotes>
+							</Parameter>
+						</Parameters>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Get Error</CommandName>
+						<CommandType>imd</CommandType>
+						<CommandNotes>Gets error code.  See user document for possible error codes.</CommandNotes>
+						<CommandExpression>e</CommandExpression>
+						<ReturnExpression>{0}</ReturnExpression>
+						<ReturnParameters>
+							<ReturnParameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Error</ParameterName>
+								<ParameterType>String</ParameterType>
+							</ReturnParameter>
+						</ReturnParameters>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Get Motor Status</CommandName>
+						<CommandType>imd</CommandType>
+						<CommandNotes>Gets motor status </CommandNotes>
+						<CommandExpression>X</CommandExpression>
+						<ReturnExpression>{0:1}{1:1}</ReturnExpression>
+						<ReturnParameters>
+							<ReturnParameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Valve</ParameterName>
+								<ParameterType>String</ParameterType>
+								<ParameterNotes>'P' = parked, 'R' = running, 'E' =error condition, 'I' = not initialized</ParameterNotes>
+							</ReturnParameter>
+							<ReturnParameter>
+								<ParameterId>1</ParameterId>
+								<ParameterName>Syringe</ParameterName>
+								<ParameterType>String</ParameterType>
+								<ParameterNotes>'P' = parked, 'R' = running, 'E' =error condition, 'I' = not initialized</ParameterNotes>
+							</ReturnParameter>
+						</ReturnParameters>
+						<ReturnValues>
+							<ReadyValues>
+								<Value>P</Value>
+							</ReadyValues>
+							<RunningValues>
+								<Value>R</Value>
+							</RunningValues>
+							<UnpoweredValues>
+								<Value>U</Value>
+							</UnpoweredValues>
+							<ErrorValues>
+								<Value>E</Value>
+								<Value>M</Value>
+							</ErrorValues>
+						</ReturnValues>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Get Syringe Info</CommandName>
+						<CommandType>imd</CommandType>
+						<CommandNotes>Gets the Valve position of the syringe and the Volume of the syringe contents. Default unit for volume is µL.</CommandNotes>
+						<CommandExpression>Q</CommandExpression>
+						<ReturnExpression>{0}/{1}</ReturnExpression>
+						<ReturnParameters>
+							<ReturnParameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Valve Position</ParameterName>
+								<ParameterType>String</ParameterType>
+								<ParameterNotes>Valve position can be 'R' for Reservoir, ‘N’ for Needle, ‘O’ for valve motor overload, ‘X’ for running</ParameterNotes>
+							</ReturnParameter>
+							<ReturnParameter>
+								<ParameterId>1</ParameterId>
+								<ParameterName>Volume</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>ul</ParameterUnits>
+								<ParameterNotes>Volume can be to 0.1 µl resolution, depending on syringe</ParameterNotes>
+							</ReturnParameter>
+						</ReturnParameters>
+					</CommandDefinition>
+
+					<CommandDefinition>
+						<CommandName>Halt Syringe</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Halt the syringe and generate error.</CommandNotes>
+						<CommandExpression>PX</CommandExpression>
+						<MotionCommands>
+							<CommandName>Syringe</CommandName>
+						</MotionCommands>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Home</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Homes GX Solvent system selection valve to waste position. The held volume is set to zero but no pumping occurs.</CommandNotes>
+						<CommandExpression>p</CommandExpression>
+						<MotionCommands>
+							<CommandName>Syringe</CommandName>
+						</MotionCommands>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Identify</CommandName>
+						<CommandType>imd</CommandType>
+						<CommandNotes>The PROM instrument name and version.</CommandNotes>
+						<CommandExpression>%</CommandExpression>
+						<ReturnExpression>{0}</ReturnExpression>
+						<ReturnParameters>
+							<ReturnParameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Identity</ParameterName>
+								<ParameterType>String</ParameterType>
+							</ReturnParameter>
+						</ReturnParameters>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Immediate</CommandName>
+						<CommandType>imd</CommandType>
+						<CommandNotes>Legacy.</CommandNotes>
+						<CommandExpression>{0}</CommandExpression>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Command</ParameterName>
+								<ParameterType>String</ParameterType>
+								<ParameterDefault>%</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+							</Parameter>
+						</Parameters>
+						<ReturnExpression>{0}</ReturnExpression>
+						<ReturnParameters>
+							<ReturnParameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Response</ParameterName>
+								<ParameterType>String</ParameterType>
+							</ReturnParameter>
+						</ReturnParameters>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Valve Position</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Sets the valve position.</CommandNotes>
+						<CommandExpression>P{0}</CommandExpression>
+						<MotionCommands>
+							<CommandName>Syringe</CommandName>
+						</MotionCommands>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Valve Position</ParameterName>
+								<ParameterType>String</ParameterType>
+								<ParameterDefault>1</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+								<RangeInfo>
+								<Min>1</Min>
+								<Max>6</Max>
+								</RangeInfo>
+							</Parameter>
+						</Parameters>
+					</CommandDefinition>
+
+					<CommandDefinition>
+						<CommandName>Wait For Syringe</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Wait for syringe motor to get into parked position.</CommandNotes>
+						<MotionCommands>
+							<CommandName>Syringe</CommandName>
+						</MotionCommands>
+					</CommandDefinition>
+
+				</CommandDefinitions>
+			</Device>
+			
+			<!-- Start of GX Direct Inject Device definition -->
+			<Device>
+				<DeviceName>GX Direct Inject</DeviceName>
+				<DeviceId>9</DeviceId>
+				<DeviceVersion>1.0.5.0</DeviceVersion>
+				<DeviceType>Ethernet</DeviceType>
+				<DeviceGroup>Injection Module</DeviceGroup>
+				<PriorityLevel>3</PriorityLevel>
+				<VersionCommand>
+					<CommandName>Identify</CommandName>
+				</VersionCommand>
+				<CompatibleFirmwareVersions>
+					<Version>1</Version>
+				</CompatibleFirmwareVersions>
+				<StatusDefinition>
+					<IdentifyCommand>Identify</IdentifyCommand>
+					<StatusCommands>
+						<StatusCommand>
+							<CommandName>Get Error</CommandName>
+							<PollingCommand>0</PollingCommand>
+						</StatusCommand>
+						
+						<StatusCommand>
+							<CommandName>Get Valve Position</CommandName>
+							<PollingCommand>0</PollingCommand>
+						</StatusCommand>
+
+					</StatusCommands>
+				</StatusDefinition>
+				<!-- Define the commands -->
+				<CommandDefinitions>
+					<CommandDefinition>
+						<CommandName>Buffered</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Legacy.</CommandNotes>
+						<CommandExpression>{0}</CommandExpression>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Command</ParameterName>
+								<ParameterType>String</ParameterType>
+								<ParameterExpression>{Value}</ParameterExpression>
+							</Parameter>
+						</Parameters>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Clear Error</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Clears error code.</CommandNotes>
+						<CommandExpression>e</CommandExpression>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Get Error</CommandName>
+						<CommandType>imd</CommandType>
+						<CommandNotes>Gets error code.  See user document for possible error codes.</CommandNotes>
+						<CommandExpression>e</CommandExpression>
+						<ReturnExpression>{0}</ReturnExpression>
+						<ReturnParameters>
+							<ReturnParameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Error</ParameterName>
+								<ParameterType>String</ParameterType>
+							</ReturnParameter>
+						</ReturnParameters>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Get Motor Status</CommandName>
+						<CommandType>imd</CommandType>
+						<CommandNotes>Get the status of the valve.</CommandNotes>
+           <CommandExpression>X</CommandExpression>
+						<ReturnExpression>{0:1}</ReturnExpression>
+						<ReturnParameters>
+							<ReturnParameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Valve</ParameterName>
+								<ParameterType>String</ParameterType>
+								<ParameterNotes>Will be one of these values.  'R' for Moving, 'L' for Load position, 'I' for Inject position.</ParameterNotes>
+              </ReturnParameter>
+						</ReturnParameters>
+						<ReturnValues>
+							<ReadyValues>
+								<Value>I</Value>
+								<Value>L</Value>
+							</ReadyValues>
+							<RunningValues>
+								<Value>R</Value>
+							</RunningValues>
+							<UnpoweredValues>
+								<Value>U</Value>
+							</UnpoweredValues>
+						</ReturnValues>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Get Valve Position</CommandName>
+						<CommandType>imd</CommandType>
+						<CommandNotes>Gets the valve position. 'R' for Moving,  ' L' for Load position, 'I' for Inject position.</CommandNotes>
+						<CommandExpression>X</CommandExpression>
+						<ReturnExpression>{0:1}</ReturnExpression>
+						<ReturnParameters>
+							<ReturnParameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Valve Position</ParameterName>
+								<ParameterType>String</ParameterType>
+							</ReturnParameter>
+						</ReturnParameters>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Identify</CommandName>
+						<CommandType>imd</CommandType>
+						<CommandNotes>The PROM instrument name and version.</CommandNotes>
+						<CommandExpression>%</CommandExpression>
+						<ReturnExpression>{0}</ReturnExpression>
+						<ReturnParameters>
+							<ReturnParameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Identity</ParameterName>
+								<ParameterType>String</ParameterType>
+							</ReturnParameter>
+						</ReturnParameters>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Immediate</CommandName>
+						<CommandType>imd</CommandType>
+						<CommandNotes>Legacy.</CommandNotes>
+						<CommandExpression>{0}</CommandExpression>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Command</ParameterName>
+								<ParameterType>String</ParameterType>
+								<ParameterDefault>%</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+							</Parameter>
+						</Parameters>
+						<ReturnExpression>{0}</ReturnExpression>
+						<ReturnParameters>
+							<ReturnParameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Response</ParameterName>
+								<ParameterType>String</ParameterType>
+							</ReturnParameter>
+						</ReturnParameters>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Move Valve to Inject</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Turns valve to injection position.</CommandNotes>
+						<CommandExpression>VI</CommandExpression>
+						<MotionCommands>
+							<CommandName>Valve</CommandName>
+						</MotionCommands>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Move Valve to Load</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Turns valve to load position.</CommandNotes>
+						<CommandExpression>VL</CommandExpression>
+						<MotionCommands>
+							<CommandName>Valve</CommandName>
+						</MotionCommands>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Valve Position</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Moves the valve to specified position. 'L' for Load position, 'I' for Inject position. </CommandNotes>
+						<CommandExpression>V{0}</CommandExpression>
+						<MotionCommands>
+							<CommandName>Valve</CommandName>
+						</MotionCommands>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Valve Position</ParameterName>
+								<ParameterType>String</ParameterType>
+								<ParameterDefault>L</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+							</Parameter>
+						</Parameters>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Wait For Valve</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Wait for valve motor to come to load position.</CommandNotes>
+						<MotionCommands>
+							<CommandName>Valve</CommandName>
+						</MotionCommands>
+					</CommandDefinition>
+
+				</CommandDefinitions>
+			</Device>
+			
+			<!-- Start of 406 Device definition -->		
+			<Device>
+				<DeviceName>406 Single Syringe Pump</DeviceName>
+				<DeviceId>7</DeviceId>
+				<DeviceVersion>1.0.7.0</DeviceVersion>
+				<DeviceType>Ethernet</DeviceType>
+				<DeviceGroup>Pump</DeviceGroup>
+				<PriorityLevel>2</PriorityLevel>
+				<VersionCommand>
+					<CommandName>Identify</CommandName>
+				</VersionCommand>
+				<CompatibleFirmwareVersions>
+					<Version>1</Version>
+				</CompatibleFirmwareVersions>
+				<StatusDefinition>
+					<IdentifyCommand>Identify</IdentifyCommand>
+					<StatusCommands>
+						<StatusCommand>
+							<CommandName>Get Error</CommandName>
+							<PollingCommand>0</PollingCommand>
+						</StatusCommand>
+						
+						<StatusCommand>
+							<CommandName>Get Pressure</CommandName>
+							<PollingCommand>1</PollingCommand>
+						</StatusCommand>
+						
+						<StatusCommand>
+							<CommandName>Get Syringe Info</CommandName>
+							<PollingCommand>1</PollingCommand>
+						</StatusCommand>
+						
+					</StatusCommands>
+				</StatusDefinition>
+				<CommandDefinitions>
+					<CommandDefinition>
+						<CommandName>Aspirate</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Flip valve to position specified and then aspirate with the specified flow rate.</CommandNotes>
+						<StatusCommand>0</StatusCommand>
+						<CommandExpression>P{0}{1}{2}</CommandExpression>
+						<MotionCommands>
+							<CommandName>Syringe</CommandName>
+						</MotionCommands>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Valve Position</ParameterName>
+								<ParameterType>String</ParameterType>
+								<ParameterDefault>N</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+								<ParameterNotes>'N' for needle or 'R' for reservoir position.</ParameterNotes>
+							</Parameter>
+							<Parameter>
+								<ParameterId>1</ParameterId>
+								<ParameterName>Volume</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>ul</ParameterUnits>
+								<ParameterDefault>0</ParameterDefault>
+								<ParameterExpression>:{Value}</ParameterExpression>
+								<ParameterNotes>Volume in ul to aspirate.</ParameterNotes>
+							</Parameter>
+							<Parameter>
+								<ParameterId>2</ParameterId>
+								<ParameterName>Flow Rate</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>ml/min</ParameterUnits>
+								<ParameterDefault>10</ParameterDefault>
+								<ParameterExpression>:{Value}</ParameterExpression>
+								<ParameterNotes>Flow Rate at which to aspirate in ml/min</ParameterNotes>
+							</Parameter>
+						</Parameters>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Buffered</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Legacy.</CommandNotes>
+						<StatusCommand>0</StatusCommand>
+						<CommandExpression>{0}</CommandExpression>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Command</ParameterName>
+								<ParameterType>String</ParameterType>
+								<ParameterExpression>{Value}</ParameterExpression>
+							</Parameter>
+						</Parameters>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Clear Error</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Clears error code.</CommandNotes>
+						<StatusCommand>0</StatusCommand>
+						<CommandExpression>e</CommandExpression>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Dispense</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Flip valve to specified position and then dispense at specified flow rate.</CommandNotes>
+						<StatusCommand>0</StatusCommand>
+						<CommandExpression>P{0}{1}{2}</CommandExpression>
+						<MotionCommands>
+							<CommandName>Syringe</CommandName>
+						</MotionCommands>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Valve Position</ParameterName>
+								<ParameterType>String</ParameterType>
+								<ParameterDefault>N</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+                <ParameterNotes>'N' for needle or 'R' for reservoir position.</ParameterNotes>
+							</Parameter>
+							<Parameter>
+								<ParameterId>1</ParameterId>
+								<ParameterName>Volume</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>ul</ParameterUnits>
+								<ParameterDefault>0</ParameterDefault>
+								<ParameterExpression>:-{Value}</ParameterExpression>
+								<ParameterNotes>Volume to dispense in ul.</ParameterNotes>
+							</Parameter>
+							<Parameter>
+								<ParameterId>2</ParameterId>
+								<ParameterName>Flow Rate</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>ml/min</ParameterUnits>
+								<ParameterDefault>10</ParameterDefault>
+								<ParameterExpression>:{Value}</ParameterExpression>
+								<ParameterNotes>Flow rate at which to dispense in ml/min.</ParameterNotes>
+							</Parameter>
+						</Parameters>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Get Error</CommandName>
+						<CommandType>imd</CommandType>
+						<CommandNotes>Gets error code.  See user document for possible error codes.</CommandNotes>
+						<StatusCommand>0</StatusCommand>
+						<CommandExpression>e</CommandExpression>
+						<ReturnExpression>{0}</ReturnExpression>
+						<ReturnParameters>
+							<ReturnParameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Error</ParameterName>
+								<ParameterType>String</ParameterType>
+							</ReturnParameter>
+						</ReturnParameters>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Get Motor Status</CommandName>
+						<CommandType>imd</CommandType>
+						<CommandNotes>Gets the status of the syringe.</CommandNotes>
+						<StatusCommand>0</StatusCommand>
+						<CommandExpression>M</CommandExpression>
+						<ReturnExpression>{0}</ReturnExpression>
+						<ReturnParameters>
+							<ReturnParameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Syringe</ParameterName>
+								<ParameterType>String</ParameterType>
+								<ParameterNotes>Will be one of these values.  'U for unpowered, 'P' for parked, 'R' for running, 'E' for Error, ‘X’ for missing.</ParameterNotes>
+							</ReturnParameter>
+						</ReturnParameters>
+						<ReturnValues>
+							<ReadyValues>
+								<Value>P</Value>
+							</ReadyValues>
+							<RunningValues>
+								<Value>R</Value>
+							</RunningValues>
+							<UnpoweredValues>
+								<Value>U</Value>
+							</UnpoweredValues>
+							<ErrorValues>
+								<Value>E</Value>
+								<Value>M</Value>
+							</ErrorValues>
+						</ReturnValues>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Get Pressure</CommandName>
+						<CommandType>imd</CommandType>
+						<CommandNotes>Gets current pressure value with 2 decimal places.</CommandNotes>
+						<StatusCommand>0</StatusCommand>
+						<CommandExpression>B</CommandExpression>
+						<ReturnExpression>{0}</ReturnExpression>
+						<ReturnParameters>
+							<ReturnParameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Pressure</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>centiBar</ParameterUnits>
+							</ReturnParameter>
+						</ReturnParameters>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Get Syringe Info</CommandName>
+						<CommandType>imd</CommandType>
+						<CommandNotes>Gets the valve position and Syringe contents volume in µL or '?' if unknown (Homed).</CommandNotes>
+						<StatusCommand>0</StatusCommand>
+						<CommandExpression>P</CommandExpression>
+						<ReturnExpression>{0}:{1}</ReturnExpression>
+						<ReturnParameters>
+							<ReturnParameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Valve Position</ParameterName>
+								<ParameterType>String</ParameterType>
+								<ParameterNotes>N, R, or G for 3 position valve, N or R for 2 position valve, T if configured for a ‘tee’, X for missing, E if an invalid configuration</ParameterNotes>
+							</ReturnParameter>
+							<ReturnParameter>
+								<ParameterId>1</ParameterId>
+								<ParameterName>Volume</ParameterName>
+								<ParameterType>Number</ParameterType>
+								<ParameterUnits>ul</ParameterUnits>
+							</ReturnParameter>
+						</ReturnParameters>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Halt Syringe</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Syringe operation is halted.</CommandNotes>
+						<StatusCommand>0</StatusCommand>
+						<CommandExpression>PX</CommandExpression>
+						<MotionCommands>
+							<CommandName>Syringe</CommandName>
+						</MotionCommands>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Home</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Initialized Valve &amp; Syringe. NOTE: Some liquid will typically come from the probe during initializing, so ensure that the probes are in a suitable location before initializing.</CommandNotes>
+						<StatusCommand>0</StatusCommand>
+						<CommandExpression>p</CommandExpression>
+						<MotionCommands>
+							<CommandName>Syringe</CommandName>
+						</MotionCommands>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Identify</CommandName>
+						<CommandType>imd</CommandType>
+						<CommandNotes>The PROM instrument name and version</CommandNotes>
+						<StatusCommand>0</StatusCommand>
+						<CommandExpression>%</CommandExpression>
+						<ReturnExpression>{0}</ReturnExpression>
+						<ReturnParameters>
+							<ReturnParameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Identity</ParameterName>
+								<ParameterType>String</ParameterType>
+							</ReturnParameter>
+						</ReturnParameters>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Immediate</CommandName>
+						<CommandType>imd</CommandType>
+						<CommandNotes>Legacy</CommandNotes>
+						<CommandNotes>Legacy</CommandNotes>
+						<StatusCommand>0</StatusCommand>
+						<CommandExpression>{0}</CommandExpression>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Command</ParameterName>
+								<ParameterType>String</ParameterType>
+								<ParameterDefault>%</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+							</Parameter>
+						</Parameters>
+						<ReturnExpression>{0}</ReturnExpression>
+						<ReturnParameters>
+							<ReturnParameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Response</ParameterName>
+								<ParameterType>String</ParameterType>
+							</ReturnParameter>
+						</ReturnParameters>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Valve Position</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Gets the valve position of the pump. N, R, or G for 3 position valve, N or R for 2 position valve, T if configured for a ‘tee’, X for missing, E if an invalid configuration</CommandNotes>
+						<CommandExpression>P{0}</CommandExpression>
+						<MotionCommands>
+							<CommandName>Syringe</CommandName>
+						</MotionCommands>
+						<Parameters>
+							<Parameter>
+								<ParameterId>0</ParameterId>
+								<ParameterName>Valve Position</ParameterName>
+								<ParameterType>String</ParameterType>
+								<ParameterDefault>N</ParameterDefault>
+								<ParameterExpression>{Value}</ParameterExpression>
+							</Parameter>
+						</Parameters>
+					</CommandDefinition>
+					
+					<CommandDefinition>
+						<CommandName>Wait For Syringe</CommandName>
+						<CommandType>buf</CommandType>
+						<CommandNotes>Wait for syringe to complete the current operation.</CommandNotes>
+						<MotionCommands>
+							<CommandName>Syringe</CommandName>
+						</MotionCommands>
+					</CommandDefinition>
+
+				</CommandDefinitions>
+			</Device>
+		</Devices>
+	</InstructionSet>
+</Gilson>
