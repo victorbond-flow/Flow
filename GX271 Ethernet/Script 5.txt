@@ -1,0 +1,1938 @@
+No.     Time           Source                Destination           Protocol Length Info
+    148 1.802885       192.168.1.101         255.255.255.255       UDP      1237   2564 → 50184 Len=1195
+
+Frame 148: 1237 bytes on wire (9896 bits), 1237 bytes captured (9896 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: DigiBoard_a2:56:92 (00:40:9d:a2:56:92), Dst: Broadcast (ff:ff:ff:ff:ff:ff)
+Internet Protocol Version 4, Src: 192.168.1.101, Dst: 255.255.255.255
+User Datagram Protocol, Src Port: 2564, Dst Port: 50184
+Data (1195 bytes)
+
+0000  3c 47 69 6c 73 6f 6e 3e 3c 42 65 61 63 6f 6e 3e   <Gilson><Beacon>
+0010  3c 44 65 76 69 63 65 49 6e 66 6f 3e 3c 49 50 41   <DeviceInfo><IPA
+0020  64 64 72 65 73 73 3e 31 39 32 2e 31 36 38 2e 31   ddress>192.168.1
+0030  2e 31 30 31 3c 2f 49 50 41 64 64 72 65 73 73 3e   .101</IPAddress>
+0040  3c 53 75 62 6e 65 74 4d 61 73 6b 3e 32 35 35 2e   <SubnetMask>255.
+0050  32 35 35 2e 32 35 35 2e 30 3c 2f 53 75 62 6e 65   255.255.0</Subne
+0060  74 4d 61 73 6b 3e 3c 44 65 66 61 75 6c 74 47 61   tMask><DefaultGa
+0070  74 65 77 61 79 3e 31 39 32 2e 31 36 38 2e 31 2e   teway>192.168.1.
+0080  31 3c 2f 44 65 66 61 75 6c 74 47 61 74 65 77 61   1</DefaultGatewa
+0090  79 3e 3c 4d 41 43 3e 30 30 3a 34 30 3a 39 64 3a   y><MAC>00:40:9d:
+00a0  61 32 3a 35 36 3a 39 32 3c 2f 4d 41 43 3e 3c 49   a2:56:92</MAC><I
+00b0  6e 73 74 72 75 6d 65 6e 74 73 3e 3c 49 6e 73 74   nstruments><Inst
+00c0  72 75 6d 65 6e 74 3e 3c 4e 61 6d 65 3e 53 79 73   rument><Name>Sys
+00d0  74 65 6d 3c 2f 4e 61 6d 65 3e 3c 49 6e 73 74 72   tem</Name><Instr
+00e0  75 6d 65 6e 74 4e 61 6d 65 3e 53 79 73 74 65 6d   umentName>System
+00f0  3c 2f 49 6e 73 74 72 75 6d 65 6e 74 4e 61 6d 65   </InstrumentName
+0100  3e 3c 49 44 3e 2d 31 3c 2f 49 44 3e 3c 53 65 72   ><ID>-1</ID><Ser
+0110  69 61 6c 4e 75 6d 62 65 72 3e 4e 39 39 39 39 39   ialNumber>N99999
+0120  39 39 39 3c 2f 53 65 72 69 61 6c 4e 75 6d 62 65   999</SerialNumbe
+0130  72 3e 3c 2f 49 6e 73 74 72 75 6d 65 6e 74 3e 3c   r></Instrument><
+0140  49 6e 73 74 72 75 6d 65 6e 74 3e 3c 4e 61 6d 65   Instrument><Name
+0150  3e 47 58 2d 32 37 78 3c 2f 4e 61 6d 65 3e 3c 49   >GX-27x</Name><I
+0160  6e 73 74 72 75 6d 65 6e 74 4e 61 6d 65 3e 47 58   nstrumentName>GX
+0170  20 32 37 31 20 3c 2f 49 6e 73 74 72 75 6d 65 6e    271 </Instrumen
+0180  74 4e 61 6d 65 3e 3c 50 72 6f 6d 56 65 72 73 69   tName><PromVersi
+0190  6f 6e 3e 32 2e 33 2e 30 2e 31 3c 2f 50 72 6f 6d   on>2.3.0.1</Prom
+01a0  56 65 72 73 69 6f 6e 3e 3c 49 44 3e 33 35 3c 2f   Version><ID>35</
+01b0  49 44 3e 3c 53 65 72 69 61 6c 4e 75 6d 62 65 72   ID><SerialNumber
+01c0  3e 32 36 31 4a 37 4e 32 35 33 3c 2f 53 65 72 69   >261J7N253</Seri
+01d0  61 6c 4e 75 6d 62 65 72 3e 3c 2f 49 6e 73 74 72   alNumber></Instr
+01e0  75 6d 65 6e 74 3e 3c 49 6e 73 74 72 75 6d 65 6e   ument><Instrumen
+01f0  74 3e 3c 4e 61 6d 65 3e 47 58 20 53 6f 6c 76 65   t><Name>GX Solve
+0200  6e 74 20 53 79 73 74 65 6d 3c 2f 4e 61 6d 65 3e   nt System</Name>
+0210  3c 49 6e 73 74 72 75 6d 65 6e 74 4e 61 6d 65 3e   <InstrumentName>
+0220  47 58 20 53 6f 6c 76 65 6e 74 20 53 79 73 74 65   GX Solvent Syste
+0230  6d 3c 2f 49 6e 73 74 72 75 6d 65 6e 74 4e 61 6d   m</InstrumentNam
+0240  65 3e 3c 50 72 6f 6d 56 65 72 73 69 6f 6e 3e 3c   e><PromVersion><
+0250  2f 50 72 6f 6d 56 65 72 73 69 6f 6e 3e 3c 49 44   /PromVersion><ID
+0260  3e 38 3c 2f 49 44 3e 3c 53 65 72 69 61 6c 4e 75   >8</ID><SerialNu
+0270  6d 62 65 72 3e 53 65 72 69 61 6c 20 6e 75 6d 62   mber>Serial numb
+0280  65 72 20 63 6f 75 6c 64 20 6e 6f 74 20 62 65 20   er could not be 
+0290  72 65 63 65 69 76 65 64 20 66 72 6f 6d 20 64 65   received from de
+02a0  76 69 63 65 3c 2f 53 65 72 69 61 6c 4e 75 6d 62   vice</SerialNumb
+02b0  65 72 3e 3c 2f 49 6e 73 74 72 75 6d 65 6e 74 3e   er></Instrument>
+02c0  3c 49 6e 73 74 72 75 6d 65 6e 74 3e 3c 4e 61 6d   <Instrument><Nam
+02d0  65 3e 47 58 20 44 69 72 65 63 74 20 49 6e 6a 65   e>GX Direct Inje
+02e0  63 74 3c 2f 4e 61 6d 65 3e 3c 49 6e 73 74 72 75   ct</Name><Instru
+02f0  6d 65 6e 74 4e 61 6d 65 3e 47 58 20 44 69 72 65   mentName>GX Dire
+0300  63 74 20 49 6e 6a 65 63 74 3c 2f 49 6e 73 74 72   ct Inject</Instr
+0310  75 6d 65 6e 74 4e 61 6d 65 3e 3c 50 72 6f 6d 56   umentName><PromV
+0320  65 72 73 69 6f 6e 3e 3c 2f 50 72 6f 6d 56 65 72   ersion></PromVer
+0330  73 69 6f 6e 3e 3c 49 44 3e 39 3c 2f 49 44 3e 3c   sion><ID>9</ID><
+0340  53 65 72 69 61 6c 4e 75 6d 62 65 72 3e 53 65 72   SerialNumber>Ser
+0350  69 61 6c 20 6e 75 6d 62 65 72 20 63 6f 75 6c 64   ial number could
+0360  20 6e 6f 74 20 62 65 20 72 65 63 65 69 76 65 64    not be received
+0370  20 66 72 6f 6d 20 64 65 76 69 63 65 3c 2f 53 65    from device</Se
+0380  72 69 61 6c 4e 75 6d 62 65 72 3e 3c 2f 49 6e 73   rialNumber></Ins
+0390  74 72 75 6d 65 6e 74 3e 3c 49 6e 73 74 72 75 6d   trument><Instrum
+03a0  65 6e 74 3e 3c 4e 61 6d 65 3e 34 30 36 20 53 69   ent><Name>406 Si
+03b0  6e 67 6c 65 20 53 79 72 69 6e 67 65 20 50 75 6d   ngle Syringe Pum
+03c0  70 3c 2f 4e 61 6d 65 3e 3c 49 6e 73 74 72 75 6d   p</Name><Instrum
+03d0  65 6e 74 4e 61 6d 65 3e 34 30 36 20 53 69 6e 67   entName>406 Sing
+03e0  6c 65 20 53 79 72 69 6e 67 65 20 50 75 6d 70 3c   le Syringe Pump<
+03f0  2f 49 6e 73 74 72 75 6d 65 6e 74 4e 61 6d 65 3e   /InstrumentName>
+0400  3c 50 72 6f 6d 56 65 72 73 69 6f 6e 3e 3c 2f 50   <PromVersion></P
+0410  72 6f 6d 56 65 72 73 69 6f 6e 3e 3c 49 44 3e 37   romVersion><ID>7
+0420  3c 2f 49 44 3e 3c 53 65 72 69 61 6c 4e 75 6d 62   </ID><SerialNumb
+0430  65 72 3e 53 65 72 69 61 6c 20 6e 75 6d 62 65 72   er>Serial number
+0440  20 63 6f 75 6c 64 20 6e 6f 74 20 62 65 20 72 65    could not be re
+0450  63 65 69 76 65 64 20 66 72 6f 6d 20 64 65 76 69   ceived from devi
+0460  63 65 3c 2f 53 65 72 69 61 6c 4e 75 6d 62 65 72   ce</SerialNumber
+0470  3e 3c 2f 49 6e 73 74 72 75 6d 65 6e 74 3e 3c 2f   ></Instrument></
+0480  49 6e 73 74 72 75 6d 65 6e 74 73 3e 3c 2f 44 65   Instruments></De
+0490  76 69 63 65 49 6e 66 6f 3e 3c 2f 42 65 61 63 6f   viceInfo></Beaco
+04a0  6e 3e 3c 2f 47 69 6c 73 6f 6e 3e                  n></Gilson>
+
+No.     Time           Source                Destination           Protocol Length Info
+    513 3.803125       192.168.1.101         255.255.255.255       UDP      1237   2564 → 50184 Len=1195
+
+Frame 513: 1237 bytes on wire (9896 bits), 1237 bytes captured (9896 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: DigiBoard_a2:56:92 (00:40:9d:a2:56:92), Dst: Broadcast (ff:ff:ff:ff:ff:ff)
+Internet Protocol Version 4, Src: 192.168.1.101, Dst: 255.255.255.255
+User Datagram Protocol, Src Port: 2564, Dst Port: 50184
+Data (1195 bytes)
+
+0000  3c 47 69 6c 73 6f 6e 3e 3c 42 65 61 63 6f 6e 3e   <Gilson><Beacon>
+0010  3c 44 65 76 69 63 65 49 6e 66 6f 3e 3c 49 50 41   <DeviceInfo><IPA
+0020  64 64 72 65 73 73 3e 31 39 32 2e 31 36 38 2e 31   ddress>192.168.1
+0030  2e 31 30 31 3c 2f 49 50 41 64 64 72 65 73 73 3e   .101</IPAddress>
+0040  3c 53 75 62 6e 65 74 4d 61 73 6b 3e 32 35 35 2e   <SubnetMask>255.
+0050  32 35 35 2e 32 35 35 2e 30 3c 2f 53 75 62 6e 65   255.255.0</Subne
+0060  74 4d 61 73 6b 3e 3c 44 65 66 61 75 6c 74 47 61   tMask><DefaultGa
+0070  74 65 77 61 79 3e 31 39 32 2e 31 36 38 2e 31 2e   teway>192.168.1.
+0080  31 3c 2f 44 65 66 61 75 6c 74 47 61 74 65 77 61   1</DefaultGatewa
+0090  79 3e 3c 4d 41 43 3e 30 30 3a 34 30 3a 39 64 3a   y><MAC>00:40:9d:
+00a0  61 32 3a 35 36 3a 39 32 3c 2f 4d 41 43 3e 3c 49   a2:56:92</MAC><I
+00b0  6e 73 74 72 75 6d 65 6e 74 73 3e 3c 49 6e 73 74   nstruments><Inst
+00c0  72 75 6d 65 6e 74 3e 3c 4e 61 6d 65 3e 53 79 73   rument><Name>Sys
+00d0  74 65 6d 3c 2f 4e 61 6d 65 3e 3c 49 6e 73 74 72   tem</Name><Instr
+00e0  75 6d 65 6e 74 4e 61 6d 65 3e 53 79 73 74 65 6d   umentName>System
+00f0  3c 2f 49 6e 73 74 72 75 6d 65 6e 74 4e 61 6d 65   </InstrumentName
+0100  3e 3c 49 44 3e 2d 31 3c 2f 49 44 3e 3c 53 65 72   ><ID>-1</ID><Ser
+0110  69 61 6c 4e 75 6d 62 65 72 3e 4e 39 39 39 39 39   ialNumber>N99999
+0120  39 39 39 3c 2f 53 65 72 69 61 6c 4e 75 6d 62 65   999</SerialNumbe
+0130  72 3e 3c 2f 49 6e 73 74 72 75 6d 65 6e 74 3e 3c   r></Instrument><
+0140  49 6e 73 74 72 75 6d 65 6e 74 3e 3c 4e 61 6d 65   Instrument><Name
+0150  3e 47 58 2d 32 37 78 3c 2f 4e 61 6d 65 3e 3c 49   >GX-27x</Name><I
+0160  6e 73 74 72 75 6d 65 6e 74 4e 61 6d 65 3e 47 58   nstrumentName>GX
+0170  20 32 37 31 20 3c 2f 49 6e 73 74 72 75 6d 65 6e    271 </Instrumen
+0180  74 4e 61 6d 65 3e 3c 50 72 6f 6d 56 65 72 73 69   tName><PromVersi
+0190  6f 6e 3e 32 2e 33 2e 30 2e 31 3c 2f 50 72 6f 6d   on>2.3.0.1</Prom
+01a0  56 65 72 73 69 6f 6e 3e 3c 49 44 3e 33 35 3c 2f   Version><ID>35</
+01b0  49 44 3e 3c 53 65 72 69 61 6c 4e 75 6d 62 65 72   ID><SerialNumber
+01c0  3e 32 36 31 4a 37 4e 32 35 33 3c 2f 53 65 72 69   >261J7N253</Seri
+01d0  61 6c 4e 75 6d 62 65 72 3e 3c 2f 49 6e 73 74 72   alNumber></Instr
+01e0  75 6d 65 6e 74 3e 3c 49 6e 73 74 72 75 6d 65 6e   ument><Instrumen
+01f0  74 3e 3c 4e 61 6d 65 3e 47 58 20 53 6f 6c 76 65   t><Name>GX Solve
+0200  6e 74 20 53 79 73 74 65 6d 3c 2f 4e 61 6d 65 3e   nt System</Name>
+0210  3c 49 6e 73 74 72 75 6d 65 6e 74 4e 61 6d 65 3e   <InstrumentName>
+0220  47 58 20 53 6f 6c 76 65 6e 74 20 53 79 73 74 65   GX Solvent Syste
+0230  6d 3c 2f 49 6e 73 74 72 75 6d 65 6e 74 4e 61 6d   m</InstrumentNam
+0240  65 3e 3c 50 72 6f 6d 56 65 72 73 69 6f 6e 3e 3c   e><PromVersion><
+0250  2f 50 72 6f 6d 56 65 72 73 69 6f 6e 3e 3c 49 44   /PromVersion><ID
+0260  3e 38 3c 2f 49 44 3e 3c 53 65 72 69 61 6c 4e 75   >8</ID><SerialNu
+0270  6d 62 65 72 3e 53 65 72 69 61 6c 20 6e 75 6d 62   mber>Serial numb
+0280  65 72 20 63 6f 75 6c 64 20 6e 6f 74 20 62 65 20   er could not be 
+0290  72 65 63 65 69 76 65 64 20 66 72 6f 6d 20 64 65   received from de
+02a0  76 69 63 65 3c 2f 53 65 72 69 61 6c 4e 75 6d 62   vice</SerialNumb
+02b0  65 72 3e 3c 2f 49 6e 73 74 72 75 6d 65 6e 74 3e   er></Instrument>
+02c0  3c 49 6e 73 74 72 75 6d 65 6e 74 3e 3c 4e 61 6d   <Instrument><Nam
+02d0  65 3e 47 58 20 44 69 72 65 63 74 20 49 6e 6a 65   e>GX Direct Inje
+02e0  63 74 3c 2f 4e 61 6d 65 3e 3c 49 6e 73 74 72 75   ct</Name><Instru
+02f0  6d 65 6e 74 4e 61 6d 65 3e 47 58 20 44 69 72 65   mentName>GX Dire
+0300  63 74 20 49 6e 6a 65 63 74 3c 2f 49 6e 73 74 72   ct Inject</Instr
+0310  75 6d 65 6e 74 4e 61 6d 65 3e 3c 50 72 6f 6d 56   umentName><PromV
+0320  65 72 73 69 6f 6e 3e 3c 2f 50 72 6f 6d 56 65 72   ersion></PromVer
+0330  73 69 6f 6e 3e 3c 49 44 3e 39 3c 2f 49 44 3e 3c   sion><ID>9</ID><
+0340  53 65 72 69 61 6c 4e 75 6d 62 65 72 3e 53 65 72   SerialNumber>Ser
+0350  69 61 6c 20 6e 75 6d 62 65 72 20 63 6f 75 6c 64   ial number could
+0360  20 6e 6f 74 20 62 65 20 72 65 63 65 69 76 65 64    not be received
+0370  20 66 72 6f 6d 20 64 65 76 69 63 65 3c 2f 53 65    from device</Se
+0380  72 69 61 6c 4e 75 6d 62 65 72 3e 3c 2f 49 6e 73   rialNumber></Ins
+0390  74 72 75 6d 65 6e 74 3e 3c 49 6e 73 74 72 75 6d   trument><Instrum
+03a0  65 6e 74 3e 3c 4e 61 6d 65 3e 34 30 36 20 53 69   ent><Name>406 Si
+03b0  6e 67 6c 65 20 53 79 72 69 6e 67 65 20 50 75 6d   ngle Syringe Pum
+03c0  70 3c 2f 4e 61 6d 65 3e 3c 49 6e 73 74 72 75 6d   p</Name><Instrum
+03d0  65 6e 74 4e 61 6d 65 3e 34 30 36 20 53 69 6e 67   entName>406 Sing
+03e0  6c 65 20 53 79 72 69 6e 67 65 20 50 75 6d 70 3c   le Syringe Pump<
+03f0  2f 49 6e 73 74 72 75 6d 65 6e 74 4e 61 6d 65 3e   /InstrumentName>
+0400  3c 50 72 6f 6d 56 65 72 73 69 6f 6e 3e 3c 2f 50   <PromVersion></P
+0410  72 6f 6d 56 65 72 73 69 6f 6e 3e 3c 49 44 3e 37   romVersion><ID>7
+0420  3c 2f 49 44 3e 3c 53 65 72 69 61 6c 4e 75 6d 62   </ID><SerialNumb
+0430  65 72 3e 53 65 72 69 61 6c 20 6e 75 6d 62 65 72   er>Serial number
+0440  20 63 6f 75 6c 64 20 6e 6f 74 20 62 65 20 72 65    could not be re
+0450  63 65 69 76 65 64 20 66 72 6f 6d 20 64 65 76 69   ceived from devi
+0460  63 65 3c 2f 53 65 72 69 61 6c 4e 75 6d 62 65 72   ce</SerialNumber
+0470  3e 3c 2f 49 6e 73 74 72 75 6d 65 6e 74 3e 3c 2f   ></Instrument></
+0480  49 6e 73 74 72 75 6d 65 6e 74 73 3e 3c 2f 44 65   Instruments></De
+0490  76 69 63 65 49 6e 66 6f 3e 3c 2f 42 65 61 63 6f   viceInfo></Beaco
+04a0  6e 3e 3c 2f 47 69 6c 73 6f 6e 3e                  n></Gilson>
+
+No.     Time           Source                Destination           Protocol Length Info
+    962 5.654153       192.168.1.100         192.168.1.101         TCP      54     54770 → 50190 [FIN, ACK] Seq=1 Ack=1 Win=511 Len=0
+
+Frame 962: 54 bytes on wire (432 bits), 54 bytes captured (432 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: Dell_b8:f8:97 (98:90:96:b8:f8:97), Dst: DigiBoard_a2:56:92 (00:40:9d:a2:56:92)
+Internet Protocol Version 4, Src: 192.168.1.100, Dst: 192.168.1.101
+Transmission Control Protocol, Src Port: 54770, Dst Port: 50190, Seq: 1, Ack: 1, Len: 0
+
+No.     Time           Source                Destination           Protocol Length Info
+    963 5.655966       192.168.1.101         192.168.1.100         TCP      60     [TCP ZeroWindow] 50190 → 54770 [ACK] Seq=1 Ack=2 Win=0 Len=0
+
+Frame 963: 60 bytes on wire (480 bits), 60 bytes captured (480 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: DigiBoard_a2:56:92 (00:40:9d:a2:56:92), Dst: Dell_b8:f8:97 (98:90:96:b8:f8:97)
+Internet Protocol Version 4, Src: 192.168.1.101, Dst: 192.168.1.100
+Transmission Control Protocol, Src Port: 50190, Dst Port: 54770, Seq: 1, Ack: 2, Len: 0
+
+No.     Time           Source                Destination           Protocol Length Info
+    973 5.674559       192.168.1.101         192.168.1.100         TCP      60     50190 → 54770 [FIN, PSH, ACK] Seq=1 Ack=2 Win=0 Len=0
+
+Frame 973: 60 bytes on wire (480 bits), 60 bytes captured (480 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: DigiBoard_a2:56:92 (00:40:9d:a2:56:92), Dst: Dell_b8:f8:97 (98:90:96:b8:f8:97)
+Internet Protocol Version 4, Src: 192.168.1.101, Dst: 192.168.1.100
+Transmission Control Protocol, Src Port: 50190, Dst Port: 54770, Seq: 1, Ack: 2, Len: 0
+
+No.     Time           Source                Destination           Protocol Length Info
+    974 5.674606       192.168.1.100         192.168.1.101         TCP      54     54770 → 50190 [ACK] Seq=2 Ack=2 Win=511 Len=0
+
+Frame 974: 54 bytes on wire (432 bits), 54 bytes captured (432 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: Dell_b8:f8:97 (98:90:96:b8:f8:97), Dst: DigiBoard_a2:56:92 (00:40:9d:a2:56:92)
+Internet Protocol Version 4, Src: 192.168.1.100, Dst: 192.168.1.101
+Transmission Control Protocol, Src Port: 54770, Dst Port: 50190, Seq: 2, Ack: 2, Len: 0
+
+No.     Time           Source                Destination           Protocol Length Info
+   1028 5.803590       192.168.1.101         255.255.255.255       UDP      1237   2564 → 50184 Len=1195
+
+Frame 1028: 1237 bytes on wire (9896 bits), 1237 bytes captured (9896 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: DigiBoard_a2:56:92 (00:40:9d:a2:56:92), Dst: Broadcast (ff:ff:ff:ff:ff:ff)
+Internet Protocol Version 4, Src: 192.168.1.101, Dst: 255.255.255.255
+User Datagram Protocol, Src Port: 2564, Dst Port: 50184
+Data (1195 bytes)
+
+0000  3c 47 69 6c 73 6f 6e 3e 3c 42 65 61 63 6f 6e 3e   <Gilson><Beacon>
+0010  3c 44 65 76 69 63 65 49 6e 66 6f 3e 3c 49 50 41   <DeviceInfo><IPA
+0020  64 64 72 65 73 73 3e 31 39 32 2e 31 36 38 2e 31   ddress>192.168.1
+0030  2e 31 30 31 3c 2f 49 50 41 64 64 72 65 73 73 3e   .101</IPAddress>
+0040  3c 53 75 62 6e 65 74 4d 61 73 6b 3e 32 35 35 2e   <SubnetMask>255.
+0050  32 35 35 2e 32 35 35 2e 30 3c 2f 53 75 62 6e 65   255.255.0</Subne
+0060  74 4d 61 73 6b 3e 3c 44 65 66 61 75 6c 74 47 61   tMask><DefaultGa
+0070  74 65 77 61 79 3e 31 39 32 2e 31 36 38 2e 31 2e   teway>192.168.1.
+0080  31 3c 2f 44 65 66 61 75 6c 74 47 61 74 65 77 61   1</DefaultGatewa
+0090  79 3e 3c 4d 41 43 3e 30 30 3a 34 30 3a 39 64 3a   y><MAC>00:40:9d:
+00a0  61 32 3a 35 36 3a 39 32 3c 2f 4d 41 43 3e 3c 49   a2:56:92</MAC><I
+00b0  6e 73 74 72 75 6d 65 6e 74 73 3e 3c 49 6e 73 74   nstruments><Inst
+00c0  72 75 6d 65 6e 74 3e 3c 4e 61 6d 65 3e 53 79 73   rument><Name>Sys
+00d0  74 65 6d 3c 2f 4e 61 6d 65 3e 3c 49 6e 73 74 72   tem</Name><Instr
+00e0  75 6d 65 6e 74 4e 61 6d 65 3e 53 79 73 74 65 6d   umentName>System
+00f0  3c 2f 49 6e 73 74 72 75 6d 65 6e 74 4e 61 6d 65   </InstrumentName
+0100  3e 3c 49 44 3e 2d 31 3c 2f 49 44 3e 3c 53 65 72   ><ID>-1</ID><Ser
+0110  69 61 6c 4e 75 6d 62 65 72 3e 4e 39 39 39 39 39   ialNumber>N99999
+0120  39 39 39 3c 2f 53 65 72 69 61 6c 4e 75 6d 62 65   999</SerialNumbe
+0130  72 3e 3c 2f 49 6e 73 74 72 75 6d 65 6e 74 3e 3c   r></Instrument><
+0140  49 6e 73 74 72 75 6d 65 6e 74 3e 3c 4e 61 6d 65   Instrument><Name
+0150  3e 47 58 2d 32 37 78 3c 2f 4e 61 6d 65 3e 3c 49   >GX-27x</Name><I
+0160  6e 73 74 72 75 6d 65 6e 74 4e 61 6d 65 3e 47 58   nstrumentName>GX
+0170  20 32 37 31 20 3c 2f 49 6e 73 74 72 75 6d 65 6e    271 </Instrumen
+0180  74 4e 61 6d 65 3e 3c 50 72 6f 6d 56 65 72 73 69   tName><PromVersi
+0190  6f 6e 3e 32 2e 33 2e 30 2e 31 3c 2f 50 72 6f 6d   on>2.3.0.1</Prom
+01a0  56 65 72 73 69 6f 6e 3e 3c 49 44 3e 33 35 3c 2f   Version><ID>35</
+01b0  49 44 3e 3c 53 65 72 69 61 6c 4e 75 6d 62 65 72   ID><SerialNumber
+01c0  3e 32 36 31 4a 37 4e 32 35 33 3c 2f 53 65 72 69   >261J7N253</Seri
+01d0  61 6c 4e 75 6d 62 65 72 3e 3c 2f 49 6e 73 74 72   alNumber></Instr
+01e0  75 6d 65 6e 74 3e 3c 49 6e 73 74 72 75 6d 65 6e   ument><Instrumen
+01f0  74 3e 3c 4e 61 6d 65 3e 47 58 20 53 6f 6c 76 65   t><Name>GX Solve
+0200  6e 74 20 53 79 73 74 65 6d 3c 2f 4e 61 6d 65 3e   nt System</Name>
+0210  3c 49 6e 73 74 72 75 6d 65 6e 74 4e 61 6d 65 3e   <InstrumentName>
+0220  47 58 20 53 6f 6c 76 65 6e 74 20 53 79 73 74 65   GX Solvent Syste
+0230  6d 3c 2f 49 6e 73 74 72 75 6d 65 6e 74 4e 61 6d   m</InstrumentNam
+0240  65 3e 3c 50 72 6f 6d 56 65 72 73 69 6f 6e 3e 3c   e><PromVersion><
+0250  2f 50 72 6f 6d 56 65 72 73 69 6f 6e 3e 3c 49 44   /PromVersion><ID
+0260  3e 38 3c 2f 49 44 3e 3c 53 65 72 69 61 6c 4e 75   >8</ID><SerialNu
+0270  6d 62 65 72 3e 53 65 72 69 61 6c 20 6e 75 6d 62   mber>Serial numb
+0280  65 72 20 63 6f 75 6c 64 20 6e 6f 74 20 62 65 20   er could not be 
+0290  72 65 63 65 69 76 65 64 20 66 72 6f 6d 20 64 65   received from de
+02a0  76 69 63 65 3c 2f 53 65 72 69 61 6c 4e 75 6d 62   vice</SerialNumb
+02b0  65 72 3e 3c 2f 49 6e 73 74 72 75 6d 65 6e 74 3e   er></Instrument>
+02c0  3c 49 6e 73 74 72 75 6d 65 6e 74 3e 3c 4e 61 6d   <Instrument><Nam
+02d0  65 3e 47 58 20 44 69 72 65 63 74 20 49 6e 6a 65   e>GX Direct Inje
+02e0  63 74 3c 2f 4e 61 6d 65 3e 3c 49 6e 73 74 72 75   ct</Name><Instru
+02f0  6d 65 6e 74 4e 61 6d 65 3e 47 58 20 44 69 72 65   mentName>GX Dire
+0300  63 74 20 49 6e 6a 65 63 74 3c 2f 49 6e 73 74 72   ct Inject</Instr
+0310  75 6d 65 6e 74 4e 61 6d 65 3e 3c 50 72 6f 6d 56   umentName><PromV
+0320  65 72 73 69 6f 6e 3e 3c 2f 50 72 6f 6d 56 65 72   ersion></PromVer
+0330  73 69 6f 6e 3e 3c 49 44 3e 39 3c 2f 49 44 3e 3c   sion><ID>9</ID><
+0340  53 65 72 69 61 6c 4e 75 6d 62 65 72 3e 53 65 72   SerialNumber>Ser
+0350  69 61 6c 20 6e 75 6d 62 65 72 20 63 6f 75 6c 64   ial number could
+0360  20 6e 6f 74 20 62 65 20 72 65 63 65 69 76 65 64    not be received
+0370  20 66 72 6f 6d 20 64 65 76 69 63 65 3c 2f 53 65    from device</Se
+0380  72 69 61 6c 4e 75 6d 62 65 72 3e 3c 2f 49 6e 73   rialNumber></Ins
+0390  74 72 75 6d 65 6e 74 3e 3c 49 6e 73 74 72 75 6d   trument><Instrum
+03a0  65 6e 74 3e 3c 4e 61 6d 65 3e 34 30 36 20 53 69   ent><Name>406 Si
+03b0  6e 67 6c 65 20 53 79 72 69 6e 67 65 20 50 75 6d   ngle Syringe Pum
+03c0  70 3c 2f 4e 61 6d 65 3e 3c 49 6e 73 74 72 75 6d   p</Name><Instrum
+03d0  65 6e 74 4e 61 6d 65 3e 34 30 36 20 53 69 6e 67   entName>406 Sing
+03e0  6c 65 20 53 79 72 69 6e 67 65 20 50 75 6d 70 3c   le Syringe Pump<
+03f0  2f 49 6e 73 74 72 75 6d 65 6e 74 4e 61 6d 65 3e   /InstrumentName>
+0400  3c 50 72 6f 6d 56 65 72 73 69 6f 6e 3e 3c 2f 50   <PromVersion></P
+0410  72 6f 6d 56 65 72 73 69 6f 6e 3e 3c 49 44 3e 37   romVersion><ID>7
+0420  3c 2f 49 44 3e 3c 53 65 72 69 61 6c 4e 75 6d 62   </ID><SerialNumb
+0430  65 72 3e 53 65 72 69 61 6c 20 6e 75 6d 62 65 72   er>Serial number
+0440  20 63 6f 75 6c 64 20 6e 6f 74 20 62 65 20 72 65    could not be re
+0450  63 65 69 76 65 64 20 66 72 6f 6d 20 64 65 76 69   ceived from devi
+0460  63 65 3c 2f 53 65 72 69 61 6c 4e 75 6d 62 65 72   ce</SerialNumber
+0470  3e 3c 2f 49 6e 73 74 72 75 6d 65 6e 74 3e 3c 2f   ></Instrument></
+0480  49 6e 73 74 72 75 6d 65 6e 74 73 3e 3c 2f 44 65   Instruments></De
+0490  76 69 63 65 49 6e 66 6f 3e 3c 2f 42 65 61 63 6f   viceInfo></Beaco
+04a0  6e 3e 3c 2f 47 69 6c 73 6f 6e 3e                  n></Gilson>
+
+No.     Time           Source                Destination           Protocol Length Info
+   1246 7.803929       192.168.1.101         255.255.255.255       UDP      1237   2564 → 50184 Len=1195
+
+Frame 1246: 1237 bytes on wire (9896 bits), 1237 bytes captured (9896 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: DigiBoard_a2:56:92 (00:40:9d:a2:56:92), Dst: Broadcast (ff:ff:ff:ff:ff:ff)
+Internet Protocol Version 4, Src: 192.168.1.101, Dst: 255.255.255.255
+User Datagram Protocol, Src Port: 2564, Dst Port: 50184
+Data (1195 bytes)
+
+0000  3c 47 69 6c 73 6f 6e 3e 3c 42 65 61 63 6f 6e 3e   <Gilson><Beacon>
+0010  3c 44 65 76 69 63 65 49 6e 66 6f 3e 3c 49 50 41   <DeviceInfo><IPA
+0020  64 64 72 65 73 73 3e 31 39 32 2e 31 36 38 2e 31   ddress>192.168.1
+0030  2e 31 30 31 3c 2f 49 50 41 64 64 72 65 73 73 3e   .101</IPAddress>
+0040  3c 53 75 62 6e 65 74 4d 61 73 6b 3e 32 35 35 2e   <SubnetMask>255.
+0050  32 35 35 2e 32 35 35 2e 30 3c 2f 53 75 62 6e 65   255.255.0</Subne
+0060  74 4d 61 73 6b 3e 3c 44 65 66 61 75 6c 74 47 61   tMask><DefaultGa
+0070  74 65 77 61 79 3e 31 39 32 2e 31 36 38 2e 31 2e   teway>192.168.1.
+0080  31 3c 2f 44 65 66 61 75 6c 74 47 61 74 65 77 61   1</DefaultGatewa
+0090  79 3e 3c 4d 41 43 3e 30 30 3a 34 30 3a 39 64 3a   y><MAC>00:40:9d:
+00a0  61 32 3a 35 36 3a 39 32 3c 2f 4d 41 43 3e 3c 49   a2:56:92</MAC><I
+00b0  6e 73 74 72 75 6d 65 6e 74 73 3e 3c 49 6e 73 74   nstruments><Inst
+00c0  72 75 6d 65 6e 74 3e 3c 4e 61 6d 65 3e 53 79 73   rument><Name>Sys
+00d0  74 65 6d 3c 2f 4e 61 6d 65 3e 3c 49 6e 73 74 72   tem</Name><Instr
+00e0  75 6d 65 6e 74 4e 61 6d 65 3e 53 79 73 74 65 6d   umentName>System
+00f0  3c 2f 49 6e 73 74 72 75 6d 65 6e 74 4e 61 6d 65   </InstrumentName
+0100  3e 3c 49 44 3e 2d 31 3c 2f 49 44 3e 3c 53 65 72   ><ID>-1</ID><Ser
+0110  69 61 6c 4e 75 6d 62 65 72 3e 4e 39 39 39 39 39   ialNumber>N99999
+0120  39 39 39 3c 2f 53 65 72 69 61 6c 4e 75 6d 62 65   999</SerialNumbe
+0130  72 3e 3c 2f 49 6e 73 74 72 75 6d 65 6e 74 3e 3c   r></Instrument><
+0140  49 6e 73 74 72 75 6d 65 6e 74 3e 3c 4e 61 6d 65   Instrument><Name
+0150  3e 47 58 2d 32 37 78 3c 2f 4e 61 6d 65 3e 3c 49   >GX-27x</Name><I
+0160  6e 73 74 72 75 6d 65 6e 74 4e 61 6d 65 3e 47 58   nstrumentName>GX
+0170  20 32 37 31 20 3c 2f 49 6e 73 74 72 75 6d 65 6e    271 </Instrumen
+0180  74 4e 61 6d 65 3e 3c 50 72 6f 6d 56 65 72 73 69   tName><PromVersi
+0190  6f 6e 3e 32 2e 33 2e 30 2e 31 3c 2f 50 72 6f 6d   on>2.3.0.1</Prom
+01a0  56 65 72 73 69 6f 6e 3e 3c 49 44 3e 33 35 3c 2f   Version><ID>35</
+01b0  49 44 3e 3c 53 65 72 69 61 6c 4e 75 6d 62 65 72   ID><SerialNumber
+01c0  3e 32 36 31 4a 37 4e 32 35 33 3c 2f 53 65 72 69   >261J7N253</Seri
+01d0  61 6c 4e 75 6d 62 65 72 3e 3c 2f 49 6e 73 74 72   alNumber></Instr
+01e0  75 6d 65 6e 74 3e 3c 49 6e 73 74 72 75 6d 65 6e   ument><Instrumen
+01f0  74 3e 3c 4e 61 6d 65 3e 47 58 20 53 6f 6c 76 65   t><Name>GX Solve
+0200  6e 74 20 53 79 73 74 65 6d 3c 2f 4e 61 6d 65 3e   nt System</Name>
+0210  3c 49 6e 73 74 72 75 6d 65 6e 74 4e 61 6d 65 3e   <InstrumentName>
+0220  47 58 20 53 6f 6c 76 65 6e 74 20 53 79 73 74 65   GX Solvent Syste
+0230  6d 3c 2f 49 6e 73 74 72 75 6d 65 6e 74 4e 61 6d   m</InstrumentNam
+0240  65 3e 3c 50 72 6f 6d 56 65 72 73 69 6f 6e 3e 3c   e><PromVersion><
+0250  2f 50 72 6f 6d 56 65 72 73 69 6f 6e 3e 3c 49 44   /PromVersion><ID
+0260  3e 38 3c 2f 49 44 3e 3c 53 65 72 69 61 6c 4e 75   >8</ID><SerialNu
+0270  6d 62 65 72 3e 53 65 72 69 61 6c 20 6e 75 6d 62   mber>Serial numb
+0280  65 72 20 63 6f 75 6c 64 20 6e 6f 74 20 62 65 20   er could not be 
+0290  72 65 63 65 69 76 65 64 20 66 72 6f 6d 20 64 65   received from de
+02a0  76 69 63 65 3c 2f 53 65 72 69 61 6c 4e 75 6d 62   vice</SerialNumb
+02b0  65 72 3e 3c 2f 49 6e 73 74 72 75 6d 65 6e 74 3e   er></Instrument>
+02c0  3c 49 6e 73 74 72 75 6d 65 6e 74 3e 3c 4e 61 6d   <Instrument><Nam
+02d0  65 3e 47 58 20 44 69 72 65 63 74 20 49 6e 6a 65   e>GX Direct Inje
+02e0  63 74 3c 2f 4e 61 6d 65 3e 3c 49 6e 73 74 72 75   ct</Name><Instru
+02f0  6d 65 6e 74 4e 61 6d 65 3e 47 58 20 44 69 72 65   mentName>GX Dire
+0300  63 74 20 49 6e 6a 65 63 74 3c 2f 49 6e 73 74 72   ct Inject</Instr
+0310  75 6d 65 6e 74 4e 61 6d 65 3e 3c 50 72 6f 6d 56   umentName><PromV
+0320  65 72 73 69 6f 6e 3e 3c 2f 50 72 6f 6d 56 65 72   ersion></PromVer
+0330  73 69 6f 6e 3e 3c 49 44 3e 39 3c 2f 49 44 3e 3c   sion><ID>9</ID><
+0340  53 65 72 69 61 6c 4e 75 6d 62 65 72 3e 53 65 72   SerialNumber>Ser
+0350  69 61 6c 20 6e 75 6d 62 65 72 20 63 6f 75 6c 64   ial number could
+0360  20 6e 6f 74 20 62 65 20 72 65 63 65 69 76 65 64    not be received
+0370  20 66 72 6f 6d 20 64 65 76 69 63 65 3c 2f 53 65    from device</Se
+0380  72 69 61 6c 4e 75 6d 62 65 72 3e 3c 2f 49 6e 73   rialNumber></Ins
+0390  74 72 75 6d 65 6e 74 3e 3c 49 6e 73 74 72 75 6d   trument><Instrum
+03a0  65 6e 74 3e 3c 4e 61 6d 65 3e 34 30 36 20 53 69   ent><Name>406 Si
+03b0  6e 67 6c 65 20 53 79 72 69 6e 67 65 20 50 75 6d   ngle Syringe Pum
+03c0  70 3c 2f 4e 61 6d 65 3e 3c 49 6e 73 74 72 75 6d   p</Name><Instrum
+03d0  65 6e 74 4e 61 6d 65 3e 34 30 36 20 53 69 6e 67   entName>406 Sing
+03e0  6c 65 20 53 79 72 69 6e 67 65 20 50 75 6d 70 3c   le Syringe Pump<
+03f0  2f 49 6e 73 74 72 75 6d 65 6e 74 4e 61 6d 65 3e   /InstrumentName>
+0400  3c 50 72 6f 6d 56 65 72 73 69 6f 6e 3e 3c 2f 50   <PromVersion></P
+0410  72 6f 6d 56 65 72 73 69 6f 6e 3e 3c 49 44 3e 37   romVersion><ID>7
+0420  3c 2f 49 44 3e 3c 53 65 72 69 61 6c 4e 75 6d 62   </ID><SerialNumb
+0430  65 72 3e 53 65 72 69 61 6c 20 6e 75 6d 62 65 72   er>Serial number
+0440  20 63 6f 75 6c 64 20 6e 6f 74 20 62 65 20 72 65    could not be re
+0450  63 65 69 76 65 64 20 66 72 6f 6d 20 64 65 76 69   ceived from devi
+0460  63 65 3c 2f 53 65 72 69 61 6c 4e 75 6d 62 65 72   ce</SerialNumber
+0470  3e 3c 2f 49 6e 73 74 72 75 6d 65 6e 74 3e 3c 2f   ></Instrument></
+0480  49 6e 73 74 72 75 6d 65 6e 74 73 3e 3c 2f 44 65   Instruments></De
+0490  76 69 63 65 49 6e 66 6f 3e 3c 2f 42 65 61 63 6f   viceInfo></Beaco
+04a0  6e 3e 3c 2f 47 69 6c 73 6f 6e 3e                  n></Gilson>
+
+No.     Time           Source                Destination           Protocol Length Info
+   1256 8.064069       192.168.1.100         192.168.1.101         TCP      66     54830 → 50185 [SYN] Seq=0 Win=64240 Len=0 MSS=1460 WS=256 SACK_PERM
+
+Frame 1256: 66 bytes on wire (528 bits), 66 bytes captured (528 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: Dell_b8:f8:97 (98:90:96:b8:f8:97), Dst: DigiBoard_a2:56:92 (00:40:9d:a2:56:92)
+Internet Protocol Version 4, Src: 192.168.1.100, Dst: 192.168.1.101
+Transmission Control Protocol, Src Port: 54830, Dst Port: 50185, Seq: 0, Len: 0
+
+No.     Time           Source                Destination           Protocol Length Info
+   1257 8.066818       192.168.1.101         192.168.1.100         TCP      62     50185 → 54830 [SYN, ACK] Seq=0 Ack=1 Win=8192 Len=0 MSS=1460 WS=1
+
+Frame 1257: 62 bytes on wire (496 bits), 62 bytes captured (496 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: DigiBoard_a2:56:92 (00:40:9d:a2:56:92), Dst: Dell_b8:f8:97 (98:90:96:b8:f8:97)
+Internet Protocol Version 4, Src: 192.168.1.101, Dst: 192.168.1.100
+Transmission Control Protocol, Src Port: 50185, Dst Port: 54830, Seq: 0, Ack: 1, Len: 0
+
+No.     Time           Source                Destination           Protocol Length Info
+   1258 8.066863       192.168.1.100         192.168.1.101         TCP      54     54830 → 50185 [ACK] Seq=1 Ack=1 Win=131328 Len=0
+
+Frame 1258: 54 bytes on wire (432 bits), 54 bytes captured (432 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: Dell_b8:f8:97 (98:90:96:b8:f8:97), Dst: DigiBoard_a2:56:92 (00:40:9d:a2:56:92)
+Internet Protocol Version 4, Src: 192.168.1.100, Dst: 192.168.1.101
+Transmission Control Protocol, Src Port: 54830, Dst Port: 50185, Seq: 1, Ack: 1, Len: 0
+
+No.     Time           Source                Destination           Protocol Length Info
+   1261 8.088134       192.168.1.100         192.168.1.101         TCP      221    54830 → 50185 [PSH, ACK] Seq=1 Ack=1 Win=131328 Len=167
+
+Frame 1261: 221 bytes on wire (1768 bits), 221 bytes captured (1768 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: Dell_b8:f8:97 (98:90:96:b8:f8:97), Dst: DigiBoard_a2:56:92 (00:40:9d:a2:56:92)
+Internet Protocol Version 4, Src: 192.168.1.100, Dst: 192.168.1.101
+Transmission Control Protocol, Src Port: 54830, Dst Port: 50185, Seq: 1, Ack: 1, Len: 167
+Data (167 bytes)
+
+0000  3c 4d 65 73 73 61 67 65 20 4d 65 73 73 61 67 65   <Message Message
+0010  49 64 3d 22 31 39 38 34 22 3e 0d 0a 20 20 20 20   Id="1984">..    
+0020  20 20 20 20 20 20 20 20 3c 47 69 6c 73 6f 6e 3e           <Gilson>
+0030  0d 0a 20 20 20 20 20 20 20 20 20 20 20 20 20 20   ..              
+0040  20 20 3c 47 69 6c 73 6f 6e 43 6f 6e 6e 65 63 74     <GilsonConnect
+0050  3e 47 69 6c 73 6f 6e 20 45 74 68 65 72 6e 65 74   >Gilson Ethernet
+0060  20 55 74 69 6c 69 74 79 3c 2f 47 69 6c 73 6f 6e    Utility</Gilson
+0070  43 6f 6e 6e 65 63 74 3e 0d 0a 20 20 20 20 20 20   Connect>..      
+0080  20 20 20 20 20 20 3c 2f 47 69 6c 73 6f 6e 3e 0d         </Gilson>.
+0090  0a 20 20 20 20 20 20 20 20 20 20 20 20 3c 2f 4d   .            </M
+00a0  65 73 73 61 67 65 3e                              essage>
+
+No.     Time           Source                Destination           Protocol Length Info
+   1262 8.097308       192.168.1.101         192.168.1.100         TCP      429    50185 → 54830 [PSH, ACK] Seq=1 Ack=168 Win=8192 Len=375
+
+Frame 1262: 429 bytes on wire (3432 bits), 429 bytes captured (3432 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: DigiBoard_a2:56:92 (00:40:9d:a2:56:92), Dst: Dell_b8:f8:97 (98:90:96:b8:f8:97)
+Internet Protocol Version 4, Src: 192.168.1.101, Dst: 192.168.1.100
+Transmission Control Protocol, Src Port: 50185, Dst Port: 54830, Seq: 1, Ack: 168, Len: 375
+Data (375 bytes)
+
+0000  3c 4d 65 73 73 61 67 65 20 4d 65 73 73 61 67 65   <Message Message
+0010  49 64 3d 22 31 38 31 22 20 42 6c 6f 63 6b 43 6f   Id="181" BlockCo
+0020  75 6e 74 3d 22 31 22 20 42 6c 6f 63 6b 49 64 3d   unt="1" BlockId=
+0030  22 30 22 3e 3c 47 69 6c 73 6f 6e 3e 3c 52 65 73   "0"><Gilson><Res
+0040  70 6f 6e 73 65 3e 3c 43 6f 6d 6d 61 6e 64 4e 61   ponse><CommandNa
+0050  6d 65 3e 43 6f 6e 6e 65 63 74 69 6f 6e 20 52 65   me>Connection Re
+0060  71 75 65 73 74 3c 2f 43 6f 6d 6d 61 6e 64 4e 61   quest</CommandNa
+0070  6d 65 3e 3c 50 61 72 61 6d 65 74 65 72 73 3e 3c   me><Parameters><
+0080  50 61 72 61 6d 65 74 65 72 3e 3c 50 61 72 61 6d   Parameter><Param
+0090  65 74 65 72 4e 61 6d 65 3e 52 65 73 70 6f 6e 73   eterName>Respons
+00a0  65 43 6f 64 65 3c 2f 50 61 72 61 6d 65 74 65 72   eCode</Parameter
+00b0  4e 61 6d 65 3e 3c 50 61 72 61 6d 65 74 65 72 56   Name><ParameterV
+00c0  61 6c 75 65 3e 32 3c 2f 50 61 72 61 6d 65 74 65   alue>2</Paramete
+00d0  72 56 61 6c 75 65 3e 3c 2f 50 61 72 61 6d 65 74   rValue></Paramet
+00e0  65 72 3e 3c 50 61 72 61 6d 65 74 65 72 3e 3c 50   er><Parameter><P
+00f0  61 72 61 6d 65 74 65 72 4e 61 6d 65 3e 52 65 73   arameterName>Res
+0100  70 6f 6e 73 65 56 61 6c 75 65 3c 2f 50 61 72 61   ponseValue</Para
+0110  6d 65 74 65 72 4e 61 6d 65 3e 3c 50 61 72 61 6d   meterName><Param
+0120  65 74 65 72 56 61 6c 75 65 3e 35 30 31 39 30 3c   eterValue>50190<
+0130  2f 50 61 72 61 6d 65 74 65 72 56 61 6c 75 65 3e   /ParameterValue>
+0140  3c 2f 50 61 72 61 6d 65 74 65 72 3e 3c 2f 50 61   </Parameter></Pa
+0150  72 61 6d 65 74 65 72 73 3e 3c 2f 52 65 73 70 6f   rameters></Respo
+0160  6e 73 65 3e 3c 2f 47 69 6c 73 6f 6e 3e 3c 2f 4d   nse></Gilson></M
+0170  65 73 73 61 67 65 3e                              essage>
+
+No.     Time           Source                Destination           Protocol Length Info
+   1263 8.097408       192.168.1.100         192.168.1.101         TCP      54     54830 → 50185 [FIN, ACK] Seq=168 Ack=376 Win=130816 Len=0
+
+Frame 1263: 54 bytes on wire (432 bits), 54 bytes captured (432 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: Dell_b8:f8:97 (98:90:96:b8:f8:97), Dst: DigiBoard_a2:56:92 (00:40:9d:a2:56:92)
+Internet Protocol Version 4, Src: 192.168.1.100, Dst: 192.168.1.101
+Transmission Control Protocol, Src Port: 54830, Dst Port: 50185, Seq: 168, Ack: 376, Len: 0
+
+No.     Time           Source                Destination           Protocol Length Info
+   1264 8.097599       192.168.1.100         192.168.1.101         TCP      66     54831 → 50190 [SYN] Seq=0 Win=64240 Len=0 MSS=1460 WS=256 SACK_PERM
+
+Frame 1264: 66 bytes on wire (528 bits), 66 bytes captured (528 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: Dell_b8:f8:97 (98:90:96:b8:f8:97), Dst: DigiBoard_a2:56:92 (00:40:9d:a2:56:92)
+Internet Protocol Version 4, Src: 192.168.1.100, Dst: 192.168.1.101
+Transmission Control Protocol, Src Port: 54831, Dst Port: 50190, Seq: 0, Len: 0
+
+No.     Time           Source                Destination           Protocol Length Info
+   1269 8.099535       192.168.1.101         192.168.1.100         TCP      60     [TCP ZeroWindow] 50185 → 54830 [ACK] Seq=376 Ack=169 Win=0 Len=0
+
+Frame 1269: 60 bytes on wire (480 bits), 60 bytes captured (480 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: DigiBoard_a2:56:92 (00:40:9d:a2:56:92), Dst: Dell_b8:f8:97 (98:90:96:b8:f8:97)
+Internet Protocol Version 4, Src: 192.168.1.101, Dst: 192.168.1.100
+Transmission Control Protocol, Src Port: 50185, Dst Port: 54830, Seq: 376, Ack: 169, Len: 0
+
+No.     Time           Source                Destination           Protocol Length Info
+   1276 8.100234       192.168.1.101         192.168.1.100         TCP      60     50190 → 54831 [RST, ACK] Seq=1 Ack=1 Win=0 Len=0
+
+Frame 1276: 60 bytes on wire (480 bits), 60 bytes captured (480 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: DigiBoard_a2:56:92 (00:40:9d:a2:56:92), Dst: Dell_b8:f8:97 (98:90:96:b8:f8:97)
+Internet Protocol Version 4, Src: 192.168.1.101, Dst: 192.168.1.100
+Transmission Control Protocol, Src Port: 50190, Dst Port: 54831, Seq: 1, Ack: 1, Len: 0
+
+No.     Time           Source                Destination           Protocol Length Info
+   1314 8.608387       192.168.1.100         192.168.1.101         TCP      66     [TCP Port numbers reused] 54831 → 50190 [SYN] Seq=0 Win=64240 Len=0 MSS=1460 WS=256 SACK_PERM
+
+Frame 1314: 66 bytes on wire (528 bits), 66 bytes captured (528 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: Dell_b8:f8:97 (98:90:96:b8:f8:97), Dst: DigiBoard_a2:56:92 (00:40:9d:a2:56:92)
+Internet Protocol Version 4, Src: 192.168.1.100, Dst: 192.168.1.101
+Transmission Control Protocol, Src Port: 54831, Dst Port: 50190, Seq: 0, Len: 0
+
+No.     Time           Source                Destination           Protocol Length Info
+   1317 8.611056       192.168.1.101         192.168.1.100         TCP      62     50190 → 54831 [SYN, ACK] Seq=0 Ack=1 Win=8192 Len=0 MSS=1460 WS=1
+
+Frame 1317: 62 bytes on wire (496 bits), 62 bytes captured (496 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: DigiBoard_a2:56:92 (00:40:9d:a2:56:92), Dst: Dell_b8:f8:97 (98:90:96:b8:f8:97)
+Internet Protocol Version 4, Src: 192.168.1.101, Dst: 192.168.1.100
+Transmission Control Protocol, Src Port: 50190, Dst Port: 54831, Seq: 0, Ack: 1, Len: 0
+
+No.     Time           Source                Destination           Protocol Length Info
+   1318 8.611110       192.168.1.100         192.168.1.101         TCP      54     54831 → 50190 [ACK] Seq=1 Ack=1 Win=131328 Len=0
+
+Frame 1318: 54 bytes on wire (432 bits), 54 bytes captured (432 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: Dell_b8:f8:97 (98:90:96:b8:f8:97), Dst: DigiBoard_a2:56:92 (00:40:9d:a2:56:92)
+Internet Protocol Version 4, Src: 192.168.1.100, Dst: 192.168.1.101
+Transmission Control Protocol, Src Port: 54831, Dst Port: 50190, Seq: 1, Ack: 1, Len: 0
+
+No.     Time           Source                Destination           Protocol Length Info
+   1321 8.626986       192.168.1.100         192.168.1.101         TCP      977    54831 → 50190 [PSH, ACK] Seq=1 Ack=1 Win=131328 Len=923
+
+Frame 1321: 977 bytes on wire (7816 bits), 977 bytes captured (7816 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: Dell_b8:f8:97 (98:90:96:b8:f8:97), Dst: DigiBoard_a2:56:92 (00:40:9d:a2:56:92)
+Internet Protocol Version 4, Src: 192.168.1.100, Dst: 192.168.1.101
+Transmission Control Protocol, Src Port: 54831, Dst Port: 50190, Seq: 1, Ack: 1, Len: 923
+Data (923 bytes)
+
+0000  3c 4d 65 73 73 61 67 65 20 4d 65 73 73 61 67 65   <Message Message
+0010  49 64 3d 22 39 32 37 36 39 22 20 42 6c 6f 63 6b   Id="92769" Block
+0020  43 6f 75 6e 74 3d 22 32 22 20 42 6c 6f 63 6b 49   Count="2" BlockI
+0030  64 3d 22 30 22 3e 0d 0a 20 20 20 20 20 20 20 20   d="0">..        
+0040  20 20 3c 47 69 6c 73 6f 6e 3e 0d 0a 20 20 20 20     <Gilson>..    
+0050  20 20 20 20 20 20 20 20 3c 43 6f 6d 6d 61 6e 64           <Command
+0060  44 61 74 61 3e 0d 0a 20 20 20 20 20 20 20 20 20   Data>..         
+0070  20 20 20 20 20 3c 43 6f 6d 6d 61 6e 64 73 3e 0d        <Commands>.
+0080  0a 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20   .               
+0090  20 3c 43 6f 6d 6d 61 6e 64 3e 0d 0a 20 20 20 20    <Command>..    
+00a0  20 20 20 20 20 20 20 20 20 20 20 20 20 20 3c 43                 <C
+00b0  6f 6d 6d 61 6e 64 54 79 70 65 3e 4c 6f 63 61 6c   ommandType>Local
+00c0  3c 2f 43 6f 6d 6d 61 6e 64 54 79 70 65 3e 0d 0a   </CommandType>..
+00d0  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                   
+00e0  20 20 3c 43 6f 6d 6d 61 6e 64 49 6e 66 6f 3e 0d     <CommandInfo>.
+00f0  0a 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20   .               
+0100  20 20 20 20 20 3c 49 6e 73 74 72 75 6d 65 6e 74        <Instrument
+0110  49 6e 66 6f 3e 0d 0a 20 20 20 20 20 20 20 20 20   Info>..         
+0120  20 20 20 20 20 20 20 20 20 20 20 20 20 3c 44 65                <De
+0130  76 69 63 65 4e 61 6d 65 3e 53 79 73 74 65 6d 3c   viceName>System<
+0140  2f 44 65 76 69 63 65 4e 61 6d 65 3e 0d 0a 20 20   /DeviceName>..  
+0150  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                   
+0160  20 20 20 20 3c 44 65 76 69 63 65 49 64 3e 2d 31       <DeviceId>-1
+0170  3c 2f 44 65 76 69 63 65 49 64 3e 0d 0a 20 20 20   </DeviceId>..   
+0180  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                   
+0190  20 3c 2f 49 6e 73 74 72 75 6d 65 6e 74 49 6e 66    </InstrumentInf
+01a0  6f 3e 0d 0a 20 20 20 20 20 20 20 20 20 20 20 20   o>..            
+01b0  20 20 20 20 20 20 20 20 3c 53 65 71 75 65 6e 63           <Sequenc
+01c0  65 4e 75 6d 62 65 72 3e 31 3c 2f 53 65 71 75 65   eNumber>1</Seque
+01d0  6e 63 65 4e 75 6d 62 65 72 3e 0d 0a 20 20 20 20   nceNumber>..    
+01e0  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                   
+01f0  3c 53 79 6e 63 68 72 6f 6e 69 7a 65 3e 54 72 75   <Synchronize>Tru
+0200  65 3c 2f 53 79 6e 63 68 72 6f 6e 69 7a 65 3e 0d   e</Synchronize>.
+0210  0a 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20   .               
+0220  20 20 20 20 20 3c 53 65 6c 65 63 74 65 64 3e 46        <Selected>F
+0230  61 6c 73 65 3c 2f 53 65 6c 65 63 74 65 64 3e 0d   alse</Selected>.
+0240  0a 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20   .               
+0250  20 20 20 20 20 3c 43 6f 6d 6d 61 6e 64 58 4d 4c        <CommandXML
+0260  3e 0d 0a 20 20 20 20 20 20 20 20 20 20 20 20 20   >..             
+0270  20 20 20 20 20 20 20 20 20 3c 43 6f 6d 6d 61 6e            <Comman
+0280  64 4e 61 6d 65 3e 41 64 6d 69 6e 3c 2f 43 6f 6d   dName>Admin</Com
+0290  6d 61 6e 64 4e 61 6d 65 3e 0d 0a 20 20 20 20 20   mandName>..     
+02a0  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 3c                  <
+02b0  2f 43 6f 6d 6d 61 6e 64 58 4d 4c 3e 0d 0a 20 20   /CommandXML>..  
+02c0  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                   
+02d0  3c 2f 43 6f 6d 6d 61 6e 64 49 6e 66 6f 3e 0d 0a   </CommandInfo>..
+02e0  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                   
+02f0  3c 2f 43 6f 6d 6d 61 6e 64 3e 0d 0a 20 20 20 20   </Command>..    
+0300  20 20 20 20 20 20 20 20 20 20 3c 2f 43 6f 6d 6d             </Comm
+0310  61 6e 64 73 3e 0d 0a 20 20 20 20 20 20 20 20 20   ands>..         
+0320  20 20 20 3c 2f 43 6f 6d 6d 61 6e 64 44 61 74 61      </CommandData
+0330  3e 0d 0a 20 20 20 20 20 20 20 20 20 20 3c 2f 47   >..          </G
+0340  69 6c 73 6f 6e 3e 0d 0a 20 20 20 20 20 20 20 20   ilson>..        
+0350  3c 2f 4d 65 73 73 61 67 65 3e 0d 0a 20 20 20 20   </Message>..    
+0360  20 20 20 20 3c 4d 65 73 73 61 67 65 20 4d 65 73       <Message Mes
+0370  73 61 67 65 49 64 3d 22 39 32 37 36 39 22 20 42   sageId="92769" B
+0380  6c 6f 63 6b 43 6f 75 6e 74 3d 22 32 22 20 42 6c   lockCount="2" Bl
+0390  6f 63 6b 49 64 3d 22 31 22 2f 3e                  ockId="1"/>
+
+No.     Time           Source                Destination           Protocol Length Info
+   1345 8.768650       192.168.1.101         192.168.1.100         TCP      1514   2 → 54748 [PSH, ACK] Seq=1 Ack=1 Win=8192 Len=1460
+
+Frame 1345: 1514 bytes on wire (12112 bits), 1514 bytes captured (12112 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: DigiBoard_a2:56:92 (00:40:9d:a2:56:92), Dst: Dell_b8:f8:97 (98:90:96:b8:f8:97)
+Internet Protocol Version 4, Src: 192.168.1.101, Dst: 192.168.1.100
+Transmission Control Protocol, Src Port: 2, Dst Port: 54748, Seq: 1, Ack: 1, Len: 1460
+Data (1460 bytes)
+
+0000  3c 4d 65 73 73 61 67 65 20 4d 65 73 73 61 67 65   <Message Message
+0010  49 64 3d 22 31 38 32 22 20 42 6c 6f 63 6b 43 6f   Id="182" BlockCo
+0020  75 6e 74 3d 22 32 22 20 42 6c 6f 63 6b 49 64 3d   unt="2" BlockId=
+0030  22 30 22 3e 3c 47 69 6c 73 6f 6e 3e 3c 53 74 61   "0"><Gilson><Sta
+0040  74 75 73 3e 3c 53 79 73 74 65 6d 49 6e 66 6f 72   tus><SystemInfor
+0050  6d 61 74 69 6f 6e 3e 3c 49 50 41 64 64 72 65 73   mation><IPAddres
+0060  73 3e 31 39 32 2e 31 36 38 2e 31 2e 31 30 31 3c   s>192.168.1.101<
+0070  2f 49 50 41 64 64 72 65 73 73 3e 3c 53 75 62 6e   /IPAddress><Subn
+0080  65 74 4d 61 73 6b 3e 32 35 35 2e 32 35 35 2e 32   etMask>255.255.2
+0090  35 35 2e 30 3c 2f 53 75 62 6e 65 74 4d 61 73 6b   55.0</SubnetMask
+00a0  3e 3c 44 65 66 61 75 6c 74 47 61 74 65 77 61 79   ><DefaultGateway
+00b0  3e 31 39 32 2e 31 36 38 2e 31 2e 31 3c 2f 44 65   >192.168.1.1</De
+00c0  66 61 75 6c 74 47 61 74 65 77 61 79 3e 3c 4d 41   faultGateway><MA
+00d0  43 3e 30 30 3a 34 30 3a 39 64 3a 61 32 3a 35 36   C>00:40:9d:a2:56
+00e0  3a 39 32 3c 2f 4d 41 43 3e 3c 4c 65 61 73 65 49   :92</MAC><LeaseI
+00f0  6e 66 6f 72 6d 61 74 69 6f 6e 3e 3c 4c 65 61 73   nformation><Leas
+0100  65 41 63 74 69 76 65 3e 46 61 6c 73 65 3c 2f 4c   eActive>False</L
+0110  65 61 73 65 41 63 74 69 76 65 3e 3c 2f 4c 65 61   easeActive></Lea
+0120  73 65 49 6e 66 6f 72 6d 61 74 69 6f 6e 3e 3c 2f   seInformation></
+0130  53 79 73 74 65 6d 49 6e 66 6f 72 6d 61 74 69 6f   SystemInformatio
+0140  6e 3e 3c 44 65 76 69 63 65 73 3e 3c 44 65 76 69   n><Devices><Devi
+0150  63 65 3e 3c 44 65 76 69 63 65 4e 61 6d 65 3e 47   ce><DeviceName>G
+0160  58 2d 32 37 78 3c 2f 44 65 76 69 63 65 4e 61 6d   X-27x</DeviceNam
+0170  65 3e 3c 44 65 76 69 63 65 49 64 3e 33 35 3c 2f   e><DeviceId>35</
+0180  44 65 76 69 63 65 49 64 3e 3c 53 65 72 69 61 6c   DeviceId><Serial
+0190  4e 75 6d 62 65 72 3e 32 36 31 4a 37 4e 32 35 33   Number>261J7N253
+01a0  3c 2f 53 65 72 69 61 6c 4e 75 6d 62 65 72 3e 3c   </SerialNumber><
+01b0  43 6f 6e 6e 65 63 74 65 64 3e 54 72 75 65 3c 2f   Connected>True</
+01c0  43 6f 6e 6e 65 63 74 65 64 3e 3c 43 6f 6d 6d 61   Connected><Comma
+01d0  6e 64 73 3e 3c 43 6f 6d 6d 61 6e 64 3e 3c 43 6f   nds><Command><Co
+01e0  6d 6d 61 6e 64 4e 61 6d 65 3e 47 65 74 20 49 6e   mmandName>Get In
+01f0  70 75 74 20 43 6f 6e 74 61 63 74 73 3c 2f 43 6f   put Contacts</Co
+0200  6d 6d 61 6e 64 4e 61 6d 65 3e 3c 50 61 72 61 6d   mmandName><Param
+0210  65 74 65 72 73 3e 3c 50 61 72 61 6d 65 74 65 72   eters><Parameter
+0220  3e 3c 50 61 72 61 6d 65 74 65 72 4e 61 6d 65 3e   ><ParameterName>
+0230  52 65 73 70 6f 6e 73 65 43 6f 64 65 3c 2f 50 61   ResponseCode</Pa
+0240  72 61 6d 65 74 65 72 4e 61 6d 65 3e 3c 50 61 72   rameterName><Par
+0250  61 6d 65 74 65 72 56 61 6c 75 65 3e 32 3c 2f 50   ameterValue>2</P
+0260  61 72 61 6d 65 74 65 72 56 61 6c 75 65 3e 3c 2f   arameterValue></
+0270  50 61 72 61 6d 65 74 65 72 3e 3c 50 61 72 61 6d   Parameter><Param
+0280  65 74 65 72 3e 3c 50 61 72 61 6d 65 74 65 72 4e   eter><ParameterN
+0290  61 6d 65 3e 52 65 73 70 6f 6e 73 65 56 61 6c 75   ame>ResponseValu
+02a0  65 3c 2f 50 61 72 61 6d 65 74 65 72 4e 61 6d 65   e</ParameterName
+02b0  3e 3c 50 61 72 61 6d 65 74 65 72 56 61 6c 75 65   ><ParameterValue
+02c0  3e 3c 52 65 74 75 72 6e 50 61 72 61 6d 65 74 65   ><ReturnParamete
+02d0  72 73 3e 3c 52 65 74 75 72 6e 50 61 72 61 6d 65   rs><ReturnParame
+02e0  74 65 72 3e 3c 50 61 72 61 6d 65 74 65 72 4e 61   ter><ParameterNa
+02f0  6d 65 3e 43 6f 6e 74 61 63 74 20 41 3c 2f 50 61   me>Contact A</Pa
+0300  72 61 6d 65 74 65 72 4e 61 6d 65 3e 3c 50 61 72   rameterName><Par
+0310  61 6d 65 74 65 72 56 61 6c 75 65 3e 4f 66 66 3c   ameterValue>Off<
+0320  2f 50 61 72 61 6d 65 74 65 72 56 61 6c 75 65 3e   /ParameterValue>
+0330  3c 2f 52 65 74 75 72 6e 50 61 72 61 6d 65 74 65   </ReturnParamete
+0340  72 3e 3c 52 65 74 75 72 6e 50 61 72 61 6d 65 74   r><ReturnParamet
+0350  65 72 3e 3c 50 61 72 61 6d 65 74 65 72 4e 61 6d   er><ParameterNam
+0360  65 3e 43 6f 6e 74 61 63 74 20 42 3c 2f 50 61 72   e>Contact B</Par
+0370  61 6d 65 74 65 72 4e 61 6d 65 3e 3c 50 61 72 61   ameterName><Para
+0380  6d 65 74 65 72 56 61 6c 75 65 3e 4f 66 66 3c 2f   meterValue>Off</
+0390  50 61 72 61 6d 65 74 65 72 56 61 6c 75 65 3e 3c   ParameterValue><
+03a0  2f 52 65 74 75 72 6e 50 61 72 61 6d 65 74 65 72   /ReturnParameter
+03b0  3e 3c 52 65 74 75 72 6e 50 61 72 61 6d 65 74 65   ><ReturnParamete
+03c0  72 3e 3c 50 61 72 61 6d 65 74 65 72 4e 61 6d 65   r><ParameterName
+03d0  3e 53 61 66 65 74 79 3c 2f 50 61 72 61 6d 65 74   >Safety</Paramet
+03e0  65 72 4e 61 6d 65 3e 3c 50 61 72 61 6d 65 74 65   erName><Paramete
+03f0  72 56 61 6c 75 65 3e 4f 66 66 3c 2f 50 61 72 61   rValue>Off</Para
+0400  6d 65 74 65 72 56 61 6c 75 65 3e 3c 2f 52 65 74   meterValue></Ret
+0410  75 72 6e 50 61 72 61 6d 65 74 65 72 3e 3c 2f 52   urnParameter></R
+0420  65 74 75 72 6e 50 61 72 61 6d 65 74 65 72 73 3e   eturnParameters>
+0430  3c 2f 50 61 72 61 6d 65 74 65 72 56 61 6c 75 65   </ParameterValue
+0440  3e 3c 2f 50 61 72 61 6d 65 74 65 72 3e 3c 2f 50   ></Parameter></P
+0450  61 72 61 6d 65 74 65 72 73 3e 3c 2f 43 6f 6d 6d   arameters></Comm
+0460  61 6e 64 3e 3c 43 6f 6d 6d 61 6e 64 3e 3c 43 6f   and><Command><Co
+0470  6d 6d 61 6e 64 4e 61 6d 65 3e 47 65 74 20 4f 75   mmandName>Get Ou
+0480  74 70 75 74 20 43 6f 6e 74 61 63 74 73 3c 2f 43   tput Contacts</C
+0490  6f 6d 6d 61 6e 64 4e 61 6d 65 3e 3c 50 61 72 61   ommandName><Para
+04a0  6d 65 74 65 72 73 3e 3c 50 61 72 61 6d 65 74 65   meters><Paramete
+04b0  72 3e 3c 50 61 72 61 6d 65 74 65 72 4e 61 6d 65   r><ParameterName
+04c0  3e 52 65 73 70 6f 6e 73 65 43 6f 64 65 3c 2f 50   >ResponseCode</P
+04d0  61 72 61 6d 65 74 65 72 4e 61 6d 65 3e 3c 50 61   arameterName><Pa
+04e0  72 61 6d 65 74 65 72 56 61 6c 75 65 3e 32 3c 2f   rameterValue>2</
+04f0  50 61 72 61 6d 65 74 65 72 56 61 6c 75 65 3e 3c   ParameterValue><
+0500  2f 50 61 72 61 6d 65 74 65 72 3e 3c 50 61 72 61   /Parameter><Para
+0510  6d 65 74 65 72 3e 3c 50 61 72 61 6d 65 74 65 72   meter><Parameter
+0520  4e 61 6d 65 3e 52 65 73 70 6f 6e 73 65 56 61 6c   Name>ResponseVal
+0530  75 65 3c 2f 50 61 72 61 6d 65 74 65 72 4e 61 6d   ue</ParameterNam
+0540  65 3e 3c 50 61 72 61 6d 65 74 65 72 56 61 6c 75   e><ParameterValu
+0550  65 3e 3c 52 65 74 75 72 6e 50 61 72 61 6d 65 74   e><ReturnParamet
+0560  65 72 73 3e 3c 52 65 74 75 72 6e 50 61 72 61 6d   ers><ReturnParam
+0570  65 74 65 72 3e 3c 50 61 72 61 6d 65 74 65 72 4e   eter><ParameterN
+0580  61 6d 65 3e 43 6f 6e 74 61 63 74 20 31 3c 2f 50   ame>Contact 1</P
+0590  61 72 61 6d 65 74 65 72 4e 61 6d 65 3e 3c 50 61   arameterName><Pa
+05a0  72 61 6d 65 74 65 72 56 61 6c 75 65 3e 4f 66 66   rameterValue>Off
+05b0  3c 2f 50 61                                       </Pa
+
+No.     Time           Source                Destination           Protocol Length Info
+   1346 8.769305       192.168.1.101         192.168.1.100         TCP      1514   2 → 54748 [PSH, ACK] Seq=1461 Ack=1 Win=8192 Len=1460
+
+Frame 1346: 1514 bytes on wire (12112 bits), 1514 bytes captured (12112 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: DigiBoard_a2:56:92 (00:40:9d:a2:56:92), Dst: Dell_b8:f8:97 (98:90:96:b8:f8:97)
+Internet Protocol Version 4, Src: 192.168.1.101, Dst: 192.168.1.100
+Transmission Control Protocol, Src Port: 2, Dst Port: 54748, Seq: 1461, Ack: 1, Len: 1460
+Data (1460 bytes)
+
+0000  72 61 6d 65 74 65 72 56 61 6c 75 65 3e 3c 2f 52   rameterValue></R
+0010  65 74 75 72 6e 50 61 72 61 6d 65 74 65 72 3e 3c   eturnParameter><
+0020  52 65 74 75 72 6e 50 61 72 61 6d 65 74 65 72 3e   ReturnParameter>
+0030  3c 50 61 72 61 6d 65 74 65 72 4e 61 6d 65 3e 43   <ParameterName>C
+0040  6f 6e 74 61 63 74 20 32 3c 2f 50 61 72 61 6d 65   ontact 2</Parame
+0050  74 65 72 4e 61 6d 65 3e 3c 50 61 72 61 6d 65 74   terName><Paramet
+0060  65 72 56 61 6c 75 65 3e 4f 66 66 3c 2f 50 61 72   erValue>Off</Par
+0070  61 6d 65 74 65 72 56 61 6c 75 65 3e 3c 2f 52 65   ameterValue></Re
+0080  74 75 72 6e 50 61 72 61 6d 65 74 65 72 3e 3c 2f   turnParameter></
+0090  52 65 74 75 72 6e 50 61 72 61 6d 65 74 65 72 73   ReturnParameters
+00a0  3e 3c 2f 50 61 72 61 6d 65 74 65 72 56 61 6c 75   ></ParameterValu
+00b0  65 3e 3c 2f 50 61 72 61 6d 65 74 65 72 3e 3c 2f   e></Parameter></
+00c0  50 61 72 61 6d 65 74 65 72 73 3e 3c 2f 43 6f 6d   Parameters></Com
+00d0  6d 61 6e 64 3e 3c 43 6f 6d 6d 61 6e 64 3e 3c 43   mand><Command><C
+00e0  6f 6d 6d 61 6e 64 4e 61 6d 65 3e 47 65 74 20 53   ommandName>Get S
+00f0  6f 6c 65 6e 6f 69 64 20 43 6f 6e 74 61 63 74 73   olenoid Contacts
+0100  3c 2f 43 6f 6d 6d 61 6e 64 4e 61 6d 65 3e 3c 50   </CommandName><P
+0110  61 72 61 6d 65 74 65 72 73 3e 3c 50 61 72 61 6d   arameters><Param
+0120  65 74 65 72 3e 3c 50 61 72 61 6d 65 74 65 72 4e   eter><ParameterN
+0130  61 6d 65 3e 52 65 73 70 6f 6e 73 65 43 6f 64 65   ame>ResponseCode
+0140  3c 2f 50 61 72 61 6d 65 74 65 72 4e 61 6d 65 3e   </ParameterName>
+0150  3c 50 61 72 61 6d 65 74 65 72 56 61 6c 75 65 3e   <ParameterValue>
+0160  32 3c 2f 50 61 72 61 6d 65 74 65 72 56 61 6c 75   2</ParameterValu
+0170  65 3e 3c 2f 50 61 72 61 6d 65 74 65 72 3e 3c 50   e></Parameter><P
+0180  61 72 61 6d 65 74 65 72 3e 3c 50 61 72 61 6d 65   arameter><Parame
+0190  74 65 72 4e 61 6d 65 3e 52 65 73 70 6f 6e 73 65   terName>Response
+01a0  56 61 6c 75 65 3c 2f 50 61 72 61 6d 65 74 65 72   Value</Parameter
+01b0  4e 61 6d 65 3e 3c 50 61 72 61 6d 65 74 65 72 56   Name><ParameterV
+01c0  61 6c 75 65 3e 3c 52 65 74 75 72 6e 50 61 72 61   alue><ReturnPara
+01d0  6d 65 74 65 72 73 3e 3c 52 65 74 75 72 6e 50 61   meters><ReturnPa
+01e0  72 61 6d 65 74 65 72 3e 3c 50 61 72 61 6d 65 74   rameter><Paramet
+01f0  65 72 4e 61 6d 65 3e 53 6f 6c 65 6e 6f 69 64 20   erName>Solenoid 
+0200  31 3c 2f 50 61 72 61 6d 65 74 65 72 4e 61 6d 65   1</ParameterName
+0210  3e 3c 50 61 72 61 6d 65 74 65 72 56 61 6c 75 65   ><ParameterValue
+0220  3e 4f 66 66 3c 2f 50 61 72 61 6d 65 74 65 72 56   >Off</ParameterV
+0230  61 6c 75 65 3e 3c 2f 52 65 74 75 72 6e 50 61 72   alue></ReturnPar
+0240  61 6d 65 74 65 72 3e 3c 52 65 74 75 72 6e 50 61   ameter><ReturnPa
+0250  72 61 6d 65 74 65 72 3e 3c 50 61 72 61 6d 65 74   rameter><Paramet
+0260  65 72 4e 61 6d 65 3e 53 6f 6c 65 6e 6f 69 64 20   erName>Solenoid 
+0270  32 3c 2f 50 61 72 61 6d 65 74 65 72 4e 61 6d 65   2</ParameterName
+0280  3e 3c 50 61 72 61 6d 65 74 65 72 56 61 6c 75 65   ><ParameterValue
+0290  3e 4f 66 66 3c 2f 50 61 72 61 6d 65 74 65 72 56   >Off</ParameterV
+02a0  61 6c 75 65 3e 3c 2f 52 65 74 75 72 6e 50 61 72   alue></ReturnPar
+02b0  61 6d 65 74 65 72 3e 3c 2f 52 65 74 75 72 6e 50   ameter></ReturnP
+02c0  61 72 61 6d 65 74 65 72 73 3e 3c 2f 50 61 72 61   arameters></Para
+02d0  6d 65 74 65 72 56 61 6c 75 65 3e 3c 2f 50 61 72   meterValue></Par
+02e0  61 6d 65 74 65 72 3e 3c 2f 50 61 72 61 6d 65 74   ameter></Paramet
+02f0  65 72 73 3e 3c 2f 43 6f 6d 6d 61 6e 64 3e 3c 43   ers></Command><C
+0300  6f 6d 6d 61 6e 64 3e 3c 43 6f 6d 6d 61 6e 64 4e   ommand><CommandN
+0310  61 6d 65 3e 47 65 74 20 32 34 56 20 43 6f 6e 74   ame>Get 24V Cont
+0320  61 63 74 73 3c 2f 43 6f 6d 6d 61 6e 64 4e 61 6d   acts</CommandNam
+0330  65 3e 3c 50 61 72 61 6d 65 74 65 72 73 3e 3c 50   e><Parameters><P
+0340  61 72 61 6d 65 74 65 72 3e 3c 50 61 72 61 6d 65   arameter><Parame
+0350  74 65 72 4e 61 6d 65 3e 52 65 73 70 6f 6e 73 65   terName>Response
+0360  43 6f 64 65 3c 2f 50 61 72 61 6d 65 74 65 72 4e   Code</ParameterN
+0370  61 6d 65 3e 3c 50 61 72 61 6d 65 74 65 72 56 61   ame><ParameterVa
+0380  6c 75 65 3e 32 3c 2f 50 61 72 61 6d 65 74 65 72   lue>2</Parameter
+0390  56 61 6c 75 65 3e 3c 2f 50 61 72 61 6d 65 74 65   Value></Paramete
+03a0  72 3e 3c 50 61 72 61 6d 65 74 65 72 3e 3c 50 61   r><Parameter><Pa
+03b0  72 61 6d 65 74 65 72 4e 61 6d 65 3e 52 65 73 70   rameterName>Resp
+03c0  6f 6e 73 65 56 61 6c 75 65 3c 2f 50 61 72 61 6d   onseValue</Param
+03d0  65 74 65 72 4e 61 6d 65 3e 3c 50 61 72 61 6d 65   eterName><Parame
+03e0  74 65 72 56 61 6c 75 65 3e 3c 52 65 74 75 72 6e   terValue><Return
+03f0  50 61 72 61 6d 65 74 65 72 73 3e 3c 52 65 74 75   Parameters><Retu
+0400  72 6e 50 61 72 61 6d 65 74 65 72 3e 3c 50 61 72   rnParameter><Par
+0410  61 6d 65 74 65 72 4e 61 6d 65 3e 32 34 56 20 43   ameterName>24V C
+0420  6f 6e 74 61 63 74 20 31 3c 2f 50 61 72 61 6d 65   ontact 1</Parame
+0430  74 65 72 4e 61 6d 65 3e 3c 50 61 72 61 6d 65 74   terName><Paramet
+0440  65 72 56 61 6c 75 65 3e 4f 66 66 3c 2f 50 61 72   erValue>Off</Par
+0450  61 6d 65 74 65 72 56 61 6c 75 65 3e 3c 2f 52 65   ameterValue></Re
+0460  74 75 72 6e 50 61 72 61 6d 65 74 65 72 3e 3c 52   turnParameter><R
+0470  65 74 75 72 6e 50 61 72 61 6d 65 74 65 72 3e 3c   eturnParameter><
+0480  50 61 72 61 6d 65 74 65 72 4e 61 6d 65 3e 32 34   ParameterName>24
+0490  56 20 43 6f 6e 74 61 63 74 20 32 3c 2f 50 61 72   V Contact 2</Par
+04a0  61 6d 65 74 65 72 4e 61 6d 65 3e 3c 50 61 72 61   ameterName><Para
+04b0  6d 65 74 65 72 56 61 6c 75 65 3e 4f 66 66 3c 2f   meterValue>Off</
+04c0  50 61 72 61 6d 65 74 65 72 56 61 6c 75 65 3e 3c   ParameterValue><
+04d0  2f 52 65 74 75 72 6e 50 61 72 61 6d 65 74 65 72   /ReturnParameter
+04e0  3e 3c 2f 52 65 74 75 72 6e 50 61 72 61 6d 65 74   ></ReturnParamet
+04f0  65 72 73 3e 3c 2f 50 61 72 61 6d 65 74 65 72 56   ers></ParameterV
+0500  61 6c 75 65 3e 3c 2f 50 61 72 61 6d 65 74 65 72   alue></Parameter
+0510  3e 3c 2f 50 61 72 61 6d 65 74 65 72 73 3e 3c 2f   ></Parameters></
+0520  43 6f 6d 6d 61 6e 64 3e 3c 43 6f 6d 6d 61 6e 64   Command><Command
+0530  3e 3c 43 6f 6d 6d 61 6e 64 4e 61 6d 65 3e 47 65   ><CommandName>Ge
+0540  74 20 44 69 76 65 72 74 65 72 20 56 61 6c 76 65   t Diverter Valve
+0550  3c 2f 43 6f 6d 6d 61 6e 64 4e 61 6d 65 3e 3c 50   </CommandName><P
+0560  61 72 61 6d 65 74 65 72 73 3e 3c 50 61 72 61 6d   arameters><Param
+0570  65 74 65 72 3e 3c 50 61 72 61 6d 65 74 65 72 4e   eter><ParameterN
+0580  61 6d 65 3e 52 65 73 70 6f 6e 73 65 43 6f 64 65   ame>ResponseCode
+0590  3c 2f 50 61 72 61 6d 65 74 65 72 4e 61 6d 65 3e   </ParameterName>
+05a0  3c 50 61 72 61 6d 65 74 65 72 56 61 6c 75 65 3e   <ParameterValue>
+05b0  32 3c 2f 50                                       2</P
+
+No.     Time           Source                Destination           Protocol Length Info
+   1347 8.769386       192.168.1.100         192.168.1.101         TCP      54     54748 → 2 [ACK] Seq=1 Ack=2921 Win=513 Len=0
+
+Frame 1347: 54 bytes on wire (432 bits), 54 bytes captured (432 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: Dell_b8:f8:97 (98:90:96:b8:f8:97), Dst: DigiBoard_a2:56:92 (00:40:9d:a2:56:92)
+Internet Protocol Version 4, Src: 192.168.1.100, Dst: 192.168.1.101
+Transmission Control Protocol, Src Port: 54748, Dst Port: 2, Seq: 1, Ack: 2921, Len: 0
+
+No.     Time           Source                Destination           Protocol Length Info
+   1348 8.771655       192.168.1.101         192.168.1.100         TCP      1196   2 → 54748 [PSH, ACK] Seq=2921 Ack=1 Win=8192 Len=1142
+
+Frame 1348: 1196 bytes on wire (9568 bits), 1196 bytes captured (9568 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: DigiBoard_a2:56:92 (00:40:9d:a2:56:92), Dst: Dell_b8:f8:97 (98:90:96:b8:f8:97)
+Internet Protocol Version 4, Src: 192.168.1.101, Dst: 192.168.1.100
+Transmission Control Protocol, Src Port: 2, Dst Port: 54748, Seq: 2921, Ack: 1, Len: 1142
+Data (1142 bytes)
+
+0000  61 72 61 6d 65 74 65 72 56 61 6c 75 65 3e 3c 2f   arameterValue></
+0010  50 61 72 61 6d 65 74 65 72 3e 3c 50 61 72 61 6d   Parameter><Param
+0020  65 74 65 72 3e 3c 50 61 72 61 6d 65 74 65 72 4e   eter><ParameterN
+0030  61 6d 65 3e 52 65 73 70 6f 6e 73 65 56 61 6c 75   ame>ResponseValu
+0040  65 3c 2f 50 61 72 61 6d 65 74 65 72 4e 61 6d 65   e</ParameterName
+0050  3e 3c 50 61 72 61 6d 65 74 65 72 56 61 6c 75 65   ><ParameterValue
+0060  3e 3c 52 65 74 75 72 6e 50 61 72 61 6d 65 74 65   ><ReturnParamete
+0070  72 73 3e 3c 52 65 74 75 72 6e 50 61 72 61 6d 65   rs><ReturnParame
+0080  74 65 72 3e 3c 50 61 72 61 6d 65 74 65 72 4e 61   ter><ParameterNa
+0090  6d 65 3e 56 61 6c 76 65 3c 2f 50 61 72 61 6d 65   me>Valve</Parame
+00a0  74 65 72 4e 61 6d 65 3e 3c 50 61 72 61 6d 65 74   terName><Paramet
+00b0  65 72 56 61 6c 75 65 3e 4f 66 66 3c 2f 50 61 72   erValue>Off</Par
+00c0  61 6d 65 74 65 72 56 61 6c 75 65 3e 3c 2f 52 65   ameterValue></Re
+00d0  74 75 72 6e 50 61 72 61 6d 65 74 65 72 3e 3c 2f   turnParameter></
+00e0  52 65 74 75 72 6e 50 61 72 61 6d 65 74 65 72 73   ReturnParameters
+00f0  3e 3c 2f 50 61 72 61 6d 65 74 65 72 56 61 6c 75   ></ParameterValu
+0100  65 3e 3c 2f 50 61 72 61 6d 65 74 65 72 3e 3c 2f   e></Parameter></
+0110  50 61 72 61 6d 65 74 65 72 73 3e 3c 2f 43 6f 6d   Parameters></Com
+0120  6d 61 6e 64 3e 3c 43 6f 6d 6d 61 6e 64 3e 3c 43   mand><Command><C
+0130  6f 6d 6d 61 6e 64 4e 61 6d 65 3e 47 65 74 20 45   ommandName>Get E
+0140  72 72 6f 72 3c 2f 43 6f 6d 6d 61 6e 64 4e 61 6d   rror</CommandNam
+0150  65 3e 3c 50 61 72 61 6d 65 74 65 72 73 3e 3c 50   e><Parameters><P
+0160  61 72 61 6d 65 74 65 72 3e 3c 50 61 72 61 6d 65   arameter><Parame
+0170  74 65 72 4e 61 6d 65 3e 52 65 73 70 6f 6e 73 65   terName>Response
+0180  43 6f 64 65 3c 2f 50 61 72 61 6d 65 74 65 72 4e   Code</ParameterN
+0190  61 6d 65 3e 3c 50 61 72 61 6d 65 74 65 72 56 61   ame><ParameterVa
+01a0  6c 75 65 3e 32 3c 2f 50 61 72 61 6d 65 74 65 72   lue>2</Parameter
+01b0  56 61 6c 75 65 3e 3c 2f 50 61 72 61 6d 65 74 65   Value></Paramete
+01c0  72 3e 3c 50 61 72 61 6d 65 74 65 72 3e 3c 50 61   r><Parameter><Pa
+01d0  72 61 6d 65 74 65 72 4e 61 6d 65 3e 52 65 73 70   rameterName>Resp
+01e0  6f 6e 73 65 56 61 6c 75 65 3c 2f 50 61 72 61 6d   onseValue</Param
+01f0  65 74 65 72 4e 61 6d 65 3e 3c 50 61 72 61 6d 65   eterName><Parame
+0200  74 65 72 56 61 6c 75 65 3e 3c 52 65 74 75 72 6e   terValue><Return
+0210  50 61 72 61 6d 65 74 65 72 73 3e 3c 52 65 74 75   Parameters><Retu
+0220  72 6e 50 61 72 61 6d 65 74 65 72 3e 3c 50 61 72   rnParameter><Par
+0230  61 6d 65 74 65 72 4e 61 6d 65 3e 45 72 72 6f 72   ameterName>Error
+0240  3c 2f 50 61 72 61 6d 65 74 65 72 4e 61 6d 65 3e   </ParameterName>
+0250  3c 50 61 72 61 6d 65 74 65 72 56 61 6c 75 65 3e   <ParameterValue>
+0260  30 20 4e 6f 20 65 72 72 6f 72 3c 2f 50 61 72 61   0 No error</Para
+0270  6d 65 74 65 72 56 61 6c 75 65 3e 3c 2f 52 65 74   meterValue></Ret
+0280  75 72 6e 50 61 72 61 6d 65 74 65 72 3e 3c 2f 52   urnParameter></R
+0290  65 74 75 72 6e 50 61 72 61 6d 65 74 65 72 73 3e   eturnParameters>
+02a0  3c 2f 50 61 72 61 6d 65 74 65 72 56 61 6c 75 65   </ParameterValue
+02b0  3e 3c 2f 50 61 72 61 6d 65 74 65 72 3e 3c 2f 50   ></Parameter></P
+02c0  61 72 61 6d 65 74 65 72 73 3e 3c 2f 43 6f 6d 6d   arameters></Comm
+02d0  61 6e 64 3e 3c 43 6f 6d 6d 61 6e 64 3e 3c 43 6f   and><Command><Co
+02e0  6d 6d 61 6e 64 4e 61 6d 65 3e 47 65 74 20 58 59   mmandName>Get XY
+02f0  20 50 6f 73 69 74 69 6f 6e 3c 2f 43 6f 6d 6d 61    Position</Comma
+0300  6e 64 4e 61 6d 65 3e 3c 50 61 72 61 6d 65 74 65   ndName><Paramete
+0310  72 73 3e 3c 50 61 72 61 6d 65 74 65 72 3e 3c 50   rs><Parameter><P
+0320  61 72 61 6d 65 74 65 72 4e 61 6d 65 3e 52 65 73   arameterName>Res
+0330  70 6f 6e 73 65 43 6f 64 65 3c 2f 50 61 72 61 6d   ponseCode</Param
+0340  65 74 65 72 4e 61 6d 65 3e 3c 50 61 72 61 6d 65   eterName><Parame
+0350  74 65 72 56 61 6c 75 65 3e 32 3c 2f 50 61 72 61   terValue>2</Para
+0360  6d 65 74 65 72 56 61 6c 75 65 3e 3c 2f 50 61 72   meterValue></Par
+0370  61 6d 65 74 65 72 3e 3c 50 61 72 61 6d 65 74 65   ameter><Paramete
+0380  72 3e 3c 50 61 72 61 6d 65 74 65 72 4e 61 6d 65   r><ParameterName
+0390  3e 52 65 73 70 6f 6e 73 65 56 61 6c 75 65 3c 2f   >ResponseValue</
+03a0  50 61 72 61 6d 65 74 65 72 4e 61 6d 65 3e 3c 50   ParameterName><P
+03b0  61 72 61 6d 65 74 65 72 56 61 6c 75 65 3e 3c 52   arameterValue><R
+03c0  65 74 75 72 6e 50 61 72 61 6d 65 74 65 72 73 3e   eturnParameters>
+03d0  3c 52 65 74 75 72 6e 50 61 72 61 6d 65 74 65 72   <ReturnParameter
+03e0  3e 3c 50 61 72 61 6d 65 74 65 72 4e 61 6d 65 3e   ><ParameterName>
+03f0  58 20 50 6f 73 69 74 69 6f 6e 3c 2f 50 61 72 61   X Position</Para
+0400  6d 65 74 65 72 4e 61 6d 65 3e 3c 50 61 72 61 6d   meterName><Param
+0410  65 74 65 72 56 61 6c 75 65 3e 2d 31 3c 2f 50 61   eterValue>-1</Pa
+0420  72 61 6d 65 74 65 72 56 61 6c 75 65 3e 3c 2f 52   rameterValue></R
+0430  65 74 75 72 6e 50 61 72 61 6d 65 74 65 72 3e 3c   eturnParameter><
+0440  52 65 74 75 72 6e 50 61 72 61 6d 65 74 65 72 3e   ReturnParameter>
+0450  3c 50 61 72 61 6d 65 74 65 72 4e 61 6d 65 3e 59   <ParameterName>Y
+0460  20 50 6f 73 69 74 69 6f 6e 3c 2f 50 3c 2f 4d 65    Position</P</Me
+0470  73 73 61 67 65 3e                                 ssage>
+
+No.     Time           Source                Destination           Protocol Length Info
+   1349 8.773511       192.168.1.101         192.168.1.100         TCP      1514   50190 → 54831 [PSH, ACK] Seq=1 Ack=924 Win=7269 Len=1460
+
+Frame 1349: 1514 bytes on wire (12112 bits), 1514 bytes captured (12112 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: DigiBoard_a2:56:92 (00:40:9d:a2:56:92), Dst: Dell_b8:f8:97 (98:90:96:b8:f8:97)
+Internet Protocol Version 4, Src: 192.168.1.101, Dst: 192.168.1.100
+Transmission Control Protocol, Src Port: 50190, Dst Port: 54831, Seq: 1, Ack: 924, Len: 1460
+Data (1460 bytes)
+
+0000  3c 4d 65 73 73 61 67 65 20 4d 65 73 73 61 67 65   <Message Message
+0010  49 64 3d 22 31 38 32 22 20 42 6c 6f 63 6b 43 6f   Id="182" BlockCo
+0020  75 6e 74 3d 22 32 22 20 42 6c 6f 63 6b 49 64 3d   unt="2" BlockId=
+0030  22 30 22 3e 3c 47 69 6c 73 6f 6e 3e 3c 53 74 61   "0"><Gilson><Sta
+0040  74 75 73 3e 3c 53 79 73 74 65 6d 49 6e 66 6f 72   tus><SystemInfor
+0050  6d 61 74 69 6f 6e 3e 3c 49 50 41 64 64 72 65 73   mation><IPAddres
+0060  73 3e 31 39 32 2e 31 36 38 2e 31 2e 31 30 31 3c   s>192.168.1.101<
+0070  2f 49 50 41 64 64 72 65 73 73 3e 3c 53 75 62 6e   /IPAddress><Subn
+0080  65 74 4d 61 73 6b 3e 32 35 35 2e 32 35 35 2e 32   etMask>255.255.2
+0090  35 35 2e 30 3c 2f 53 75 62 6e 65 74 4d 61 73 6b   55.0</SubnetMask
+00a0  3e 3c 44 65 66 61 75 6c 74 47 61 74 65 77 61 79   ><DefaultGateway
+00b0  3e 31 39 32 2e 31 36 38 2e 31 2e 31 3c 2f 44 65   >192.168.1.1</De
+00c0  66 61 75 6c 74 47 61 74 65 77 61 79 3e 3c 4d 41   faultGateway><MA
+00d0  43 3e 30 30 3a 34 30 3a 39 64 3a 61 32 3a 35 36   C>00:40:9d:a2:56
+00e0  3a 39 32 3c 2f 4d 41 43 3e 3c 4c 65 61 73 65 49   :92</MAC><LeaseI
+00f0  6e 66 6f 72 6d 61 74 69 6f 6e 3e 3c 4c 65 61 73   nformation><Leas
+0100  65 41 63 74 69 76 65 3e 46 61 6c 73 65 3c 2f 4c   eActive>False</L
+0110  65 61 73 65 41 63 74 69 76 65 3e 3c 2f 4c 65 61   easeActive></Lea
+0120  73 65 49 6e 66 6f 72 6d 61 74 69 6f 6e 3e 3c 2f   seInformation></
+0130  53 79 73 74 65 6d 49 6e 66 6f 72 6d 61 74 69 6f   SystemInformatio
+0140  6e 3e 3c 44 65 76 69 63 65 73 3e 3c 44 65 76 69   n><Devices><Devi
+0150  63 65 3e 3c 44 65 76 69 63 65 4e 61 6d 65 3e 47   ce><DeviceName>G
+0160  58 2d 32 37 78 3c 2f 44 65 76 69 63 65 4e 61 6d   X-27x</DeviceNam
+0170  65 3e 3c 44 65 76 69 63 65 49 64 3e 33 35 3c 2f   e><DeviceId>35</
+0180  44 65 76 69 63 65 49 64 3e 3c 53 65 72 69 61 6c   DeviceId><Serial
+0190  4e 75 6d 62 65 72 3e 32 36 31 4a 37 4e 32 35 33   Number>261J7N253
+01a0  3c 2f 53 65 72 69 61 6c 4e 75 6d 62 65 72 3e 3c   </SerialNumber><
+01b0  43 6f 6e 6e 65 63 74 65 64 3e 54 72 75 65 3c 2f   Connected>True</
+01c0  43 6f 6e 6e 65 63 74 65 64 3e 3c 43 6f 6d 6d 61   Connected><Comma
+01d0  6e 64 73 3e 3c 43 6f 6d 6d 61 6e 64 3e 3c 43 6f   nds><Command><Co
+01e0  6d 6d 61 6e 64 4e 61 6d 65 3e 47 65 74 20 49 6e   mmandName>Get In
+01f0  70 75 74 20 43 6f 6e 74 61 63 74 73 3c 2f 43 6f   put Contacts</Co
+0200  6d 6d 61 6e 64 4e 61 6d 65 3e 3c 50 61 72 61 6d   mmandName><Param
+0210  65 74 65 72 73 3e 3c 50 61 72 61 6d 65 74 65 72   eters><Parameter
+0220  3e 3c 50 61 72 61 6d 65 74 65 72 4e 61 6d 65 3e   ><ParameterName>
+0230  52 65 73 70 6f 6e 73 65 43 6f 64 65 3c 2f 50 61   ResponseCode</Pa
+0240  72 61 6d 65 74 65 72 4e 61 6d 65 3e 3c 50 61 72   rameterName><Par
+0250  61 6d 65 74 65 72 56 61 6c 75 65 3e 32 3c 2f 50   ameterValue>2</P
+0260  61 72 61 6d 65 74 65 72 56 61 6c 75 65 3e 3c 2f   arameterValue></
+0270  50 61 72 61 6d 65 74 65 72 3e 3c 50 61 72 61 6d   Parameter><Param
+0280  65 74 65 72 3e 3c 50 61 72 61 6d 65 74 65 72 4e   eter><ParameterN
+0290  61 6d 65 3e 52 65 73 70 6f 6e 73 65 56 61 6c 75   ame>ResponseValu
+02a0  65 3c 2f 50 61 72 61 6d 65 74 65 72 4e 61 6d 65   e</ParameterName
+02b0  3e 3c 50 61 72 61 6d 65 74 65 72 56 61 6c 75 65   ><ParameterValue
+02c0  3e 3c 52 65 74 75 72 6e 50 61 72 61 6d 65 74 65   ><ReturnParamete
+02d0  72 73 3e 3c 52 65 74 75 72 6e 50 61 72 61 6d 65   rs><ReturnParame
+02e0  74 65 72 3e 3c 50 61 72 61 6d 65 74 65 72 4e 61   ter><ParameterNa
+02f0  6d 65 3e 43 6f 6e 74 61 63 74 20 41 3c 2f 50 61   me>Contact A</Pa
+0300  72 61 6d 65 74 65 72 4e 61 6d 65 3e 3c 50 61 72   rameterName><Par
+0310  61 6d 65 74 65 72 56 61 6c 75 65 3e 4f 66 66 3c   ameterValue>Off<
+0320  2f 50 61 72 61 6d 65 74 65 72 56 61 6c 75 65 3e   /ParameterValue>
+0330  3c 2f 52 65 74 75 72 6e 50 61 72 61 6d 65 74 65   </ReturnParamete
+0340  72 3e 3c 52 65 74 75 72 6e 50 61 72 61 6d 65 74   r><ReturnParamet
+0350  65 72 3e 3c 50 61 72 61 6d 65 74 65 72 4e 61 6d   er><ParameterNam
+0360  65 3e 43 6f 6e 74 61 63 74 20 42 3c 2f 50 61 72   e>Contact B</Par
+0370  61 6d 65 74 65 72 4e 61 6d 65 3e 3c 50 61 72 61   ameterName><Para
+0380  6d 65 74 65 72 56 61 6c 75 65 3e 4f 66 66 3c 2f   meterValue>Off</
+0390  50 61 72 61 6d 65 74 65 72 56 61 6c 75 65 3e 3c   ParameterValue><
+03a0  2f 52 65 74 75 72 6e 50 61 72 61 6d 65 74 65 72   /ReturnParameter
+03b0  3e 3c 52 65 74 75 72 6e 50 61 72 61 6d 65 74 65   ><ReturnParamete
+03c0  72 3e 3c 50 61 72 61 6d 65 74 65 72 4e 61 6d 65   r><ParameterName
+03d0  3e 53 61 66 65 74 79 3c 2f 50 61 72 61 6d 65 74   >Safety</Paramet
+03e0  65 72 4e 61 6d 65 3e 3c 50 61 72 61 6d 65 74 65   erName><Paramete
+03f0  72 56 61 6c 75 65 3e 4f 66 66 3c 2f 50 61 72 61   rValue>Off</Para
+0400  6d 65 74 65 72 56 61 6c 75 65 3e 3c 2f 52 65 74   meterValue></Ret
+0410  75 72 6e 50 61 72 61 6d 65 74 65 72 3e 3c 2f 52   urnParameter></R
+0420  65 74 75 72 6e 50 61 72 61 6d 65 74 65 72 73 3e   eturnParameters>
+0430  3c 2f 50 61 72 61 6d 65 74 65 72 56 61 6c 75 65   </ParameterValue
+0440  3e 3c 2f 50 61 72 61 6d 65 74 65 72 3e 3c 2f 50   ></Parameter></P
+0450  61 72 61 6d 65 74 65 72 73 3e 3c 2f 43 6f 6d 6d   arameters></Comm
+0460  61 6e 64 3e 3c 43 6f 6d 6d 61 6e 64 3e 3c 43 6f   and><Command><Co
+0470  6d 6d 61 6e 64 4e 61 6d 65 3e 47 65 74 20 4f 75   mmandName>Get Ou
+0480  74 70 75 74 20 43 6f 6e 74 61 63 74 73 3c 2f 43   tput Contacts</C
+0490  6f 6d 6d 61 6e 64 4e 61 6d 65 3e 3c 50 61 72 61   ommandName><Para
+04a0  6d 65 74 65 72 73 3e 3c 50 61 72 61 6d 65 74 65   meters><Paramete
+04b0  72 3e 3c 50 61 72 61 6d 65 74 65 72 4e 61 6d 65   r><ParameterName
+04c0  3e 52 65 73 70 6f 6e 73 65 43 6f 64 65 3c 2f 50   >ResponseCode</P
+04d0  61 72 61 6d 65 74 65 72 4e 61 6d 65 3e 3c 50 61   arameterName><Pa
+04e0  72 61 6d 65 74 65 72 56 61 6c 75 65 3e 32 3c 2f   rameterValue>2</
+04f0  50 61 72 61 6d 65 74 65 72 56 61 6c 75 65 3e 3c   ParameterValue><
+0500  2f 50 61 72 61 6d 65 74 65 72 3e 3c 50 61 72 61   /Parameter><Para
+0510  6d 65 74 65 72 3e 3c 50 61 72 61 6d 65 74 65 72   meter><Parameter
+0520  4e 61 6d 65 3e 52 65 73 70 6f 6e 73 65 56 61 6c   Name>ResponseVal
+0530  75 65 3c 2f 50 61 72 61 6d 65 74 65 72 4e 61 6d   ue</ParameterNam
+0540  65 3e 3c 50 61 72 61 6d 65 74 65 72 56 61 6c 75   e><ParameterValu
+0550  65 3e 3c 52 65 74 75 72 6e 50 61 72 61 6d 65 74   e><ReturnParamet
+0560  65 72 73 3e 3c 52 65 74 75 72 6e 50 61 72 61 6d   ers><ReturnParam
+0570  65 74 65 72 3e 3c 50 61 72 61 6d 65 74 65 72 4e   eter><ParameterN
+0580  61 6d 65 3e 43 6f 6e 74 61 63 74 20 31 3c 2f 50   ame>Contact 1</P
+0590  61 72 61 6d 65 74 65 72 4e 61 6d 65 3e 3c 50 61   arameterName><Pa
+05a0  72 61 6d 65 74 65 72 56 61 6c 75 65 3e 4f 66 66   rameterValue>Off
+05b0  3c 2f 50 61                                       </Pa
+
+No.     Time           Source                Destination           Protocol Length Info
+   1350 8.774155       192.168.1.101         192.168.1.100         TCP      1514   50190 → 54831 [PSH, ACK] Seq=1461 Ack=924 Win=7269 Len=1460
+
+Frame 1350: 1514 bytes on wire (12112 bits), 1514 bytes captured (12112 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: DigiBoard_a2:56:92 (00:40:9d:a2:56:92), Dst: Dell_b8:f8:97 (98:90:96:b8:f8:97)
+Internet Protocol Version 4, Src: 192.168.1.101, Dst: 192.168.1.100
+Transmission Control Protocol, Src Port: 50190, Dst Port: 54831, Seq: 1461, Ack: 924, Len: 1460
+Data (1460 bytes)
+
+0000  72 61 6d 65 74 65 72 56 61 6c 75 65 3e 3c 2f 52   rameterValue></R
+0010  65 74 75 72 6e 50 61 72 61 6d 65 74 65 72 3e 3c   eturnParameter><
+0020  52 65 74 75 72 6e 50 61 72 61 6d 65 74 65 72 3e   ReturnParameter>
+0030  3c 50 61 72 61 6d 65 74 65 72 4e 61 6d 65 3e 43   <ParameterName>C
+0040  6f 6e 74 61 63 74 20 32 3c 2f 50 61 72 61 6d 65   ontact 2</Parame
+0050  74 65 72 4e 61 6d 65 3e 3c 50 61 72 61 6d 65 74   terName><Paramet
+0060  65 72 56 61 6c 75 65 3e 4f 66 66 3c 2f 50 61 72   erValue>Off</Par
+0070  61 6d 65 74 65 72 56 61 6c 75 65 3e 3c 2f 52 65   ameterValue></Re
+0080  74 75 72 6e 50 61 72 61 6d 65 74 65 72 3e 3c 2f   turnParameter></
+0090  52 65 74 75 72 6e 50 61 72 61 6d 65 74 65 72 73   ReturnParameters
+00a0  3e 3c 2f 50 61 72 61 6d 65 74 65 72 56 61 6c 75   ></ParameterValu
+00b0  65 3e 3c 2f 50 61 72 61 6d 65 74 65 72 3e 3c 2f   e></Parameter></
+00c0  50 61 72 61 6d 65 74 65 72 73 3e 3c 2f 43 6f 6d   Parameters></Com
+00d0  6d 61 6e 64 3e 3c 43 6f 6d 6d 61 6e 64 3e 3c 43   mand><Command><C
+00e0  6f 6d 6d 61 6e 64 4e 61 6d 65 3e 47 65 74 20 53   ommandName>Get S
+00f0  6f 6c 65 6e 6f 69 64 20 43 6f 6e 74 61 63 74 73   olenoid Contacts
+0100  3c 2f 43 6f 6d 6d 61 6e 64 4e 61 6d 65 3e 3c 50   </CommandName><P
+0110  61 72 61 6d 65 74 65 72 73 3e 3c 50 61 72 61 6d   arameters><Param
+0120  65 74 65 72 3e 3c 50 61 72 61 6d 65 74 65 72 4e   eter><ParameterN
+0130  61 6d 65 3e 52 65 73 70 6f 6e 73 65 43 6f 64 65   ame>ResponseCode
+0140  3c 2f 50 61 72 61 6d 65 74 65 72 4e 61 6d 65 3e   </ParameterName>
+0150  3c 50 61 72 61 6d 65 74 65 72 56 61 6c 75 65 3e   <ParameterValue>
+0160  32 3c 2f 50 61 72 61 6d 65 74 65 72 56 61 6c 75   2</ParameterValu
+0170  65 3e 3c 2f 50 61 72 61 6d 65 74 65 72 3e 3c 50   e></Parameter><P
+0180  61 72 61 6d 65 74 65 72 3e 3c 50 61 72 61 6d 65   arameter><Parame
+0190  74 65 72 4e 61 6d 65 3e 52 65 73 70 6f 6e 73 65   terName>Response
+01a0  56 61 6c 75 65 3c 2f 50 61 72 61 6d 65 74 65 72   Value</Parameter
+01b0  4e 61 6d 65 3e 3c 50 61 72 61 6d 65 74 65 72 56   Name><ParameterV
+01c0  61 6c 75 65 3e 3c 52 65 74 75 72 6e 50 61 72 61   alue><ReturnPara
+01d0  6d 65 74 65 72 73 3e 3c 52 65 74 75 72 6e 50 61   meters><ReturnPa
+01e0  72 61 6d 65 74 65 72 3e 3c 50 61 72 61 6d 65 74   rameter><Paramet
+01f0  65 72 4e 61 6d 65 3e 53 6f 6c 65 6e 6f 69 64 20   erName>Solenoid 
+0200  31 3c 2f 50 61 72 61 6d 65 74 65 72 4e 61 6d 65   1</ParameterName
+0210  3e 3c 50 61 72 61 6d 65 74 65 72 56 61 6c 75 65   ><ParameterValue
+0220  3e 4f 66 66 3c 2f 50 61 72 61 6d 65 74 65 72 56   >Off</ParameterV
+0230  61 6c 75 65 3e 3c 2f 52 65 74 75 72 6e 50 61 72   alue></ReturnPar
+0240  61 6d 65 74 65 72 3e 3c 52 65 74 75 72 6e 50 61   ameter><ReturnPa
+0250  72 61 6d 65 74 65 72 3e 3c 50 61 72 61 6d 65 74   rameter><Paramet
+0260  65 72 4e 61 6d 65 3e 53 6f 6c 65 6e 6f 69 64 20   erName>Solenoid 
+0270  32 3c 2f 50 61 72 61 6d 65 74 65 72 4e 61 6d 65   2</ParameterName
+0280  3e 3c 50 61 72 61 6d 65 74 65 72 56 61 6c 75 65   ><ParameterValue
+0290  3e 4f 66 66 3c 2f 50 61 72 61 6d 65 74 65 72 56   >Off</ParameterV
+02a0  61 6c 75 65 3e 3c 2f 52 65 74 75 72 6e 50 61 72   alue></ReturnPar
+02b0  61 6d 65 74 65 72 3e 3c 2f 52 65 74 75 72 6e 50   ameter></ReturnP
+02c0  61 72 61 6d 65 74 65 72 73 3e 3c 2f 50 61 72 61   arameters></Para
+02d0  6d 65 74 65 72 56 61 6c 75 65 3e 3c 2f 50 61 72   meterValue></Par
+02e0  61 6d 65 74 65 72 3e 3c 2f 50 61 72 61 6d 65 74   ameter></Paramet
+02f0  65 72 73 3e 3c 2f 43 6f 6d 6d 61 6e 64 3e 3c 43   ers></Command><C
+0300  6f 6d 6d 61 6e 64 3e 3c 43 6f 6d 6d 61 6e 64 4e   ommand><CommandN
+0310  61 6d 65 3e 47 65 74 20 32 34 56 20 43 6f 6e 74   ame>Get 24V Cont
+0320  61 63 74 73 3c 2f 43 6f 6d 6d 61 6e 64 4e 61 6d   acts</CommandNam
+0330  65 3e 3c 50 61 72 61 6d 65 74 65 72 73 3e 3c 50   e><Parameters><P
+0340  61 72 61 6d 65 74 65 72 3e 3c 50 61 72 61 6d 65   arameter><Parame
+0350  74 65 72 4e 61 6d 65 3e 52 65 73 70 6f 6e 73 65   terName>Response
+0360  43 6f 64 65 3c 2f 50 61 72 61 6d 65 74 65 72 4e   Code</ParameterN
+0370  61 6d 65 3e 3c 50 61 72 61 6d 65 74 65 72 56 61   ame><ParameterVa
+0380  6c 75 65 3e 32 3c 2f 50 61 72 61 6d 65 74 65 72   lue>2</Parameter
+0390  56 61 6c 75 65 3e 3c 2f 50 61 72 61 6d 65 74 65   Value></Paramete
+03a0  72 3e 3c 50 61 72 61 6d 65 74 65 72 3e 3c 50 61   r><Parameter><Pa
+03b0  72 61 6d 65 74 65 72 4e 61 6d 65 3e 52 65 73 70   rameterName>Resp
+03c0  6f 6e 73 65 56 61 6c 75 65 3c 2f 50 61 72 61 6d   onseValue</Param
+03d0  65 74 65 72 4e 61 6d 65 3e 3c 50 61 72 61 6d 65   eterName><Parame
+03e0  74 65 72 56 61 6c 75 65 3e 3c 52 65 74 75 72 6e   terValue><Return
+03f0  50 61 72 61 6d 65 74 65 72 73 3e 3c 52 65 74 75   Parameters><Retu
+0400  72 6e 50 61 72 61 6d 65 74 65 72 3e 3c 50 61 72   rnParameter><Par
+0410  61 6d 65 74 65 72 4e 61 6d 65 3e 32 34 56 20 43   ameterName>24V C
+0420  6f 6e 74 61 63 74 20 31 3c 2f 50 61 72 61 6d 65   ontact 1</Parame
+0430  74 65 72 4e 61 6d 65 3e 3c 50 61 72 61 6d 65 74   terName><Paramet
+0440  65 72 56 61 6c 75 65 3e 4f 66 66 3c 2f 50 61 72   erValue>Off</Par
+0450  61 6d 65 74 65 72 56 61 6c 75 65 3e 3c 2f 52 65   ameterValue></Re
+0460  74 75 72 6e 50 61 72 61 6d 65 74 65 72 3e 3c 52   turnParameter><R
+0470  65 74 75 72 6e 50 61 72 61 6d 65 74 65 72 3e 3c   eturnParameter><
+0480  50 61 72 61 6d 65 74 65 72 4e 61 6d 65 3e 32 34   ParameterName>24
+0490  56 20 43 6f 6e 74 61 63 74 20 32 3c 2f 50 61 72   V Contact 2</Par
+04a0  61 6d 65 74 65 72 4e 61 6d 65 3e 3c 50 61 72 61   ameterName><Para
+04b0  6d 65 74 65 72 56 61 6c 75 65 3e 4f 66 66 3c 2f   meterValue>Off</
+04c0  50 61 72 61 6d 65 74 65 72 56 61 6c 75 65 3e 3c   ParameterValue><
+04d0  2f 52 65 74 75 72 6e 50 61 72 61 6d 65 74 65 72   /ReturnParameter
+04e0  3e 3c 2f 52 65 74 75 72 6e 50 61 72 61 6d 65 74   ></ReturnParamet
+04f0  65 72 73 3e 3c 2f 50 61 72 61 6d 65 74 65 72 56   ers></ParameterV
+0500  61 6c 75 65 3e 3c 2f 50 61 72 61 6d 65 74 65 72   alue></Parameter
+0510  3e 3c 2f 50 61 72 61 6d 65 74 65 72 73 3e 3c 2f   ></Parameters></
+0520  43 6f 6d 6d 61 6e 64 3e 3c 43 6f 6d 6d 61 6e 64   Command><Command
+0530  3e 3c 43 6f 6d 6d 61 6e 64 4e 61 6d 65 3e 47 65   ><CommandName>Ge
+0540  74 20 44 69 76 65 72 74 65 72 20 56 61 6c 76 65   t Diverter Valve
+0550  3c 2f 43 6f 6d 6d 61 6e 64 4e 61 6d 65 3e 3c 50   </CommandName><P
+0560  61 72 61 6d 65 74 65 72 73 3e 3c 50 61 72 61 6d   arameters><Param
+0570  65 74 65 72 3e 3c 50 61 72 61 6d 65 74 65 72 4e   eter><ParameterN
+0580  61 6d 65 3e 52 65 73 70 6f 6e 73 65 43 6f 64 65   ame>ResponseCode
+0590  3c 2f 50 61 72 61 6d 65 74 65 72 4e 61 6d 65 3e   </ParameterName>
+05a0  3c 50 61 72 61 6d 65 74 65 72 56 61 6c 75 65 3e   <ParameterValue>
+05b0  32 3c 2f 50                                       2</P
+
+No.     Time           Source                Destination           Protocol Length Info
+   1351 8.774245       192.168.1.100         192.168.1.101         TCP      54     54831 → 50190 [ACK] Seq=924 Ack=2921 Win=131328 Len=0
+
+Frame 1351: 54 bytes on wire (432 bits), 54 bytes captured (432 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: Dell_b8:f8:97 (98:90:96:b8:f8:97), Dst: DigiBoard_a2:56:92 (00:40:9d:a2:56:92)
+Internet Protocol Version 4, Src: 192.168.1.100, Dst: 192.168.1.101
+Transmission Control Protocol, Src Port: 54831, Dst Port: 50190, Seq: 924, Ack: 2921, Len: 0
+
+No.     Time           Source                Destination           Protocol Length Info
+   1352 8.776177       192.168.1.101         192.168.1.100         TCP      1196   50190 → 54831 [PSH, ACK] Seq=2921 Ack=924 Win=7269 Len=1142
+
+Frame 1352: 1196 bytes on wire (9568 bits), 1196 bytes captured (9568 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: DigiBoard_a2:56:92 (00:40:9d:a2:56:92), Dst: Dell_b8:f8:97 (98:90:96:b8:f8:97)
+Internet Protocol Version 4, Src: 192.168.1.101, Dst: 192.168.1.100
+Transmission Control Protocol, Src Port: 50190, Dst Port: 54831, Seq: 2921, Ack: 924, Len: 1142
+Data (1142 bytes)
+
+0000  61 72 61 6d 65 74 65 72 56 61 6c 75 65 3e 3c 2f   arameterValue></
+0010  50 61 72 61 6d 65 74 65 72 3e 3c 50 61 72 61 6d   Parameter><Param
+0020  65 74 65 72 3e 3c 50 61 72 61 6d 65 74 65 72 4e   eter><ParameterN
+0030  61 6d 65 3e 52 65 73 70 6f 6e 73 65 56 61 6c 75   ame>ResponseValu
+0040  65 3c 2f 50 61 72 61 6d 65 74 65 72 4e 61 6d 65   e</ParameterName
+0050  3e 3c 50 61 72 61 6d 65 74 65 72 56 61 6c 75 65   ><ParameterValue
+0060  3e 3c 52 65 74 75 72 6e 50 61 72 61 6d 65 74 65   ><ReturnParamete
+0070  72 73 3e 3c 52 65 74 75 72 6e 50 61 72 61 6d 65   rs><ReturnParame
+0080  74 65 72 3e 3c 50 61 72 61 6d 65 74 65 72 4e 61   ter><ParameterNa
+0090  6d 65 3e 56 61 6c 76 65 3c 2f 50 61 72 61 6d 65   me>Valve</Parame
+00a0  74 65 72 4e 61 6d 65 3e 3c 50 61 72 61 6d 65 74   terName><Paramet
+00b0  65 72 56 61 6c 75 65 3e 4f 66 66 3c 2f 50 61 72   erValue>Off</Par
+00c0  61 6d 65 74 65 72 56 61 6c 75 65 3e 3c 2f 52 65   ameterValue></Re
+00d0  74 75 72 6e 50 61 72 61 6d 65 74 65 72 3e 3c 2f   turnParameter></
+00e0  52 65 74 75 72 6e 50 61 72 61 6d 65 74 65 72 73   ReturnParameters
+00f0  3e 3c 2f 50 61 72 61 6d 65 74 65 72 56 61 6c 75   ></ParameterValu
+0100  65 3e 3c 2f 50 61 72 61 6d 65 74 65 72 3e 3c 2f   e></Parameter></
+0110  50 61 72 61 6d 65 74 65 72 73 3e 3c 2f 43 6f 6d   Parameters></Com
+0120  6d 61 6e 64 3e 3c 43 6f 6d 6d 61 6e 64 3e 3c 43   mand><Command><C
+0130  6f 6d 6d 61 6e 64 4e 61 6d 65 3e 47 65 74 20 45   ommandName>Get E
+0140  72 72 6f 72 3c 2f 43 6f 6d 6d 61 6e 64 4e 61 6d   rror</CommandNam
+0150  65 3e 3c 50 61 72 61 6d 65 74 65 72 73 3e 3c 50   e><Parameters><P
+0160  61 72 61 6d 65 74 65 72 3e 3c 50 61 72 61 6d 65   arameter><Parame
+0170  74 65 72 4e 61 6d 65 3e 52 65 73 70 6f 6e 73 65   terName>Response
+0180  43 6f 64 65 3c 2f 50 61 72 61 6d 65 74 65 72 4e   Code</ParameterN
+0190  61 6d 65 3e 3c 50 61 72 61 6d 65 74 65 72 56 61   ame><ParameterVa
+01a0  6c 75 65 3e 32 3c 2f 50 61 72 61 6d 65 74 65 72   lue>2</Parameter
+01b0  56 61 6c 75 65 3e 3c 2f 50 61 72 61 6d 65 74 65   Value></Paramete
+01c0  72 3e 3c 50 61 72 61 6d 65 74 65 72 3e 3c 50 61   r><Parameter><Pa
+01d0  72 61 6d 65 74 65 72 4e 61 6d 65 3e 52 65 73 70   rameterName>Resp
+01e0  6f 6e 73 65 56 61 6c 75 65 3c 2f 50 61 72 61 6d   onseValue</Param
+01f0  65 74 65 72 4e 61 6d 65 3e 3c 50 61 72 61 6d 65   eterName><Parame
+0200  74 65 72 56 61 6c 75 65 3e 3c 52 65 74 75 72 6e   terValue><Return
+0210  50 61 72 61 6d 65 74 65 72 73 3e 3c 52 65 74 75   Parameters><Retu
+0220  72 6e 50 61 72 61 6d 65 74 65 72 3e 3c 50 61 72   rnParameter><Par
+0230  61 6d 65 74 65 72 4e 61 6d 65 3e 45 72 72 6f 72   ameterName>Error
+0240  3c 2f 50 61 72 61 6d 65 74 65 72 4e 61 6d 65 3e   </ParameterName>
+0250  3c 50 61 72 61 6d 65 74 65 72 56 61 6c 75 65 3e   <ParameterValue>
+0260  30 20 4e 6f 20 65 72 72 6f 72 3c 2f 50 61 72 61   0 No error</Para
+0270  6d 65 74 65 72 56 61 6c 75 65 3e 3c 2f 52 65 74   meterValue></Ret
+0280  75 72 6e 50 61 72 61 6d 65 74 65 72 3e 3c 2f 52   urnParameter></R
+0290  65 74 75 72 6e 50 61 72 61 6d 65 74 65 72 73 3e   eturnParameters>
+02a0  3c 2f 50 61 72 61 6d 65 74 65 72 56 61 6c 75 65   </ParameterValue
+02b0  3e 3c 2f 50 61 72 61 6d 65 74 65 72 3e 3c 2f 50   ></Parameter></P
+02c0  61 72 61 6d 65 74 65 72 73 3e 3c 2f 43 6f 6d 6d   arameters></Comm
+02d0  61 6e 64 3e 3c 43 6f 6d 6d 61 6e 64 3e 3c 43 6f   and><Command><Co
+02e0  6d 6d 61 6e 64 4e 61 6d 65 3e 47 65 74 20 58 59   mmandName>Get XY
+02f0  20 50 6f 73 69 74 69 6f 6e 3c 2f 43 6f 6d 6d 61    Position</Comma
+0300  6e 64 4e 61 6d 65 3e 3c 50 61 72 61 6d 65 74 65   ndName><Paramete
+0310  72 73 3e 3c 50 61 72 61 6d 65 74 65 72 3e 3c 50   rs><Parameter><P
+0320  61 72 61 6d 65 74 65 72 4e 61 6d 65 3e 52 65 73   arameterName>Res
+0330  70 6f 6e 73 65 43 6f 64 65 3c 2f 50 61 72 61 6d   ponseCode</Param
+0340  65 74 65 72 4e 61 6d 65 3e 3c 50 61 72 61 6d 65   eterName><Parame
+0350  74 65 72 56 61 6c 75 65 3e 32 3c 2f 50 61 72 61   terValue>2</Para
+0360  6d 65 74 65 72 56 61 6c 75 65 3e 3c 2f 50 61 72   meterValue></Par
+0370  61 6d 65 74 65 72 3e 3c 50 61 72 61 6d 65 74 65   ameter><Paramete
+0380  72 3e 3c 50 61 72 61 6d 65 74 65 72 4e 61 6d 65   r><ParameterName
+0390  3e 52 65 73 70 6f 6e 73 65 56 61 6c 75 65 3c 2f   >ResponseValue</
+03a0  50 61 72 61 6d 65 74 65 72 4e 61 6d 65 3e 3c 50   ParameterName><P
+03b0  61 72 61 6d 65 74 65 72 56 61 6c 75 65 3e 3c 52   arameterValue><R
+03c0  65 74 75 72 6e 50 61 72 61 6d 65 74 65 72 73 3e   eturnParameters>
+03d0  3c 52 65 74 75 72 6e 50 61 72 61 6d 65 74 65 72   <ReturnParameter
+03e0  3e 3c 50 61 72 61 6d 65 74 65 72 4e 61 6d 65 3e   ><ParameterName>
+03f0  58 20 50 6f 73 69 74 69 6f 6e 3c 2f 50 61 72 61   X Position</Para
+0400  6d 65 74 65 72 4e 61 6d 65 3e 3c 50 61 72 61 6d   meterName><Param
+0410  65 74 65 72 56 61 6c 75 65 3e 2d 31 3c 2f 50 61   eterValue>-1</Pa
+0420  72 61 6d 65 74 65 72 56 61 6c 75 65 3e 3c 2f 52   rameterValue></R
+0430  65 74 75 72 6e 50 61 72 61 6d 65 74 65 72 3e 3c   eturnParameter><
+0440  52 65 74 75 72 6e 50 61 72 61 6d 65 74 65 72 3e   ReturnParameter>
+0450  3c 50 61 72 61 6d 65 74 65 72 4e 61 6d 65 3e 59   <ParameterName>Y
+0460  20 50 6f 73 69 74 69 6f 6e 3c 2f 50 3c 2f 4d 65    Position</P</Me
+0470  73 73 61 67 65 3e                                 ssage>
+
+No.     Time           Source                Destination           Protocol Length Info
+   1356 8.815467       192.168.1.100         192.168.1.101         TCP      54     54748 → 2 [ACK] Seq=1 Ack=4063 Win=508 Len=0
+
+Frame 1356: 54 bytes on wire (432 bits), 54 bytes captured (432 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: Dell_b8:f8:97 (98:90:96:b8:f8:97), Dst: DigiBoard_a2:56:92 (00:40:9d:a2:56:92)
+Internet Protocol Version 4, Src: 192.168.1.100, Dst: 192.168.1.101
+Transmission Control Protocol, Src Port: 54748, Dst Port: 2, Seq: 1, Ack: 4063, Len: 0
+
+No.     Time           Source                Destination           Protocol Length Info
+   1357 8.817403       192.168.1.101         192.168.1.100         TCP      1066   2 → 54748 [PSH, ACK] Seq=4063 Ack=1 Win=8192 Len=1012
+
+Frame 1357: 1066 bytes on wire (8528 bits), 1066 bytes captured (8528 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: DigiBoard_a2:56:92 (00:40:9d:a2:56:92), Dst: Dell_b8:f8:97 (98:90:96:b8:f8:97)
+Internet Protocol Version 4, Src: 192.168.1.101, Dst: 192.168.1.100
+Transmission Control Protocol, Src Port: 2, Dst Port: 54748, Seq: 4063, Ack: 1, Len: 1012
+Data (1012 bytes)
+
+0000  3c 4d 65 73 73 61 67 65 20 4d 65 73 73 61 67 65   <Message Message
+0010  49 64 3d 22 31 38 32 22 20 42 6c 6f 63 6b 43 6f   Id="182" BlockCo
+0020  75 6e 74 3d 22 32 22 20 42 6c 6f 63 6b 49 64 3d   unt="2" BlockId=
+0030  22 31 22 3e 61 72 61 6d 65 74 65 72 4e 61 6d 65   "1">arameterName
+0040  3e 3c 50 61 72 61 6d 65 74 65 72 56 61 6c 75 65   ><ParameterValue
+0050  3e 2d 31 3c 2f 50 61 72 61 6d 65 74 65 72 56 61   >-1</ParameterVa
+0060  6c 75 65 3e 3c 2f 52 65 74 75 72 6e 50 61 72 61   lue></ReturnPara
+0070  6d 65 74 65 72 3e 3c 2f 52 65 74 75 72 6e 50 61   meter></ReturnPa
+0080  72 61 6d 65 74 65 72 73 3e 3c 2f 50 61 72 61 6d   rameters></Param
+0090  65 74 65 72 56 61 6c 75 65 3e 3c 2f 50 61 72 61   eterValue></Para
+00a0  6d 65 74 65 72 3e 3c 2f 50 61 72 61 6d 65 74 65   meter></Paramete
+00b0  72 73 3e 3c 2f 43 6f 6d 6d 61 6e 64 3e 3c 43 6f   rs></Command><Co
+00c0  6d 6d 61 6e 64 3e 3c 43 6f 6d 6d 61 6e 64 4e 61   mmand><CommandNa
+00d0  6d 65 3e 47 65 74 20 5a 20 50 6f 73 69 74 69 6f   me>Get Z Positio
+00e0  6e 3c 2f 43 6f 6d 6d 61 6e 64 4e 61 6d 65 3e 3c   n</CommandName><
+00f0  50 61 72 61 6d 65 74 65 72 73 3e 3c 50 61 72 61   Parameters><Para
+0100  6d 65 74 65 72 3e 3c 50 61 72 61 6d 65 74 65 72   meter><Parameter
+0110  4e 61 6d 65 3e 52 65 73 70 6f 6e 73 65 43 6f 64   Name>ResponseCod
+0120  65 3c 2f 50 61 72 61 6d 65 74 65 72 4e 61 6d 65   e</ParameterName
+0130  3e 3c 50 61 72 61 6d 65 74 65 72 56 61 6c 75 65   ><ParameterValue
+0140  3e 32 3c 2f 50 61 72 61 6d 65 74 65 72 56 61 6c   >2</ParameterVal
+0150  75 65 3e 3c 2f 50 61 72 61 6d 65 74 65 72 3e 3c   ue></Parameter><
+0160  50 61 72 61 6d 65 74 65 72 3e 3c 50 61 72 61 6d   Parameter><Param
+0170  65 74 65 72 4e 61 6d 65 3e 52 65 73 70 6f 6e 73   eterName>Respons
+0180  65 56 61 6c 75 65 3c 2f 50 61 72 61 6d 65 74 65   eValue</Paramete
+0190  72 4e 61 6d 65 3e 3c 50 61 72 61 6d 65 74 65 72   rName><Parameter
+01a0  56 61 6c 75 65 3e 3c 52 65 74 75 72 6e 50 61 72   Value><ReturnPar
+01b0  61 6d 65 74 65 72 73 3e 3c 52 65 74 75 72 6e 50   ameters><ReturnP
+01c0  61 72 61 6d 65 74 65 72 3e 3c 50 61 72 61 6d 65   arameter><Parame
+01d0  74 65 72 4e 61 6d 65 3e 5a 20 50 6f 73 69 74 69   terName>Z Positi
+01e0  6f 6e 3c 2f 50 61 72 61 6d 65 74 65 72 4e 61 6d   on</ParameterNam
+01f0  65 3e 3c 50 61 72 61 6d 65 74 65 72 56 61 6c 75   e><ParameterValu
+0200  65 3e 2d 31 3c 2f 50 61 72 61 6d 65 74 65 72 56   e>-1</ParameterV
+0210  61 6c 75 65 3e 3c 2f 52 65 74 75 72 6e 50 61 72   alue></ReturnPar
+0220  61 6d 65 74 65 72 3e 3c 2f 52 65 74 75 72 6e 50   ameter></ReturnP
+0230  61 72 61 6d 65 74 65 72 73 3e 3c 2f 50 61 72 61   arameters></Para
+0240  6d 65 74 65 72 56 61 6c 75 65 3e 3c 2f 50 61 72   meterValue></Par
+0250  61 6d 65 74 65 72 3e 3c 2f 50 61 72 61 6d 65 74   ameter></Paramet
+0260  65 72 73 3e 3c 2f 43 6f 6d 6d 61 6e 64 3e 3c 2f   ers></Command></
+0270  43 6f 6d 6d 61 6e 64 73 3e 3c 2f 44 65 76 69 63   Commands></Devic
+0280  65 3e 3c 44 65 76 69 63 65 3e 3c 44 65 76 69 63   e><Device><Devic
+0290  65 4e 61 6d 65 3e 47 58 20 53 6f 6c 76 65 6e 74   eName>GX Solvent
+02a0  20 53 79 73 74 65 6d 3c 2f 44 65 76 69 63 65 4e    System</DeviceN
+02b0  61 6d 65 3e 3c 44 65 76 69 63 65 49 64 3e 38 3c   ame><DeviceId>8<
+02c0  2f 44 65 76 69 63 65 49 64 3e 3c 43 6f 6e 6e 65   /DeviceId><Conne
+02d0  63 74 65 64 3e 46 61 6c 73 65 3c 2f 43 6f 6e 6e   cted>False</Conn
+02e0  65 63 74 65 64 3e 3c 2f 44 65 76 69 63 65 3e 3c   ected></Device><
+02f0  44 65 76 69 63 65 3e 3c 44 65 76 69 63 65 4e 61   Device><DeviceNa
+0300  6d 65 3e 47 58 20 44 69 72 65 63 74 20 49 6e 6a   me>GX Direct Inj
+0310  65 63 74 3c 2f 44 65 76 69 63 65 4e 61 6d 65 3e   ect</DeviceName>
+0320  3c 44 65 76 69 63 65 49 64 3e 39 3c 2f 44 65 76   <DeviceId>9</Dev
+0330  69 63 65 49 64 3e 3c 43 6f 6e 6e 65 63 74 65 64   iceId><Connected
+0340  3e 46 61 6c 73 65 3c 2f 43 6f 6e 6e 65 63 74 65   >False</Connecte
+0350  64 3e 3c 2f 44 65 76 69 63 65 3e 3c 44 65 76 69   d></Device><Devi
+0360  63 65 3e 3c 44 65 76 69 63 65 4e 61 6d 65 3e 34   ce><DeviceName>4
+0370  30 36 20 53 69 6e 67 6c 65 20 53 79 72 69 6e 67   06 Single Syring
+0380  65 20 50 75 6d 70 3c 2f 44 65 76 69 63 65 4e 61   e Pump</DeviceNa
+0390  6d 65 3e 3c 44 65 76 69 63 65 49 64 3e 37 3c 2f   me><DeviceId>7</
+03a0  44 65 76 69 63 65 49 64 3e 3c 43 6f 6e 6e 65 63   DeviceId><Connec
+03b0  74 65 64 3e 46 61 6c 73 65 3c 2f 43 6f 6e 6e 65   ted>False</Conne
+03c0  63 74 65 64 3e 3c 2f 44 65 76 69 63 65 3e 3c 2f   cted></Device></
+03d0  44 65 76 69 63 65 73 3e 3c 2f 53 74 61 74 75 73   Devices></Status
+03e0  3e 3c 2f 47 69 6c 73 6f 6e 3e 3c 2f 4d 65 73 73   ></Gilson></Mess
+03f0  61 67 65 3e                                       age>
+
+No.     Time           Source                Destination           Protocol Length Info
+   1360 8.831486       192.168.1.100         192.168.1.101         TCP      54     54831 → 50190 [ACK] Seq=924 Ack=4063 Win=130048 Len=0
+
+Frame 1360: 54 bytes on wire (432 bits), 54 bytes captured (432 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: Dell_b8:f8:97 (98:90:96:b8:f8:97), Dst: DigiBoard_a2:56:92 (00:40:9d:a2:56:92)
+Internet Protocol Version 4, Src: 192.168.1.100, Dst: 192.168.1.101
+Transmission Control Protocol, Src Port: 54831, Dst Port: 50190, Seq: 924, Ack: 4063, Len: 0
+
+No.     Time           Source                Destination           Protocol Length Info
+   1362 8.833857       192.168.1.101         192.168.1.100         TCP      1066   50190 → 54831 [PSH, ACK] Seq=4063 Ack=924 Win=8192 Len=1012
+
+Frame 1362: 1066 bytes on wire (8528 bits), 1066 bytes captured (8528 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: DigiBoard_a2:56:92 (00:40:9d:a2:56:92), Dst: Dell_b8:f8:97 (98:90:96:b8:f8:97)
+Internet Protocol Version 4, Src: 192.168.1.101, Dst: 192.168.1.100
+Transmission Control Protocol, Src Port: 50190, Dst Port: 54831, Seq: 4063, Ack: 924, Len: 1012
+Data (1012 bytes)
+
+0000  3c 4d 65 73 73 61 67 65 20 4d 65 73 73 61 67 65   <Message Message
+0010  49 64 3d 22 31 38 32 22 20 42 6c 6f 63 6b 43 6f   Id="182" BlockCo
+0020  75 6e 74 3d 22 32 22 20 42 6c 6f 63 6b 49 64 3d   unt="2" BlockId=
+0030  22 31 22 3e 61 72 61 6d 65 74 65 72 4e 61 6d 65   "1">arameterName
+0040  3e 3c 50 61 72 61 6d 65 74 65 72 56 61 6c 75 65   ><ParameterValue
+0050  3e 2d 31 3c 2f 50 61 72 61 6d 65 74 65 72 56 61   >-1</ParameterVa
+0060  6c 75 65 3e 3c 2f 52 65 74 75 72 6e 50 61 72 61   lue></ReturnPara
+0070  6d 65 74 65 72 3e 3c 2f 52 65 74 75 72 6e 50 61   meter></ReturnPa
+0080  72 61 6d 65 74 65 72 73 3e 3c 2f 50 61 72 61 6d   rameters></Param
+0090  65 74 65 72 56 61 6c 75 65 3e 3c 2f 50 61 72 61   eterValue></Para
+00a0  6d 65 74 65 72 3e 3c 2f 50 61 72 61 6d 65 74 65   meter></Paramete
+00b0  72 73 3e 3c 2f 43 6f 6d 6d 61 6e 64 3e 3c 43 6f   rs></Command><Co
+00c0  6d 6d 61 6e 64 3e 3c 43 6f 6d 6d 61 6e 64 4e 61   mmand><CommandNa
+00d0  6d 65 3e 47 65 74 20 5a 20 50 6f 73 69 74 69 6f   me>Get Z Positio
+00e0  6e 3c 2f 43 6f 6d 6d 61 6e 64 4e 61 6d 65 3e 3c   n</CommandName><
+00f0  50 61 72 61 6d 65 74 65 72 73 3e 3c 50 61 72 61   Parameters><Para
+0100  6d 65 74 65 72 3e 3c 50 61 72 61 6d 65 74 65 72   meter><Parameter
+0110  4e 61 6d 65 3e 52 65 73 70 6f 6e 73 65 43 6f 64   Name>ResponseCod
+0120  65 3c 2f 50 61 72 61 6d 65 74 65 72 4e 61 6d 65   e</ParameterName
+0130  3e 3c 50 61 72 61 6d 65 74 65 72 56 61 6c 75 65   ><ParameterValue
+0140  3e 32 3c 2f 50 61 72 61 6d 65 74 65 72 56 61 6c   >2</ParameterVal
+0150  75 65 3e 3c 2f 50 61 72 61 6d 65 74 65 72 3e 3c   ue></Parameter><
+0160  50 61 72 61 6d 65 74 65 72 3e 3c 50 61 72 61 6d   Parameter><Param
+0170  65 74 65 72 4e 61 6d 65 3e 52 65 73 70 6f 6e 73   eterName>Respons
+0180  65 56 61 6c 75 65 3c 2f 50 61 72 61 6d 65 74 65   eValue</Paramete
+0190  72 4e 61 6d 65 3e 3c 50 61 72 61 6d 65 74 65 72   rName><Parameter
+01a0  56 61 6c 75 65 3e 3c 52 65 74 75 72 6e 50 61 72   Value><ReturnPar
+01b0  61 6d 65 74 65 72 73 3e 3c 52 65 74 75 72 6e 50   ameters><ReturnP
+01c0  61 72 61 6d 65 74 65 72 3e 3c 50 61 72 61 6d 65   arameter><Parame
+01d0  74 65 72 4e 61 6d 65 3e 5a 20 50 6f 73 69 74 69   terName>Z Positi
+01e0  6f 6e 3c 2f 50 61 72 61 6d 65 74 65 72 4e 61 6d   on</ParameterNam
+01f0  65 3e 3c 50 61 72 61 6d 65 74 65 72 56 61 6c 75   e><ParameterValu
+0200  65 3e 2d 31 3c 2f 50 61 72 61 6d 65 74 65 72 56   e>-1</ParameterV
+0210  61 6c 75 65 3e 3c 2f 52 65 74 75 72 6e 50 61 72   alue></ReturnPar
+0220  61 6d 65 74 65 72 3e 3c 2f 52 65 74 75 72 6e 50   ameter></ReturnP
+0230  61 72 61 6d 65 74 65 72 73 3e 3c 2f 50 61 72 61   arameters></Para
+0240  6d 65 74 65 72 56 61 6c 75 65 3e 3c 2f 50 61 72   meterValue></Par
+0250  61 6d 65 74 65 72 3e 3c 2f 50 61 72 61 6d 65 74   ameter></Paramet
+0260  65 72 73 3e 3c 2f 43 6f 6d 6d 61 6e 64 3e 3c 2f   ers></Command></
+0270  43 6f 6d 6d 61 6e 64 73 3e 3c 2f 44 65 76 69 63   Commands></Devic
+0280  65 3e 3c 44 65 76 69 63 65 3e 3c 44 65 76 69 63   e><Device><Devic
+0290  65 4e 61 6d 65 3e 47 58 20 53 6f 6c 76 65 6e 74   eName>GX Solvent
+02a0  20 53 79 73 74 65 6d 3c 2f 44 65 76 69 63 65 4e    System</DeviceN
+02b0  61 6d 65 3e 3c 44 65 76 69 63 65 49 64 3e 38 3c   ame><DeviceId>8<
+02c0  2f 44 65 76 69 63 65 49 64 3e 3c 43 6f 6e 6e 65   /DeviceId><Conne
+02d0  63 74 65 64 3e 46 61 6c 73 65 3c 2f 43 6f 6e 6e   cted>False</Conn
+02e0  65 63 74 65 64 3e 3c 2f 44 65 76 69 63 65 3e 3c   ected></Device><
+02f0  44 65 76 69 63 65 3e 3c 44 65 76 69 63 65 4e 61   Device><DeviceNa
+0300  6d 65 3e 47 58 20 44 69 72 65 63 74 20 49 6e 6a   me>GX Direct Inj
+0310  65 63 74 3c 2f 44 65 76 69 63 65 4e 61 6d 65 3e   ect</DeviceName>
+0320  3c 44 65 76 69 63 65 49 64 3e 39 3c 2f 44 65 76   <DeviceId>9</Dev
+0330  69 63 65 49 64 3e 3c 43 6f 6e 6e 65 63 74 65 64   iceId><Connected
+0340  3e 46 61 6c 73 65 3c 2f 43 6f 6e 6e 65 63 74 65   >False</Connecte
+0350  64 3e 3c 2f 44 65 76 69 63 65 3e 3c 44 65 76 69   d></Device><Devi
+0360  63 65 3e 3c 44 65 76 69 63 65 4e 61 6d 65 3e 34   ce><DeviceName>4
+0370  30 36 20 53 69 6e 67 6c 65 20 53 79 72 69 6e 67   06 Single Syring
+0380  65 20 50 75 6d 70 3c 2f 44 65 76 69 63 65 4e 61   e Pump</DeviceNa
+0390  6d 65 3e 3c 44 65 76 69 63 65 49 64 3e 37 3c 2f   me><DeviceId>7</
+03a0  44 65 76 69 63 65 49 64 3e 3c 43 6f 6e 6e 65 63   DeviceId><Connec
+03b0  74 65 64 3e 46 61 6c 73 65 3c 2f 43 6f 6e 6e 65   ted>False</Conne
+03c0  63 74 65 64 3e 3c 2f 44 65 76 69 63 65 3e 3c 2f   cted></Device></
+03d0  44 65 76 69 63 65 73 3e 3c 2f 53 74 61 74 75 73   Devices></Status
+03e0  3e 3c 2f 47 69 6c 73 6f 6e 3e 3c 2f 4d 65 73 73   ></Gilson></Mess
+03f0  61 67 65 3e                                       age>
+
+No.     Time           Source                Destination           Protocol Length Info
+   1368 8.862031       192.168.1.100         192.168.1.101         TCP      54     54748 → 2 [ACK] Seq=1 Ack=5075 Win=513 Len=0
+
+Frame 1368: 54 bytes on wire (432 bits), 54 bytes captured (432 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: Dell_b8:f8:97 (98:90:96:b8:f8:97), Dst: DigiBoard_a2:56:92 (00:40:9d:a2:56:92)
+Internet Protocol Version 4, Src: 192.168.1.100, Dst: 192.168.1.101
+Transmission Control Protocol, Src Port: 54748, Dst Port: 2, Seq: 1, Ack: 5075, Len: 0
+
+No.     Time           Source                Destination           Protocol Length Info
+   1370 8.877711       192.168.1.100         192.168.1.101         TCP      54     54831 → 50190 [ACK] Seq=924 Ack=5075 Win=131328 Len=0
+
+Frame 1370: 54 bytes on wire (432 bits), 54 bytes captured (432 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: Dell_b8:f8:97 (98:90:96:b8:f8:97), Dst: DigiBoard_a2:56:92 (00:40:9d:a2:56:92)
+Internet Protocol Version 4, Src: 192.168.1.100, Dst: 192.168.1.101
+Transmission Control Protocol, Src Port: 54831, Dst Port: 50190, Seq: 924, Ack: 5075, Len: 0
+
+No.     Time           Source                Destination           Protocol Length Info
+   1372 8.879480       192.168.1.101         192.168.1.100         TCP      452    50190 → 54831 [PSH, ACK] Seq=5075 Ack=924 Win=8192 Len=398
+
+Frame 1372: 452 bytes on wire (3616 bits), 452 bytes captured (3616 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: DigiBoard_a2:56:92 (00:40:9d:a2:56:92), Dst: Dell_b8:f8:97 (98:90:96:b8:f8:97)
+Internet Protocol Version 4, Src: 192.168.1.101, Dst: 192.168.1.100
+Transmission Control Protocol, Src Port: 50190, Dst Port: 54831, Seq: 5075, Ack: 924, Len: 398
+Data (398 bytes)
+
+0000  3c 4d 65 73 73 61 67 65 20 4d 65 73 73 61 67 65   <Message Message
+0010  49 64 3d 22 31 38 34 22 20 42 6c 6f 63 6b 43 6f   Id="184" BlockCo
+0020  75 6e 74 3d 22 31 22 20 42 6c 6f 63 6b 49 64 3d   unt="1" BlockId=
+0030  22 30 22 3e 3c 47 69 6c 73 6f 6e 3e 3c 52 65 73   "0"><Gilson><Res
+0040  70 6f 6e 73 65 3e 3c 53 65 71 75 65 6e 63 65 4e   ponse><SequenceN
+0050  75 6d 62 65 72 3e 31 3c 2f 53 65 71 75 65 6e 63   umber>1</Sequenc
+0060  65 4e 75 6d 62 65 72 3e 3c 43 6f 6d 6d 61 6e 64   eNumber><Command
+0070  4e 61 6d 65 3e 41 64 6d 69 6e 3c 2f 43 6f 6d 6d   Name>Admin</Comm
+0080  61 6e 64 4e 61 6d 65 3e 3c 50 61 72 61 6d 65 74   andName><Paramet
+0090  65 72 73 3e 3c 50 61 72 61 6d 65 74 65 72 3e 3c   ers><Parameter><
+00a0  50 61 72 61 6d 65 74 65 72 4e 61 6d 65 3e 52 65   ParameterName>Re
+00b0  73 70 6f 6e 73 65 43 6f 64 65 3c 2f 50 61 72 61   sponseCode</Para
+00c0  6d 65 74 65 72 4e 61 6d 65 3e 3c 50 61 72 61 6d   meterName><Param
+00d0  65 74 65 72 56 61 6c 75 65 3e 32 3c 2f 50 61 72   eterValue>2</Par
+00e0  61 6d 65 74 65 72 56 61 6c 75 65 3e 3c 2f 50 61   ameterValue></Pa
+00f0  72 61 6d 65 74 65 72 3e 3c 50 61 72 61 6d 65 74   rameter><Paramet
+0100  65 72 3e 3c 50 61 72 61 6d 65 74 65 72 4e 61 6d   er><ParameterNam
+0110  65 3e 52 65 73 70 6f 6e 73 65 56 61 6c 75 65 3c   e>ResponseValue<
+0120  2f 50 61 72 61 6d 65 74 65 72 4e 61 6d 65 3e 3c   /ParameterName><
+0130  50 61 72 61 6d 65 74 65 72 56 61 6c 75 65 3e 53   ParameterValue>S
+0140  75 63 63 65 73 73 3c 2f 50 61 72 61 6d 65 74 65   uccess</Paramete
+0150  72 56 61 6c 75 65 3e 3c 2f 50 61 72 61 6d 65 74   rValue></Paramet
+0160  65 72 3e 3c 2f 50 61 72 61 6d 65 74 65 72 73 3e   er></Parameters>
+0170  3c 2f 52 65 73 70 6f 6e 73 65 3e 3c 2f 47 69 6c   </Response></Gil
+0180  73 6f 6e 3e 3c 2f 4d 65 73 73 61 67 65 3e         son></Message>
+
+No.     Time           Source                Destination           Protocol Length Info
+   1379 8.924670       192.168.1.100         192.168.1.101         TCP      54     54831 → 50190 [ACK] Seq=924 Ack=5473 Win=130816 Len=0
+
+Frame 1379: 54 bytes on wire (432 bits), 54 bytes captured (432 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: Dell_b8:f8:97 (98:90:96:b8:f8:97), Dst: DigiBoard_a2:56:92 (00:40:9d:a2:56:92)
+Internet Protocol Version 4, Src: 192.168.1.100, Dst: 192.168.1.101
+Transmission Control Protocol, Src Port: 54831, Dst Port: 50190, Seq: 924, Ack: 5473, Len: 0
+
+No.     Time           Source                Destination           Protocol Length Info
+   1422 9.180130       192.168.1.100         192.168.1.101         TCP      980    54831 → 50190 [PSH, ACK] Seq=924 Ack=5473 Win=130816 Len=926
+
+Frame 1422: 980 bytes on wire (7840 bits), 980 bytes captured (7840 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: Dell_b8:f8:97 (98:90:96:b8:f8:97), Dst: DigiBoard_a2:56:92 (00:40:9d:a2:56:92)
+Internet Protocol Version 4, Src: 192.168.1.100, Dst: 192.168.1.101
+Transmission Control Protocol, Src Port: 54831, Dst Port: 50190, Seq: 924, Ack: 5473, Len: 926
+Data (926 bytes)
+
+0000  3c 4d 65 73 73 61 67 65 20 4d 65 73 73 61 67 65   <Message Message
+0010  49 64 3d 22 39 33 33 32 32 22 20 42 6c 6f 63 6b   Id="93322" Block
+0020  43 6f 75 6e 74 3d 22 32 22 20 42 6c 6f 63 6b 49   Count="2" BlockI
+0030  64 3d 22 30 22 3e 0d 0a 20 20 20 20 20 20 20 20   d="0">..        
+0040  20 20 3c 47 69 6c 73 6f 6e 3e 0d 0a 20 20 20 20     <Gilson>..    
+0050  20 20 20 20 20 20 20 20 3c 43 6f 6d 6d 61 6e 64           <Command
+0060  44 61 74 61 3e 0d 0a 20 20 20 20 20 20 20 20 20   Data>..         
+0070  20 20 20 20 20 3c 43 6f 6d 6d 61 6e 64 73 3e 0d        <Commands>.
+0080  0a 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20   .               
+0090  20 3c 43 6f 6d 6d 61 6e 64 3e 0d 0a 20 20 20 20    <Command>..    
+00a0  20 20 20 20 20 20 20 20 20 20 20 20 20 20 3c 43                 <C
+00b0  6f 6d 6d 61 6e 64 54 79 70 65 3e 4c 6f 63 61 6c   ommandType>Local
+00c0  3c 2f 43 6f 6d 6d 61 6e 64 54 79 70 65 3e 0d 0a   </CommandType>..
+00d0  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                   
+00e0  20 20 3c 43 6f 6d 6d 61 6e 64 49 6e 66 6f 3e 0d     <CommandInfo>.
+00f0  0a 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20   .               
+0100  20 20 20 20 20 3c 49 6e 73 74 72 75 6d 65 6e 74        <Instrument
+0110  49 6e 66 6f 3e 0d 0a 20 20 20 20 20 20 20 20 20   Info>..         
+0120  20 20 20 20 20 20 20 20 20 20 20 20 20 3c 44 65                <De
+0130  76 69 63 65 4e 61 6d 65 3e 47 58 2d 32 37 78 3c   viceName>GX-27x<
+0140  2f 44 65 76 69 63 65 4e 61 6d 65 3e 0d 0a 20 20   /DeviceName>..  
+0150  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                   
+0160  20 20 20 20 3c 44 65 76 69 63 65 49 64 3e 33 35       <DeviceId>35
+0170  3c 2f 44 65 76 69 63 65 49 64 3e 0d 0a 20 20 20   </DeviceId>..   
+0180  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                   
+0190  20 3c 2f 49 6e 73 74 72 75 6d 65 6e 74 49 6e 66    </InstrumentInf
+01a0  6f 3e 0d 0a 20 20 20 20 20 20 20 20 20 20 20 20   o>..            
+01b0  20 20 20 20 20 20 20 20 3c 53 65 71 75 65 6e 63           <Sequenc
+01c0  65 4e 75 6d 62 65 72 3e 32 3c 2f 53 65 71 75 65   eNumber>2</Seque
+01d0  6e 63 65 4e 75 6d 62 65 72 3e 0d 0a 20 20 20 20   nceNumber>..    
+01e0  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                   
+01f0  3c 53 79 6e 63 68 72 6f 6e 69 7a 65 3e 54 72 75   <Synchronize>Tru
+0200  65 3c 2f 53 79 6e 63 68 72 6f 6e 69 7a 65 3e 0d   e</Synchronize>.
+0210  0a 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20   .               
+0220  20 20 20 20 20 3c 53 65 6c 65 63 74 65 64 3e 46        <Selected>F
+0230  61 6c 73 65 3c 2f 53 65 6c 65 63 74 65 64 3e 0d   alse</Selected>.
+0240  0a 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20   .               
+0250  20 20 20 20 20 3c 43 6f 6d 6d 61 6e 64 58 4d 4c        <CommandXML
+0260  3e 0d 0a 20 20 20 20 20 20 20 20 20 20 20 20 20   >..             
+0270  20 20 20 20 20 20 20 20 20 3c 43 6f 6d 6d 61 6e            <Comman
+0280  64 4e 61 6d 65 3e 49 64 65 6e 74 69 66 79 3c 2f   dName>Identify</
+0290  43 6f 6d 6d 61 6e 64 4e 61 6d 65 3e 0d 0a 20 20   CommandName>..  
+02a0  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                   
+02b0  20 20 3c 2f 43 6f 6d 6d 61 6e 64 58 4d 4c 3e 0d     </CommandXML>.
+02c0  0a 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20   .               
+02d0  20 20 20 3c 2f 43 6f 6d 6d 61 6e 64 49 6e 66 6f      </CommandInfo
+02e0  3e 0d 0a 20 20 20 20 20 20 20 20 20 20 20 20 20   >..             
+02f0  20 20 20 3c 2f 43 6f 6d 6d 61 6e 64 3e 0d 0a 20      </Command>.. 
+0300  20 20 20 20 20 20 20 20 20 20 20 20 20 3c 2f 43                </C
+0310  6f 6d 6d 61 6e 64 73 3e 0d 0a 20 20 20 20 20 20   ommands>..      
+0320  20 20 20 20 20 20 3c 2f 43 6f 6d 6d 61 6e 64 44         </CommandD
+0330  61 74 61 3e 0d 0a 20 20 20 20 20 20 20 20 20 20   ata>..          
+0340  3c 2f 47 69 6c 73 6f 6e 3e 0d 0a 20 20 20 20 20   </Gilson>..     
+0350  20 20 20 3c 2f 4d 65 73 73 61 67 65 3e 0d 0a 20      </Message>.. 
+0360  20 20 20 20 20 20 20 3c 4d 65 73 73 61 67 65 20          <Message 
+0370  4d 65 73 73 61 67 65 49 64 3d 22 39 33 33 32 32   MessageId="93322
+0380  22 20 42 6c 6f 63 6b 43 6f 75 6e 74 3d 22 32 22   " BlockCount="2"
+0390  20 42 6c 6f 63 6b 49 64 3d 22 31 22 2f 3e          BlockId="1"/>
+
+No.     Time           Source                Destination           Protocol Length Info
+   1424 9.191352       192.168.1.101         192.168.1.100         TCP      1042   50190 → 54831 [PSH, ACK] Seq=5473 Ack=1850 Win=8192 Len=988
+
+Frame 1424: 1042 bytes on wire (8336 bits), 1042 bytes captured (8336 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: DigiBoard_a2:56:92 (00:40:9d:a2:56:92), Dst: Dell_b8:f8:97 (98:90:96:b8:f8:97)
+Internet Protocol Version 4, Src: 192.168.1.101, Dst: 192.168.1.100
+Transmission Control Protocol, Src Port: 50190, Dst Port: 54831, Seq: 5473, Ack: 1850, Len: 988
+Data (988 bytes)
+
+0000  3c 4d 65 73 73 61 67 65 20 4d 65 73 73 61 67 65   <Message Message
+0010  49 64 3d 22 31 38 35 22 20 42 6c 6f 63 6b 43 6f   Id="185" BlockCo
+0020  75 6e 74 3d 22 31 22 20 42 6c 6f 63 6b 49 64 3d   unt="1" BlockId=
+0030  22 30 22 3e 0d 0a 20 20 20 20 20 20 20 20 3c 2f   "0">..        </
+0040  4d 65 73 73 61 67 65 3e 0d 0a 20 20 20 20 20 20   Message>..      
+0050  20 20 3c 4d 65 73 73 61 67 65 20 4d 65 73 73 61     <Message Messa
+0060  67 65 49 64 3d 22 39 32 37 36 39 22 20 42 6c 6f   geId="92769" Blo
+0070  63 6b 43 6f 75 6e 74 3d 22 32 22 20 42 6c 6f 63   ckCount="2" Bloc
+0080  6b 49 64 3d 22 31 22 2f 3e 3c 4d 65 73 73 61 67   kId="1"/><Messag
+0090  65 20 4d 65 73 73 61 67 65 49 64 3d 22 39 33 33   e MessageId="933
+00a0  32 32 22 20 42 6c 6f 63 6b 43 6f 75 6e 74 3d 22   22" BlockCount="
+00b0  32 22 20 42 6c 6f 63 6b 49 64 3d 22 30 22 3e 0d   2" BlockId="0">.
+00c0  0a 20 20 20 20 20 20 20 20 20 20 3c 47 69 6c 73   .          <Gils
+00d0  6f 6e 3e 0d 0a 20 20 20 20 20 20 20 20 20 20 20   on>..           
+00e0  20 3c 43 6f 6d 6d 61 6e 64 44 61 74 61 3e 0d 0a    <CommandData>..
+00f0  20 20 20 20 20 20 20 20 20 20 20 20 20 20 3c 43                 <C
+0100  6f 6d 6d 61 6e 64 73 3e 0d 0a 20 20 20 20 20 20   ommands>..      
+0110  20 20 20 20 20 20 20 20 20 20 3c 43 6f 6d 6d 61             <Comma
+0120  6e 64 3e 0d 0a 20 20 20 20 20 20 20 20 20 20 20   nd>..           
+0130  20 20 20 20 20 20 20 3c 43 6f 6d 6d 61 6e 64 54          <CommandT
+0140  79 70 65 3e 4c 6f 63 61 6c 3c 2f 43 6f 6d 6d 61   ype>Local</Comma
+0150  6e 64 54 79 70 65 3e 0d 0a 20 20 20 20 20 20 20   ndType>..       
+0160  20 20 20 20 20 20 20 20 20 20 20 3c 43 6f 6d 6d              <Comm
+0170  61 6e 64 49 6e 66 6f 3e 0d 0a 20 20 20 20 20 20   andInfo>..      
+0180  20 20 20 20 20 20 20 20 20 20 20 20 20 20 3c 49                 <I
+0190  6e 73 74 72 75 6d 65 6e 74 49 6e 66 6f 3e 0d 0a   nstrumentInfo>..
+01a0  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                   
+01b0  20 20 20 20 20 20 3c 44 65 76 69 63 65 4e 61 6d         <DeviceNam
+01c0  65 3e 47 58 2d 32 37 78 3c 2f 44 65 76 69 63 65   e>GX-27x</Device
+01d0  4e 61 6d 65 3e 0d 0a 20 20 20 20 20 20 20 20 20   Name>..         
+01e0  20 20 20 20 20 20 20 20 20 20 20 20 20 3c 44 65                <De
+01f0  76 69 63 65 49 64 3e 33 35 3c 2f 44 65 76 69 63   viceId>35</Devic
+0200  65 49 64 3e 0d 0a 20 20 20 20 20 20 20 20 20 20   eId>..          
+0210  20 20 20 20 20 20 20 20 20 20 3c 2f 49 6e 73 74             </Inst
+0220  72 75 6d 65 6e 74 49 6e 66 6f 3e 0d 0a 20 20 20   rumentInfo>..   
+0230  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                   
+0240  20 3c 53 65 71 75 65 6e 63 65 4e 75 6d 62 65 72    <SequenceNumber
+0250  3e 32 3c 2f 53 65 71 75 65 6e 63 65 4e 75 6d 62   >2</SequenceNumb
+0260  65 72 3e 0d 0a 20 20 20 20 20 20 20 20 20 20 20   er>..           
+0270  20 20 20 20 20 20 20 20 20 3c 53 79 6e 63 68 72            <Synchr
+0280  6f 6e 69 7a 65 3e 54 72 75 65 3c 2f 53 79 6e 63   onize>True</Sync
+0290  68 72 6f 6e 69 7a 65 3e 0d 0a 20 20 20 20 20 20   hronize>..      
+02a0  20 20 20 20 20 20 20 20 20 20 20 20 20 20 3c 53                 <S
+02b0  65 6c 65 63 74 65 64 3e 46 61 6c 73 65 3c 2f 53   elected>False</S
+02c0  65 6c 65 63 74 65 64 3e 0d 0a 20 20 20 20 20 20   elected>..      
+02d0  20 20 20 20 20 20 20 20 20 20 20 20 20 20 3c 43                 <C
+02e0  6f 6d 6d 61 6e 64 58 4d 4c 3e 0d 0a 20 20 20 20   ommandXML>..    
+02f0  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                   
+0300  20 20 3c 43 6f 6d 6d 61 6e 64 4e 61 6d 65 3e 49     <CommandName>I
+0310  64 65 6e 74 69 66 79 3c 2f 43 6f 6d 6d 61 6e 64   dentify</Command
+0320  4e 61 6d 65 3e 0d 0a 20 20 20 20 20 20 20 20 20   Name>..         
+0330  20 20 20 20 20 20 20 20 20 20 20 3c 2f 43 6f 6d              </Com
+0340  6d 61 6e 64 58 4d 4c 3e 0d 0a 20 20 20 20 20 20   mandXML>..      
+0350  20 20 20 20 20 20 20 20 20 20 20 20 3c 2f 43 6f               </Co
+0360  6d 6d 61 6e 64 49 6e 66 6f 3e 0d 0a 20 20 20 20   mmandInfo>..    
+0370  20 20 20 20 20 20 20 20 20 20 20 20 3c 2f 43 6f               </Co
+0380  6d 6d 61 6e 64 3e 0d 0a 20 20 20 20 20 20 20 20   mmand>..        
+0390  20 20 20 20 20 20 3c 2f 43 6f 6d 6d 61 6e 64 73         </Commands
+03a0  3e 0d 0a 20 20 20 20 20 20 20 20 20 20 20 20 3c   >..            <
+03b0  2f 43 6f 6d 6d 61 6e 64 44 61 74 61 3e 0d 0a 20   /CommandData>.. 
+03c0  20 20 20 20 20 20 20 20 20 3c 2f 47 69 6c 73 6f            </Gilso
+03d0  6e 3e 3c 2f 4d 65 73 73 61 67 65 3e               n></Message>
+
+No.     Time           Source                Destination           Protocol Length Info
+   1438 9.236713       192.168.1.100         192.168.1.101         TCP      54     54831 → 50190 [ACK] Seq=1850 Ack=6461 Win=129792 Len=0
+
+Frame 1438: 54 bytes on wire (432 bits), 54 bytes captured (432 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: Dell_b8:f8:97 (98:90:96:b8:f8:97), Dst: DigiBoard_a2:56:92 (00:40:9d:a2:56:92)
+Internet Protocol Version 4, Src: 192.168.1.100, Dst: 192.168.1.101
+Transmission Control Protocol, Src Port: 54831, Dst Port: 50190, Seq: 1850, Ack: 6461, Len: 0
+
+No.     Time           Source                Destination           Protocol Length Info
+   1478 9.718678       192.168.1.100         192.168.1.101         TCP      987    54831 → 50190 [PSH, ACK] Seq=1850 Ack=6461 Win=129792 Len=933
+
+Frame 1478: 987 bytes on wire (7896 bits), 987 bytes captured (7896 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: Dell_b8:f8:97 (98:90:96:b8:f8:97), Dst: DigiBoard_a2:56:92 (00:40:9d:a2:56:92)
+Internet Protocol Version 4, Src: 192.168.1.100, Dst: 192.168.1.101
+Transmission Control Protocol, Src Port: 54831, Dst Port: 50190, Seq: 1850, Ack: 6461, Len: 933
+Data (933 bytes)
+
+0000  3c 4d 65 73 73 61 67 65 20 4d 65 73 73 61 67 65   <Message Message
+0010  49 64 3d 22 39 33 38 36 30 22 20 42 6c 6f 63 6b   Id="93860" Block
+0020  43 6f 75 6e 74 3d 22 32 22 20 42 6c 6f 63 6b 49   Count="2" BlockI
+0030  64 3d 22 30 22 3e 0d 0a 20 20 20 20 20 20 20 20   d="0">..        
+0040  20 20 3c 47 69 6c 73 6f 6e 3e 0d 0a 20 20 20 20     <Gilson>..    
+0050  20 20 20 20 20 20 20 20 3c 43 6f 6d 6d 61 6e 64           <Command
+0060  44 61 74 61 3e 0d 0a 20 20 20 20 20 20 20 20 20   Data>..         
+0070  20 20 20 20 20 3c 43 6f 6d 6d 61 6e 64 73 3e 0d        <Commands>.
+0080  0a 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20   .               
+0090  20 3c 43 6f 6d 6d 61 6e 64 3e 0d 0a 20 20 20 20    <Command>..    
+00a0  20 20 20 20 20 20 20 20 20 20 20 20 20 20 3c 43                 <C
+00b0  6f 6d 6d 61 6e 64 54 79 70 65 3e 4c 6f 63 61 6c   ommandType>Local
+00c0  3c 2f 43 6f 6d 6d 61 6e 64 54 79 70 65 3e 0d 0a   </CommandType>..
+00d0  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                   
+00e0  20 20 3c 43 6f 6d 6d 61 6e 64 49 6e 66 6f 3e 0d     <CommandInfo>.
+00f0  0a 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20   .               
+0100  20 20 20 20 20 3c 49 6e 73 74 72 75 6d 65 6e 74        <Instrument
+0110  49 6e 66 6f 3e 0d 0a 20 20 20 20 20 20 20 20 20   Info>..         
+0120  20 20 20 20 20 20 20 20 20 20 20 20 20 3c 44 65                <De
+0130  76 69 63 65 4e 61 6d 65 3e 47 58 2d 32 37 78 3c   viceName>GX-27x<
+0140  2f 44 65 76 69 63 65 4e 61 6d 65 3e 0d 0a 20 20   /DeviceName>..  
+0150  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                   
+0160  20 20 20 20 3c 44 65 76 69 63 65 49 64 3e 33 35       <DeviceId>35
+0170  3c 2f 44 65 76 69 63 65 49 64 3e 0d 0a 20 20 20   </DeviceId>..   
+0180  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                   
+0190  20 3c 2f 49 6e 73 74 72 75 6d 65 6e 74 49 6e 66    </InstrumentInf
+01a0  6f 3e 0d 0a 20 20 20 20 20 20 20 20 20 20 20 20   o>..            
+01b0  20 20 20 20 20 20 20 20 3c 53 65 71 75 65 6e 63           <Sequenc
+01c0  65 4e 75 6d 62 65 72 3e 33 3c 2f 53 65 71 75 65   eNumber>3</Seque
+01d0  6e 63 65 4e 75 6d 62 65 72 3e 0d 0a 20 20 20 20   nceNumber>..    
+01e0  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                   
+01f0  3c 53 79 6e 63 68 72 6f 6e 69 7a 65 3e 54 72 75   <Synchronize>Tru
+0200  65 3c 2f 53 79 6e 63 68 72 6f 6e 69 7a 65 3e 0d   e</Synchronize>.
+0210  0a 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20   .               
+0220  20 20 20 20 20 3c 53 65 6c 65 63 74 65 64 3e 46        <Selected>F
+0230  61 6c 73 65 3c 2f 53 65 6c 65 63 74 65 64 3e 0d   alse</Selected>.
+0240  0a 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20   .               
+0250  20 20 20 20 20 3c 43 6f 6d 6d 61 6e 64 58 4d 4c        <CommandXML
+0260  3e 0d 0a 20 20 20 20 20 20 20 20 20 20 20 20 20   >..             
+0270  20 20 20 20 20 20 20 20 20 3c 43 6f 6d 6d 61 6e            <Comman
+0280  64 4e 61 6d 65 3e 47 65 74 20 58 59 20 50 6f 73   dName>Get XY Pos
+0290  69 74 69 6f 6e 3c 2f 43 6f 6d 6d 61 6e 64 4e 61   ition</CommandNa
+02a0  6d 65 3e 0d 0a 20 20 20 20 20 20 20 20 20 20 20   me>..           
+02b0  20 20 20 20 20 20 20 20 20 3c 2f 43 6f 6d 6d 61            </Comma
+02c0  6e 64 58 4d 4c 3e 0d 0a 20 20 20 20 20 20 20 20   ndXML>..        
+02d0  20 20 20 20 20 20 20 20 20 20 3c 2f 43 6f 6d 6d             </Comm
+02e0  61 6e 64 49 6e 66 6f 3e 0d 0a 20 20 20 20 20 20   andInfo>..      
+02f0  20 20 20 20 20 20 20 20 20 20 3c 2f 43 6f 6d 6d             </Comm
+0300  61 6e 64 3e 0d 0a 20 20 20 20 20 20 20 20 20 20   and>..          
+0310  20 20 20 20 3c 2f 43 6f 6d 6d 61 6e 64 73 3e 0d       </Commands>.
+0320  0a 20 20 20 20 20 20 20 20 20 20 20 20 3c 2f 43   .            </C
+0330  6f 6d 6d 61 6e 64 44 61 74 61 3e 0d 0a 20 20 20   ommandData>..   
+0340  20 20 20 20 20 20 20 3c 2f 47 69 6c 73 6f 6e 3e          </Gilson>
+0350  0d 0a 20 20 20 20 20 20 20 20 3c 2f 4d 65 73 73   ..        </Mess
+0360  61 67 65 3e 0d 0a 20 20 20 20 20 20 20 20 3c 4d   age>..        <M
+0370  65 73 73 61 67 65 20 4d 65 73 73 61 67 65 49 64   essage MessageId
+0380  3d 22 39 33 38 36 30 22 20 42 6c 6f 63 6b 43 6f   ="93860" BlockCo
+0390  75 6e 74 3d 22 32 22 20 42 6c 6f 63 6b 49 64 3d   unt="2" BlockId=
+03a0  22 31 22 2f 3e                                    "1"/>
+
+No.     Time           Source                Destination           Protocol Length Info
+   1480 9.731504       192.168.1.101         192.168.1.100         TCP      1049   50190 → 54831 [PSH, ACK] Seq=6461 Ack=2783 Win=8192 Len=995
+
+Frame 1480: 1049 bytes on wire (8392 bits), 1049 bytes captured (8392 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: DigiBoard_a2:56:92 (00:40:9d:a2:56:92), Dst: Dell_b8:f8:97 (98:90:96:b8:f8:97)
+Internet Protocol Version 4, Src: 192.168.1.101, Dst: 192.168.1.100
+Transmission Control Protocol, Src Port: 50190, Dst Port: 54831, Seq: 6461, Ack: 2783, Len: 995
+Data (995 bytes)
+
+0000  3c 4d 65 73 73 61 67 65 20 4d 65 73 73 61 67 65   <Message Message
+0010  49 64 3d 22 31 38 36 22 20 42 6c 6f 63 6b 43 6f   Id="186" BlockCo
+0020  75 6e 74 3d 22 31 22 20 42 6c 6f 63 6b 49 64 3d   unt="1" BlockId=
+0030  22 30 22 3e 0d 0a 20 20 20 20 20 20 20 20 3c 2f   "0">..        </
+0040  4d 65 73 73 61 67 65 3e 0d 0a 20 20 20 20 20 20   Message>..      
+0050  20 20 3c 4d 65 73 73 61 67 65 20 4d 65 73 73 61     <Message Messa
+0060  67 65 49 64 3d 22 39 33 33 32 32 22 20 42 6c 6f   geId="93322" Blo
+0070  63 6b 43 6f 75 6e 74 3d 22 32 22 20 42 6c 6f 63   ckCount="2" Bloc
+0080  6b 49 64 3d 22 31 22 2f 3e 3c 4d 65 73 73 61 67   kId="1"/><Messag
+0090  65 20 4d 65 73 73 61 67 65 49 64 3d 22 39 33 38   e MessageId="938
+00a0  36 30 22 20 42 6c 6f 63 6b 43 6f 75 6e 74 3d 22   60" BlockCount="
+00b0  32 22 20 42 6c 6f 63 6b 49 64 3d 22 30 22 3e 0d   2" BlockId="0">.
+00c0  0a 20 20 20 20 20 20 20 20 20 20 3c 47 69 6c 73   .          <Gils
+00d0  6f 6e 3e 0d 0a 20 20 20 20 20 20 20 20 20 20 20   on>..           
+00e0  20 3c 43 6f 6d 6d 61 6e 64 44 61 74 61 3e 0d 0a    <CommandData>..
+00f0  20 20 20 20 20 20 20 20 20 20 20 20 20 20 3c 43                 <C
+0100  6f 6d 6d 61 6e 64 73 3e 0d 0a 20 20 20 20 20 20   ommands>..      
+0110  20 20 20 20 20 20 20 20 20 20 3c 43 6f 6d 6d 61             <Comma
+0120  6e 64 3e 0d 0a 20 20 20 20 20 20 20 20 20 20 20   nd>..           
+0130  20 20 20 20 20 20 20 3c 43 6f 6d 6d 61 6e 64 54          <CommandT
+0140  79 70 65 3e 4c 6f 63 61 6c 3c 2f 43 6f 6d 6d 61   ype>Local</Comma
+0150  6e 64 54 79 70 65 3e 0d 0a 20 20 20 20 20 20 20   ndType>..       
+0160  20 20 20 20 20 20 20 20 20 20 20 3c 43 6f 6d 6d              <Comm
+0170  61 6e 64 49 6e 66 6f 3e 0d 0a 20 20 20 20 20 20   andInfo>..      
+0180  20 20 20 20 20 20 20 20 20 20 20 20 20 20 3c 49                 <I
+0190  6e 73 74 72 75 6d 65 6e 74 49 6e 66 6f 3e 0d 0a   nstrumentInfo>..
+01a0  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                   
+01b0  20 20 20 20 20 20 3c 44 65 76 69 63 65 4e 61 6d         <DeviceNam
+01c0  65 3e 47 58 2d 32 37 78 3c 2f 44 65 76 69 63 65   e>GX-27x</Device
+01d0  4e 61 6d 65 3e 0d 0a 20 20 20 20 20 20 20 20 20   Name>..         
+01e0  20 20 20 20 20 20 20 20 20 20 20 20 20 3c 44 65                <De
+01f0  76 69 63 65 49 64 3e 33 35 3c 2f 44 65 76 69 63   viceId>35</Devic
+0200  65 49 64 3e 0d 0a 20 20 20 20 20 20 20 20 20 20   eId>..          
+0210  20 20 20 20 20 20 20 20 20 20 3c 2f 49 6e 73 74             </Inst
+0220  72 75 6d 65 6e 74 49 6e 66 6f 3e 0d 0a 20 20 20   rumentInfo>..   
+0230  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                   
+0240  20 3c 53 65 71 75 65 6e 63 65 4e 75 6d 62 65 72    <SequenceNumber
+0250  3e 33 3c 2f 53 65 71 75 65 6e 63 65 4e 75 6d 62   >3</SequenceNumb
+0260  65 72 3e 0d 0a 20 20 20 20 20 20 20 20 20 20 20   er>..           
+0270  20 20 20 20 20 20 20 20 20 3c 53 79 6e 63 68 72            <Synchr
+0280  6f 6e 69 7a 65 3e 54 72 75 65 3c 2f 53 79 6e 63   onize>True</Sync
+0290  68 72 6f 6e 69 7a 65 3e 0d 0a 20 20 20 20 20 20   hronize>..      
+02a0  20 20 20 20 20 20 20 20 20 20 20 20 20 20 3c 53                 <S
+02b0  65 6c 65 63 74 65 64 3e 46 61 6c 73 65 3c 2f 53   elected>False</S
+02c0  65 6c 65 63 74 65 64 3e 0d 0a 20 20 20 20 20 20   elected>..      
+02d0  20 20 20 20 20 20 20 20 20 20 20 20 20 20 3c 43                 <C
+02e0  6f 6d 6d 61 6e 64 58 4d 4c 3e 0d 0a 20 20 20 20   ommandXML>..    
+02f0  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                   
+0300  20 20 3c 43 6f 6d 6d 61 6e 64 4e 61 6d 65 3e 47     <CommandName>G
+0310  65 74 20 58 59 20 50 6f 73 69 74 69 6f 6e 3c 2f   et XY Position</
+0320  43 6f 6d 6d 61 6e 64 4e 61 6d 65 3e 0d 0a 20 20   CommandName>..  
+0330  20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20                   
+0340  20 20 3c 2f 43 6f 6d 6d 61 6e 64 58 4d 4c 3e 0d     </CommandXML>.
+0350  0a 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20   .               
+0360  20 20 20 3c 2f 43 6f 6d 6d 61 6e 64 49 6e 66 6f      </CommandInfo
+0370  3e 0d 0a 20 20 20 20 20 20 20 20 20 20 20 20 20   >..             
+0380  20 20 20 3c 2f 43 6f 6d 6d 61 6e 64 3e 0d 0a 20      </Command>.. 
+0390  20 20 20 20 20 20 20 20 20 20 20 20 20 3c 2f 43                </C
+03a0  6f 6d 6d 61 6e 64 73 3e 0d 0a 20 20 20 20 20 20   ommands>..      
+03b0  20 20 20 20 20 20 3c 2f 43 6f 6d 6d 61 6e 64 44         </CommandD
+03c0  61 74 61 3e 0d 0a 20 20 20 20 20 20 20 20 20 20   ata>..          
+03d0  3c 2f 47 69 6c 73 6f 6e 3e 3c 2f 4d 65 73 73 61   </Gilson></Messa
+03e0  67 65 3e                                          ge>
+
+No.     Time           Source                Destination           Protocol Length Info
+   1485 9.782611       192.168.1.100         192.168.1.101         TCP      54     54831 → 50190 [ACK] Seq=2783 Ack=7456 Win=131328 Len=0
+
+Frame 1485: 54 bytes on wire (432 bits), 54 bytes captured (432 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: Dell_b8:f8:97 (98:90:96:b8:f8:97), Dst: DigiBoard_a2:56:92 (00:40:9d:a2:56:92)
+Internet Protocol Version 4, Src: 192.168.1.100, Dst: 192.168.1.101
+Transmission Control Protocol, Src Port: 54831, Dst Port: 50190, Seq: 2783, Ack: 7456, Len: 0
+
+No.     Time           Source                Destination           Protocol Length Info
+   1488 9.804277       192.168.1.101         255.255.255.255       UDP      1237   2564 → 50184 Len=1195
+
+Frame 1488: 1237 bytes on wire (9896 bits), 1237 bytes captured (9896 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: DigiBoard_a2:56:92 (00:40:9d:a2:56:92), Dst: Broadcast (ff:ff:ff:ff:ff:ff)
+Internet Protocol Version 4, Src: 192.168.1.101, Dst: 255.255.255.255
+User Datagram Protocol, Src Port: 2564, Dst Port: 50184
+Data (1195 bytes)
+
+0000  3c 47 69 6c 73 6f 6e 3e 3c 42 65 61 63 6f 6e 3e   <Gilson><Beacon>
+0010  3c 44 65 76 69 63 65 49 6e 66 6f 3e 3c 49 50 41   <DeviceInfo><IPA
+0020  64 64 72 65 73 73 3e 31 39 32 2e 31 36 38 2e 31   ddress>192.168.1
+0030  2e 31 30 31 3c 2f 49 50 41 64 64 72 65 73 73 3e   .101</IPAddress>
+0040  3c 53 75 62 6e 65 74 4d 61 73 6b 3e 32 35 35 2e   <SubnetMask>255.
+0050  32 35 35 2e 32 35 35 2e 30 3c 2f 53 75 62 6e 65   255.255.0</Subne
+0060  74 4d 61 73 6b 3e 3c 44 65 66 61 75 6c 74 47 61   tMask><DefaultGa
+0070  74 65 77 61 79 3e 31 39 32 2e 31 36 38 2e 31 2e   teway>192.168.1.
+0080  31 3c 2f 44 65 66 61 75 6c 74 47 61 74 65 77 61   1</DefaultGatewa
+0090  79 3e 3c 4d 41 43 3e 30 30 3a 34 30 3a 39 64 3a   y><MAC>00:40:9d:
+00a0  61 32 3a 35 36 3a 39 32 3c 2f 4d 41 43 3e 3c 49   a2:56:92</MAC><I
+00b0  6e 73 74 72 75 6d 65 6e 74 73 3e 3c 49 6e 73 74   nstruments><Inst
+00c0  72 75 6d 65 6e 74 3e 3c 4e 61 6d 65 3e 53 79 73   rument><Name>Sys
+00d0  74 65 6d 3c 2f 4e 61 6d 65 3e 3c 49 6e 73 74 72   tem</Name><Instr
+00e0  75 6d 65 6e 74 4e 61 6d 65 3e 53 79 73 74 65 6d   umentName>System
+00f0  3c 2f 49 6e 73 74 72 75 6d 65 6e 74 4e 61 6d 65   </InstrumentName
+0100  3e 3c 49 44 3e 2d 31 3c 2f 49 44 3e 3c 53 65 72   ><ID>-1</ID><Ser
+0110  69 61 6c 4e 75 6d 62 65 72 3e 4e 39 39 39 39 39   ialNumber>N99999
+0120  39 39 39 3c 2f 53 65 72 69 61 6c 4e 75 6d 62 65   999</SerialNumbe
+0130  72 3e 3c 2f 49 6e 73 74 72 75 6d 65 6e 74 3e 3c   r></Instrument><
+0140  49 6e 73 74 72 75 6d 65 6e 74 3e 3c 4e 61 6d 65   Instrument><Name
+0150  3e 47 58 2d 32 37 78 3c 2f 4e 61 6d 65 3e 3c 49   >GX-27x</Name><I
+0160  6e 73 74 72 75 6d 65 6e 74 4e 61 6d 65 3e 47 58   nstrumentName>GX
+0170  20 32 37 31 20 3c 2f 49 6e 73 74 72 75 6d 65 6e    271 </Instrumen
+0180  74 4e 61 6d 65 3e 3c 50 72 6f 6d 56 65 72 73 69   tName><PromVersi
+0190  6f 6e 3e 32 2e 33 2e 30 2e 31 3c 2f 50 72 6f 6d   on>2.3.0.1</Prom
+01a0  56 65 72 73 69 6f 6e 3e 3c 49 44 3e 33 35 3c 2f   Version><ID>35</
+01b0  49 44 3e 3c 53 65 72 69 61 6c 4e 75 6d 62 65 72   ID><SerialNumber
+01c0  3e 32 36 31 4a 37 4e 32 35 33 3c 2f 53 65 72 69   >261J7N253</Seri
+01d0  61 6c 4e 75 6d 62 65 72 3e 3c 2f 49 6e 73 74 72   alNumber></Instr
+01e0  75 6d 65 6e 74 3e 3c 49 6e 73 74 72 75 6d 65 6e   ument><Instrumen
+01f0  74 3e 3c 4e 61 6d 65 3e 47 58 20 53 6f 6c 76 65   t><Name>GX Solve
+0200  6e 74 20 53 79 73 74 65 6d 3c 2f 4e 61 6d 65 3e   nt System</Name>
+0210  3c 49 6e 73 74 72 75 6d 65 6e 74 4e 61 6d 65 3e   <InstrumentName>
+0220  47 58 20 53 6f 6c 76 65 6e 74 20 53 79 73 74 65   GX Solvent Syste
+0230  6d 3c 2f 49 6e 73 74 72 75 6d 65 6e 74 4e 61 6d   m</InstrumentNam
+0240  65 3e 3c 50 72 6f 6d 56 65 72 73 69 6f 6e 3e 3c   e><PromVersion><
+0250  2f 50 72 6f 6d 56 65 72 73 69 6f 6e 3e 3c 49 44   /PromVersion><ID
+0260  3e 38 3c 2f 49 44 3e 3c 53 65 72 69 61 6c 4e 75   >8</ID><SerialNu
+0270  6d 62 65 72 3e 53 65 72 69 61 6c 20 6e 75 6d 62   mber>Serial numb
+0280  65 72 20 63 6f 75 6c 64 20 6e 6f 74 20 62 65 20   er could not be 
+0290  72 65 63 65 69 76 65 64 20 66 72 6f 6d 20 64 65   received from de
+02a0  76 69 63 65 3c 2f 53 65 72 69 61 6c 4e 75 6d 62   vice</SerialNumb
+02b0  65 72 3e 3c 2f 49 6e 73 74 72 75 6d 65 6e 74 3e   er></Instrument>
+02c0  3c 49 6e 73 74 72 75 6d 65 6e 74 3e 3c 4e 61 6d   <Instrument><Nam
+02d0  65 3e 47 58 20 44 69 72 65 63 74 20 49 6e 6a 65   e>GX Direct Inje
+02e0  63 74 3c 2f 4e 61 6d 65 3e 3c 49 6e 73 74 72 75   ct</Name><Instru
+02f0  6d 65 6e 74 4e 61 6d 65 3e 47 58 20 44 69 72 65   mentName>GX Dire
+0300  63 74 20 49 6e 6a 65 63 74 3c 2f 49 6e 73 74 72   ct Inject</Instr
+0310  75 6d 65 6e 74 4e 61 6d 65 3e 3c 50 72 6f 6d 56   umentName><PromV
+0320  65 72 73 69 6f 6e 3e 3c 2f 50 72 6f 6d 56 65 72   ersion></PromVer
+0330  73 69 6f 6e 3e 3c 49 44 3e 39 3c 2f 49 44 3e 3c   sion><ID>9</ID><
+0340  53 65 72 69 61 6c 4e 75 6d 62 65 72 3e 53 65 72   SerialNumber>Ser
+0350  69 61 6c 20 6e 75 6d 62 65 72 20 63 6f 75 6c 64   ial number could
+0360  20 6e 6f 74 20 62 65 20 72 65 63 65 69 76 65 64    not be received
+0370  20 66 72 6f 6d 20 64 65 76 69 63 65 3c 2f 53 65    from device</Se
+0380  72 69 61 6c 4e 75 6d 62 65 72 3e 3c 2f 49 6e 73   rialNumber></Ins
+0390  74 72 75 6d 65 6e 74 3e 3c 49 6e 73 74 72 75 6d   trument><Instrum
+03a0  65 6e 74 3e 3c 4e 61 6d 65 3e 34 30 36 20 53 69   ent><Name>406 Si
+03b0  6e 67 6c 65 20 53 79 72 69 6e 67 65 20 50 75 6d   ngle Syringe Pum
+03c0  70 3c 2f 4e 61 6d 65 3e 3c 49 6e 73 74 72 75 6d   p</Name><Instrum
+03d0  65 6e 74 4e 61 6d 65 3e 34 30 36 20 53 69 6e 67   entName>406 Sing
+03e0  6c 65 20 53 79 72 69 6e 67 65 20 50 75 6d 70 3c   le Syringe Pump<
+03f0  2f 49 6e 73 74 72 75 6d 65 6e 74 4e 61 6d 65 3e   /InstrumentName>
+0400  3c 50 72 6f 6d 56 65 72 73 69 6f 6e 3e 3c 2f 50   <PromVersion></P
+0410  72 6f 6d 56 65 72 73 69 6f 6e 3e 3c 49 44 3e 37   romVersion><ID>7
+0420  3c 2f 49 44 3e 3c 53 65 72 69 61 6c 4e 75 6d 62   </ID><SerialNumb
+0430  65 72 3e 53 65 72 69 61 6c 20 6e 75 6d 62 65 72   er>Serial number
+0440  20 63 6f 75 6c 64 20 6e 6f 74 20 62 65 20 72 65    could not be re
+0450  63 65 69 76 65 64 20 66 72 6f 6d 20 64 65 76 69   ceived from devi
+0460  63 65 3c 2f 53 65 72 69 61 6c 4e 75 6d 62 65 72   ce</SerialNumber
+0470  3e 3c 2f 49 6e 73 74 72 75 6d 65 6e 74 3e 3c 2f   ></Instrument></
+0480  49 6e 73 74 72 75 6d 65 6e 74 73 3e 3c 2f 44 65   Instruments></De
+0490  76 69 63 65 49 6e 66 6f 3e 3c 2f 42 65 61 63 6f   viceInfo></Beaco
+04a0  6e 3e 3c 2f 47 69 6c 73 6f 6e 3e                  n></Gilson>
+
+No.     Time           Source                Destination           Protocol Length Info
+   1866 11.804680      192.168.1.101         255.255.255.255       UDP      1237   2564 → 50184 Len=1195
+
+Frame 1866: 1237 bytes on wire (9896 bits), 1237 bytes captured (9896 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: DigiBoard_a2:56:92 (00:40:9d:a2:56:92), Dst: Broadcast (ff:ff:ff:ff:ff:ff)
+Internet Protocol Version 4, Src: 192.168.1.101, Dst: 255.255.255.255
+User Datagram Protocol, Src Port: 2564, Dst Port: 50184
+Data (1195 bytes)
+
+0000  3c 47 69 6c 73 6f 6e 3e 3c 42 65 61 63 6f 6e 3e   <Gilson><Beacon>
+0010  3c 44 65 76 69 63 65 49 6e 66 6f 3e 3c 49 50 41   <DeviceInfo><IPA
+0020  64 64 72 65 73 73 3e 31 39 32 2e 31 36 38 2e 31   ddress>192.168.1
+0030  2e 31 30 31 3c 2f 49 50 41 64 64 72 65 73 73 3e   .101</IPAddress>
+0040  3c 53 75 62 6e 65 74 4d 61 73 6b 3e 32 35 35 2e   <SubnetMask>255.
+0050  32 35 35 2e 32 35 35 2e 30 3c 2f 53 75 62 6e 65   255.255.0</Subne
+0060  74 4d 61 73 6b 3e 3c 44 65 66 61 75 6c 74 47 61   tMask><DefaultGa
+0070  74 65 77 61 79 3e 31 39 32 2e 31 36 38 2e 31 2e   teway>192.168.1.
+0080  31 3c 2f 44 65 66 61 75 6c 74 47 61 74 65 77 61   1</DefaultGatewa
+0090  79 3e 3c 4d 41 43 3e 30 30 3a 34 30 3a 39 64 3a   y><MAC>00:40:9d:
+00a0  61 32 3a 35 36 3a 39 32 3c 2f 4d 41 43 3e 3c 49   a2:56:92</MAC><I
+00b0  6e 73 74 72 75 6d 65 6e 74 73 3e 3c 49 6e 73 74   nstruments><Inst
+00c0  72 75 6d 65 6e 74 3e 3c 4e 61 6d 65 3e 53 79 73   rument><Name>Sys
+00d0  74 65 6d 3c 2f 4e 61 6d 65 3e 3c 49 6e 73 74 72   tem</Name><Instr
+00e0  75 6d 65 6e 74 4e 61 6d 65 3e 53 79 73 74 65 6d   umentName>System
+00f0  3c 2f 49 6e 73 74 72 75 6d 65 6e 74 4e 61 6d 65   </InstrumentName
+0100  3e 3c 49 44 3e 2d 31 3c 2f 49 44 3e 3c 53 65 72   ><ID>-1</ID><Ser
+0110  69 61 6c 4e 75 6d 62 65 72 3e 4e 39 39 39 39 39   ialNumber>N99999
+0120  39 39 39 3c 2f 53 65 72 69 61 6c 4e 75 6d 62 65   999</SerialNumbe
+0130  72 3e 3c 2f 49 6e 73 74 72 75 6d 65 6e 74 3e 3c   r></Instrument><
+0140  49 6e 73 74 72 75 6d 65 6e 74 3e 3c 4e 61 6d 65   Instrument><Name
+0150  3e 47 58 2d 32 37 78 3c 2f 4e 61 6d 65 3e 3c 49   >GX-27x</Name><I
+0160  6e 73 74 72 75 6d 65 6e 74 4e 61 6d 65 3e 47 58   nstrumentName>GX
+0170  20 32 37 31 20 3c 2f 49 6e 73 74 72 75 6d 65 6e    271 </Instrumen
+0180  74 4e 61 6d 65 3e 3c 50 72 6f 6d 56 65 72 73 69   tName><PromVersi
+0190  6f 6e 3e 32 2e 33 2e 30 2e 31 3c 2f 50 72 6f 6d   on>2.3.0.1</Prom
+01a0  56 65 72 73 69 6f 6e 3e 3c 49 44 3e 33 35 3c 2f   Version><ID>35</
+01b0  49 44 3e 3c 53 65 72 69 61 6c 4e 75 6d 62 65 72   ID><SerialNumber
+01c0  3e 32 36 31 4a 37 4e 32 35 33 3c 2f 53 65 72 69   >261J7N253</Seri
+01d0  61 6c 4e 75 6d 62 65 72 3e 3c 2f 49 6e 73 74 72   alNumber></Instr
+01e0  75 6d 65 6e 74 3e 3c 49 6e 73 74 72 75 6d 65 6e   ument><Instrumen
+01f0  74 3e 3c 4e 61 6d 65 3e 47 58 20 53 6f 6c 76 65   t><Name>GX Solve
+0200  6e 74 20 53 79 73 74 65 6d 3c 2f 4e 61 6d 65 3e   nt System</Name>
+0210  3c 49 6e 73 74 72 75 6d 65 6e 74 4e 61 6d 65 3e   <InstrumentName>
+0220  47 58 20 53 6f 6c 76 65 6e 74 20 53 79 73 74 65   GX Solvent Syste
+0230  6d 3c 2f 49 6e 73 74 72 75 6d 65 6e 74 4e 61 6d   m</InstrumentNam
+0240  65 3e 3c 50 72 6f 6d 56 65 72 73 69 6f 6e 3e 3c   e><PromVersion><
+0250  2f 50 72 6f 6d 56 65 72 73 69 6f 6e 3e 3c 49 44   /PromVersion><ID
+0260  3e 38 3c 2f 49 44 3e 3c 53 65 72 69 61 6c 4e 75   >8</ID><SerialNu
+0270  6d 62 65 72 3e 53 65 72 69 61 6c 20 6e 75 6d 62   mber>Serial numb
+0280  65 72 20 63 6f 75 6c 64 20 6e 6f 74 20 62 65 20   er could not be 
+0290  72 65 63 65 69 76 65 64 20 66 72 6f 6d 20 64 65   received from de
+02a0  76 69 63 65 3c 2f 53 65 72 69 61 6c 4e 75 6d 62   vice</SerialNumb
+02b0  65 72 3e 3c 2f 49 6e 73 74 72 75 6d 65 6e 74 3e   er></Instrument>
+02c0  3c 49 6e 73 74 72 75 6d 65 6e 74 3e 3c 4e 61 6d   <Instrument><Nam
+02d0  65 3e 47 58 20 44 69 72 65 63 74 20 49 6e 6a 65   e>GX Direct Inje
+02e0  63 74 3c 2f 4e 61 6d 65 3e 3c 49 6e 73 74 72 75   ct</Name><Instru
+02f0  6d 65 6e 74 4e 61 6d 65 3e 47 58 20 44 69 72 65   mentName>GX Dire
+0300  63 74 20 49 6e 6a 65 63 74 3c 2f 49 6e 73 74 72   ct Inject</Instr
+0310  75 6d 65 6e 74 4e 61 6d 65 3e 3c 50 72 6f 6d 56   umentName><PromV
+0320  65 72 73 69 6f 6e 3e 3c 2f 50 72 6f 6d 56 65 72   ersion></PromVer
+0330  73 69 6f 6e 3e 3c 49 44 3e 39 3c 2f 49 44 3e 3c   sion><ID>9</ID><
+0340  53 65 72 69 61 6c 4e 75 6d 62 65 72 3e 53 65 72   SerialNumber>Ser
+0350  69 61 6c 20 6e 75 6d 62 65 72 20 63 6f 75 6c 64   ial number could
+0360  20 6e 6f 74 20 62 65 20 72 65 63 65 69 76 65 64    not be received
+0370  20 66 72 6f 6d 20 64 65 76 69 63 65 3c 2f 53 65    from device</Se
+0380  72 69 61 6c 4e 75 6d 62 65 72 3e 3c 2f 49 6e 73   rialNumber></Ins
+0390  74 72 75 6d 65 6e 74 3e 3c 49 6e 73 74 72 75 6d   trument><Instrum
+03a0  65 6e 74 3e 3c 4e 61 6d 65 3e 34 30 36 20 53 69   ent><Name>406 Si
+03b0  6e 67 6c 65 20 53 79 72 69 6e 67 65 20 50 75 6d   ngle Syringe Pum
+03c0  70 3c 2f 4e 61 6d 65 3e 3c 49 6e 73 74 72 75 6d   p</Name><Instrum
+03d0  65 6e 74 4e 61 6d 65 3e 34 30 36 20 53 69 6e 67   entName>406 Sing
+03e0  6c 65 20 53 79 72 69 6e 67 65 20 50 75 6d 70 3c   le Syringe Pump<
+03f0  2f 49 6e 73 74 72 75 6d 65 6e 74 4e 61 6d 65 3e   /InstrumentName>
+0400  3c 50 72 6f 6d 56 65 72 73 69 6f 6e 3e 3c 2f 50   <PromVersion></P
+0410  72 6f 6d 56 65 72 73 69 6f 6e 3e 3c 49 44 3e 37   romVersion><ID>7
+0420  3c 2f 49 44 3e 3c 53 65 72 69 61 6c 4e 75 6d 62   </ID><SerialNumb
+0430  65 72 3e 53 65 72 69 61 6c 20 6e 75 6d 62 65 72   er>Serial number
+0440  20 63 6f 75 6c 64 20 6e 6f 74 20 62 65 20 72 65    could not be re
+0450  63 65 69 76 65 64 20 66 72 6f 6d 20 64 65 76 69   ceived from devi
+0460  63 65 3c 2f 53 65 72 69 61 6c 4e 75 6d 62 65 72   ce</SerialNumber
+0470  3e 3c 2f 49 6e 73 74 72 75 6d 65 6e 74 3e 3c 2f   ></Instrument></
+0480  49 6e 73 74 72 75 6d 65 6e 74 73 3e 3c 2f 44 65   Instruments></De
+0490  76 69 63 65 49 6e 66 6f 3e 3c 2f 42 65 61 63 6f   viceInfo></Beaco
+04a0  6e 3e 3c 2f 47 69 6c 73 6f 6e 3e                  n></Gilson>
+
+No.     Time           Source                Destination           Protocol Length Info
+   2223 13.805097      192.168.1.101         255.255.255.255       UDP      1237   2564 → 50184 Len=1195
+
+Frame 2223: 1237 bytes on wire (9896 bits), 1237 bytes captured (9896 bits) on interface \Device\NPF_{BA899F2E-7BB5-44DE-B5F0-4314812FD947}, id 0
+Ethernet II, Src: DigiBoard_a2:56:92 (00:40:9d:a2:56:92), Dst: Broadcast (ff:ff:ff:ff:ff:ff)
+Internet Protocol Version 4, Src: 192.168.1.101, Dst: 255.255.255.255
+User Datagram Protocol, Src Port: 2564, Dst Port: 50184
+Data (1195 bytes)
+
+0000  3c 47 69 6c 73 6f 6e 3e 3c 42 65 61 63 6f 6e 3e   <Gilson><Beacon>
+0010  3c 44 65 76 69 63 65 49 6e 66 6f 3e 3c 49 50 41   <DeviceInfo><IPA
+0020  64 64 72 65 73 73 3e 31 39 32 2e 31 36 38 2e 31   ddress>192.168.1
+0030  2e 31 30 31 3c 2f 49 50 41 64 64 72 65 73 73 3e   .101</IPAddress>
+0040  3c 53 75 62 6e 65 74 4d 61 73 6b 3e 32 35 35 2e   <SubnetMask>255.
+0050  32 35 35 2e 32 35 35 2e 30 3c 2f 53 75 62 6e 65   255.255.0</Subne
+0060  74 4d 61 73 6b 3e 3c 44 65 66 61 75 6c 74 47 61   tMask><DefaultGa
+0070  74 65 77 61 79 3e 31 39 32 2e 31 36 38 2e 31 2e   teway>192.168.1.
+0080  31 3c 2f 44 65 66 61 75 6c 74 47 61 74 65 77 61   1</DefaultGatewa
+0090  79 3e 3c 4d 41 43 3e 30 30 3a 34 30 3a 39 64 3a   y><MAC>00:40:9d:
+00a0  61 32 3a 35 36 3a 39 32 3c 2f 4d 41 43 3e 3c 49   a2:56:92</MAC><I
+00b0  6e 73 74 72 75 6d 65 6e 74 73 3e 3c 49 6e 73 74   nstruments><Inst
+00c0  72 75 6d 65 6e 74 3e 3c 4e 61 6d 65 3e 53 79 73   rument><Name>Sys
+00d0  74 65 6d 3c 2f 4e 61 6d 65 3e 3c 49 6e 73 74 72   tem</Name><Instr
+00e0  75 6d 65 6e 74 4e 61 6d 65 3e 53 79 73 74 65 6d   umentName>System
+00f0  3c 2f 49 6e 73 74 72 75 6d 65 6e 74 4e 61 6d 65   </InstrumentName
+0100  3e 3c 49 44 3e 2d 31 3c 2f 49 44 3e 3c 53 65 72   ><ID>-1</ID><Ser
+0110  69 61 6c 4e 75 6d 62 65 72 3e 4e 39 39 39 39 39   ialNumber>N99999
+0120  39 39 39 3c 2f 53 65 72 69 61 6c 4e 75 6d 62 65   999</SerialNumbe
+0130  72 3e 3c 2f 49 6e 73 74 72 75 6d 65 6e 74 3e 3c   r></Instrument><
+0140  49 6e 73 74 72 75 6d 65 6e 74 3e 3c 4e 61 6d 65   Instrument><Name
+0150  3e 47 58 2d 32 37 78 3c 2f 4e 61 6d 65 3e 3c 49   >GX-27x</Name><I
+0160  6e 73 74 72 75 6d 65 6e 74 4e 61 6d 65 3e 47 58   nstrumentName>GX
+0170  20 32 37 31 20 3c 2f 49 6e 73 74 72 75 6d 65 6e    271 </Instrumen
+0180  74 4e 61 6d 65 3e 3c 50 72 6f 6d 56 65 72 73 69   tName><PromVersi
+0190  6f 6e 3e 32 2e 33 2e 30 2e 31 3c 2f 50 72 6f 6d   on>2.3.0.1</Prom
+01a0  56 65 72 73 69 6f 6e 3e 3c 49 44 3e 33 35 3c 2f   Version><ID>35</
+01b0  49 44 3e 3c 53 65 72 69 61 6c 4e 75 6d 62 65 72   ID><SerialNumber
+01c0  3e 32 36 31 4a 37 4e 32 35 33 3c 2f 53 65 72 69   >261J7N253</Seri
+01d0  61 6c 4e 75 6d 62 65 72 3e 3c 2f 49 6e 73 74 72   alNumber></Instr
+01e0  75 6d 65 6e 74 3e 3c 49 6e 73 74 72 75 6d 65 6e   ument><Instrumen
+01f0  74 3e 3c 4e 61 6d 65 3e 47 58 20 53 6f 6c 76 65   t><Name>GX Solve
+0200  6e 74 20 53 79 73 74 65 6d 3c 2f 4e 61 6d 65 3e   nt System</Name>
+0210  3c 49 6e 73 74 72 75 6d 65 6e 74 4e 61 6d 65 3e   <InstrumentName>
+0220  47 58 20 53 6f 6c 76 65 6e 74 20 53 79 73 74 65   GX Solvent Syste
+0230  6d 3c 2f 49 6e 73 74 72 75 6d 65 6e 74 4e 61 6d   m</InstrumentNam
+0240  65 3e 3c 50 72 6f 6d 56 65 72 73 69 6f 6e 3e 3c   e><PromVersion><
+0250  2f 50 72 6f 6d 56 65 72 73 69 6f 6e 3e 3c 49 44   /PromVersion><ID
+0260  3e 38 3c 2f 49 44 3e 3c 53 65 72 69 61 6c 4e 75   >8</ID><SerialNu
+0270  6d 62 65 72 3e 53 65 72 69 61 6c 20 6e 75 6d 62   mber>Serial numb
+0280  65 72 20 63 6f 75 6c 64 20 6e 6f 74 20 62 65 20   er could not be 
+0290  72 65 63 65 69 76 65 64 20 66 72 6f 6d 20 64 65   received from de
+02a0  76 69 63 65 3c 2f 53 65 72 69 61 6c 4e 75 6d 62   vice</SerialNumb
+02b0  65 72 3e 3c 2f 49 6e 73 74 72 75 6d 65 6e 74 3e   er></Instrument>
+02c0  3c 49 6e 73 74 72 75 6d 65 6e 74 3e 3c 4e 61 6d   <Instrument><Nam
+02d0  65 3e 47 58 20 44 69 72 65 63 74 20 49 6e 6a 65   e>GX Direct Inje
+02e0  63 74 3c 2f 4e 61 6d 65 3e 3c 49 6e 73 74 72 75   ct</Name><Instru
+02f0  6d 65 6e 74 4e 61 6d 65 3e 47 58 20 44 69 72 65   mentName>GX Dire
+0300  63 74 20 49 6e 6a 65 63 74 3c 2f 49 6e 73 74 72   ct Inject</Instr
+0310  75 6d 65 6e 74 4e 61 6d 65 3e 3c 50 72 6f 6d 56   umentName><PromV
+0320  65 72 73 69 6f 6e 3e 3c 2f 50 72 6f 6d 56 65 72   ersion></PromVer
+0330  73 69 6f 6e 3e 3c 49 44 3e 39 3c 2f 49 44 3e 3c   sion><ID>9</ID><
+0340  53 65 72 69 61 6c 4e 75 6d 62 65 72 3e 53 65 72   SerialNumber>Ser
+0350  69 61 6c 20 6e 75 6d 62 65 72 20 63 6f 75 6c 64   ial number could
+0360  20 6e 6f 74 20 62 65 20 72 65 63 65 69 76 65 64    not be received
+0370  20 66 72 6f 6d 20 64 65 76 69 63 65 3c 2f 53 65    from device</Se
+0380  72 69 61 6c 4e 75 6d 62 65 72 3e 3c 2f 49 6e 73   rialNumber></Ins
+0390  74 72 75 6d 65 6e 74 3e 3c 49 6e 73 74 72 75 6d   trument><Instrum
+03a0  65 6e 74 3e 3c 4e 61 6d 65 3e 34 30 36 20 53 69   ent><Name>406 Si
+03b0  6e 67 6c 65 20 53 79 72 69 6e 67 65 20 50 75 6d   ngle Syringe Pum
+03c0  70 3c 2f 4e 61 6d 65 3e 3c 49 6e 73 74 72 75 6d   p</Name><Instrum
+03d0  65 6e 74 4e 61 6d 65 3e 34 30 36 20 53 69 6e 67   entName>406 Sing
+03e0  6c 65 20 53 79 72 69 6e 67 65 20 50 75 6d 70 3c   le Syringe Pump<
+03f0  2f 49 6e 73 74 72 75 6d 65 6e 74 4e 61 6d 65 3e   /InstrumentName>
+0400  3c 50 72 6f 6d 56 65 72 73 69 6f 6e 3e 3c 2f 50   <PromVersion></P
+0410  72 6f 6d 56 65 72 73 69 6f 6e 3e 3c 49 44 3e 37   romVersion><ID>7
+0420  3c 2f 49 44 3e 3c 53 65 72 69 61 6c 4e 75 6d 62   </ID><SerialNumb
+0430  65 72 3e 53 65 72 69 61 6c 20 6e 75 6d 62 65 72   er>Serial number
+0440  20 63 6f 75 6c 64 20 6e 6f 74 20 62 65 20 72 65    could not be re
+0450  63 65 69 76 65 64 20 66 72 6f 6d 20 64 65 76 69   ceived from devi
+0460  63 65 3c 2f 53 65 72 69 61 6c 4e 75 6d 62 65 72   ce</SerialNumber
+0470  3e 3c 2f 49 6e 73 74 72 75 6d 65 6e 74 3e 3c 2f   ></Instrument></
+0480  49 6e 73 74 72 75 6d 65 6e 74 73 3e 3c 2f 44 65   Instruments></De
+0490  76 69 63 65 49 6e 66 6f 3e 3c 2f 42 65 61 63 6f   viceInfo></Beaco
+04a0  6e 3e 3c 2f 47 69 6c 73 6f 6e 3e                  n></Gilson>
