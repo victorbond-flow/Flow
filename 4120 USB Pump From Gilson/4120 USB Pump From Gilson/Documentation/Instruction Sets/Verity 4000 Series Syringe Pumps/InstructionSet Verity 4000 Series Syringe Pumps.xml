@@ -1,0 +1,474 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Gilson>
+  <InstructionSet>
+    <Devices>
+      <!--Start of Instrument Device definition-->
+      <Device>
+        <DeviceName>Verity 4000 Series Syringe Pumps</DeviceName>
+        <Baud>115200</Baud>
+        <DeviceType>Legacy</DeviceType>
+        <SerialNumber>1.0.0.0</SerialNumber>
+        <DeviceVersion>1.0.0.0</DeviceVersion>
+        <DeviceGroup>Syringe</DeviceGroup>
+        <DeviceId>11</DeviceId>
+        <PriorityLevel>1</PriorityLevel>
+        <VersionCommand>
+          <CommandName>Identify</CommandName>
+        </VersionCommand>
+        <CommandDefinitions>
+          <!--Name="Debug"-->
+          <CommandDefinition>
+            <CommandName>Debug</CommandName>
+            <CommandType>Immediate</CommandType>
+            <CommandExpression>Debug</CommandExpression>
+            <CommandNotes>Sets DEBUG On Off and Reporting Level for plugin.</CommandNotes>
+            <ReturnExpression>{}</ReturnExpression>
+            <Timeout>1000</Timeout>
+            <Parameters>
+              <Parameter>
+                <ParameterId>0</ParameterId>
+                <ParameterName>Mode</ParameterName>
+                <ParameterType>String</ParameterType>
+                <ParameterExpression>{Value}</ParameterExpression>
+                <ParameterUnits></ParameterUnits>
+                <ParameterDefault>On</ParameterDefault>
+                <ParameterNotes>Debug output is turned on or off.</ParameterNotes>
+                <RangeInfo>
+                  <Max>-1</Max>
+                  <Min>-1</Min>
+                </RangeInfo>
+              </Parameter>
+              <Parameter>
+                <ParameterId>1</ParameterId>
+                <ParameterName>Level</ParameterName>
+                <ParameterType>String</ParameterType>
+                <ParameterExpression>{Value}</ParameterExpression>
+                <ParameterUnits></ParameterUnits>
+                <ParameterDefault>1</ParameterDefault>
+                <ParameterNotes>Level controls amount of debug output which is specified per instrument.</ParameterNotes>
+                <RangeInfo>
+                  <Max>10</Max>
+                  <Min>0</Min>
+                </RangeInfo>
+              </Parameter>
+            </Parameters>
+            <ReturnParameters>
+            </ReturnParameters>
+          </CommandDefinition>
+          <!--Name="Identify"-->
+          <CommandDefinition>
+            <CommandName>Identify</CommandName>
+            <CommandType>Immediate</CommandType>
+            <CommandExpression>%</CommandExpression>
+            <CommandNotes>Instructs the instrument to report its Instrument Name and Firmware Version.</CommandNotes>
+            <ReturnExpression>{0}</ReturnExpression>
+            <Timeout>5000</Timeout>
+            <ReturnParameters>
+              <ReturnParameter>
+                <ParameterId>0</ParameterId>
+                <ParameterName>Status</ParameterName>
+                <ParameterType>String</ParameterType>
+                <ParameterExpression>{}</ParameterExpression>
+                <ParameterUnits></ParameterUnits>
+                <ParameterDefault>1</ParameterDefault>
+                <ParameterNotes></ParameterNotes>
+                <RangeInfo>
+                  <Max>-1</Max>
+                  <Min>-1</Min>
+                </RangeInfo>
+              </ReturnParameter>
+            </ReturnParameters>
+          </CommandDefinition>
+          <!--Name="Clear Error"-->
+          <CommandDefinition>
+            <CommandName>Clear Error</CommandName>
+            <CommandType>Buffered</CommandType>
+            <CommandExpression>e</CommandExpression>
+            <CommandNotes>Instructs the instrument to clear the last error.</CommandNotes>
+            <ReturnExpression>{}</ReturnExpression>
+            <Timeout>5000</Timeout>
+            <ReturnParameters>
+            </ReturnParameters>
+          </CommandDefinition>
+          <!--Name="Error"-->
+          <CommandDefinition>
+            <CommandName>Error</CommandName>
+            <CommandType>Immediate</CommandType>
+            <CommandExpression>e</CommandExpression>
+            <CommandNotes>Instructs the instrument to report the lst error.</CommandNotes>
+            <ReturnExpression>{0}</ReturnExpression>
+            <Timeout>5000</Timeout>
+            <ReturnParameters>
+              <ReturnParameter>
+                <ParameterId>0</ParameterId>
+                <ParameterName>Status</ParameterName>
+                <ParameterType>String</ParameterType>
+                <ParameterExpression>{}</ParameterExpression>
+                <ParameterUnits></ParameterUnits>
+                <ParameterDefault>1</ParameterDefault>
+                <ParameterNotes></ParameterNotes>
+                <RangeInfo>
+                  <Max>-1</Max>
+                  <Min>-1</Min>
+                </RangeInfo>
+              </ReturnParameter>
+            </ReturnParameters>
+          </CommandDefinition>
+          <!--Name="UDP"-->
+          <CommandDefinition>
+            <CommandName>UDP</CommandName>
+            <CommandType>Buffer</CommandType>
+            <CommandExpression>Get Device ID</CommandExpression>
+            <CommandNotes>KeepAlive</CommandNotes>
+            <ReturnExpression></ReturnExpression>
+            <Timeout>30000</Timeout>
+          </CommandDefinition>
+        </CommandDefinitions>
+      </Device>
+      <Device>
+        <DeviceName>Verity 4000 Syringe Pump Left</DeviceName>
+        <Baud>115200</Baud>
+        <DeviceType>Legacy</DeviceType>
+        <SerialNumber>1.0.0.0</SerialNumber>
+        <DeviceVersion>1.0.0.1</DeviceVersion>
+        <DeviceGroup>Syringe</DeviceGroup>
+        <DeviceId>11</DeviceId>
+        <PriorityLevel>1</PriorityLevel>
+        <VersionCommand>
+          <CommandName>Identify</CommandName>
+        </VersionCommand>
+        <CommandDefinitions>
+          <!--Name="Clear Error"-->
+          <CommandDefinition>
+            <CommandName>Clear Error</CommandName>
+            <CommandType>Buffered</CommandType>
+            <CommandExpression>e</CommandExpression>
+            <CommandNotes>Instructs the instrument to clear the last error.</CommandNotes>
+            <ReturnExpression>{}</ReturnExpression>
+            <Timeout>5000</Timeout>
+            <ReturnParameters>
+            </ReturnParameters>
+          </CommandDefinition>
+          <!--Name="Reset Lizard Brain"-->
+          <CommandDefinition>
+            <CommandName>Reset Lizard Brain</CommandName>
+            <CommandType>Buffered</CommandType>
+            <CommandExpression>~5B</CommandExpression>
+            <CommandNotes>Instructs the instrument to reset the local firmware copy with archived copy.</CommandNotes>
+            <ReturnExpression></ReturnExpression>
+            <Timeout>4000</Timeout>
+            <Parameters>
+            </Parameters>
+            <ReturnParameters>
+            </ReturnParameters>
+          </CommandDefinition>
+        </CommandDefinitions>
+      </Device>
+      <Device>
+        <DeviceName>Verity 4000 Syringe Pump Right</DeviceName>
+        <Baud>115200</Baud>
+        <DeviceType>Legacy</DeviceType>
+        <SerialNumber>1.0.0.0</SerialNumber>
+        <DeviceVersion>1.0.0.1</DeviceVersion>
+        <DeviceGroup>Syringe</DeviceGroup>
+        <DeviceId>12</DeviceId>
+        <PriorityLevel>1</PriorityLevel>
+        <VersionCommand>
+          <CommandName>Identify</CommandName>
+        </VersionCommand>
+        <CommandDefinitions>
+          <!--Name="Clear Error"-->
+          <CommandDefinition>
+            <CommandName>Clear Error</CommandName>
+            <CommandType>Buffered</CommandType>
+            <CommandExpression>e</CommandExpression>
+            <CommandNotes>Instructs the instrument to clear the last error.</CommandNotes>
+            <ReturnExpression>{}</ReturnExpression>
+            <Timeout>5000</Timeout>
+            <ReturnParameters>
+            </ReturnParameters>
+          </CommandDefinition>
+          <!--Name="Reset Lizard Brain"-->
+          <CommandDefinition>
+            <CommandName>Reset Lizard Brain</CommandName>
+            <CommandType>Buffered</CommandType>
+            <CommandExpression>~5B</CommandExpression>
+            <CommandNotes>Instructs the instrument to reset the local firmware copy with archived copy.</CommandNotes>
+            <ReturnExpression></ReturnExpression>
+            <Timeout>4000</Timeout>
+            <Parameters>
+            </Parameters>
+            <ReturnParameters>
+            </ReturnParameters>
+          </CommandDefinition>
+        </CommandDefinitions>
+      </Device>
+      <!--Start of System Device definition-->
+      <Device>
+        <DeviceName>System</DeviceName>
+        <Baud>-1</Baud>
+        <DeviceType>Legacy</DeviceType>
+        <SerialNumber></SerialNumber>
+        <DeviceVersion>1.0.0.0</DeviceVersion>
+        <DeviceGroup>Ethernet</DeviceGroup>
+        <DeviceId>-1</DeviceId>
+        <PriorityLevel>1</PriorityLevel>
+        <VersionCommand>
+          <CommandName>Identify</CommandName>
+        </VersionCommand>
+        <CommandDefinitions>
+          <!--Name="Get Instruction Set"-->
+          <CommandDefinition>
+            <CommandName>Get Instruction Set</CommandName>
+            <CommandType>Immediate</CommandType>
+            <CommandExpression>Get Instruction Set</CommandExpression>
+            <CommandNotes>Instructs the instrument to send the Instruction Set.</CommandNotes>
+            <ReturnExpression></ReturnExpression>
+            <Timeout>30000</Timeout>
+          </CommandDefinition>
+          <!--Name="Get Instrument Type"-->
+          <CommandDefinition>
+            <CommandName>Get Instrument Type</CommandName>
+            <CommandType>Immediate</CommandType>
+            <CommandExpression></CommandExpression>
+            <CommandNotes>Instructs the instrument to return particular type.</CommandNotes>
+            <ReturnExpression>{}</ReturnExpression>
+            <Timeout>4000</Timeout>
+            <Parameters>
+            </Parameters>
+            <ReturnParameters>
+              <ReturnParameter>
+                <ParameterId>0</ParameterId>
+                <ParameterName>Type</ParameterName>
+                <ParameterType>String</ParameterType>
+                <ParameterExpression>{}</ParameterExpression>
+                <ParameterUnits></ParameterUnits>
+                <ParameterDefault></ParameterDefault>
+                <ParameterNotes>
+                  0 : 4020 Syringe Pump,
+                  1 : 4120 Dual w/Tee Syringe Pump,
+                  2 : 4220 Dual Syringe Pump,
+                  3 : 4060 Syringe Pump,
+                  4 : 4260 Dual Syringe Pump,
+                  Invalid parameter index
+                </ParameterNotes>
+                <RangeInfo>
+                  <Max>-1</Max>
+                  <Min>-1</Min>
+                </RangeInfo>
+              </ReturnParameter>
+            </ReturnParameters>
+          </CommandDefinition>
+          <!--Name="Get Last '.' Command Response"-->
+          <CommandDefinition>
+            <CommandName>Get Last '.' Command Response</CommandName>
+            <CommandType>Immediate</CommandType>
+            <CommandExpression>.</CommandExpression>
+            <CommandNotes>Instructs the instrument to report the last response from a '.' command. For system use only.</CommandNotes>
+            <ReturnExpression>{0}</ReturnExpression>
+            <Timeout>5000</Timeout>
+            <ReturnParameters>
+              <ReturnParameter>
+                <ParameterId>0</ParameterId>
+                <ParameterName>Setting</ParameterName>
+                <ParameterType>String</ParameterType>
+                <ParameterExpression>{}</ParameterExpression>
+                <ParameterUnits></ParameterUnits>
+                <ParameterDefault>0</ParameterDefault>
+                <ParameterNotes></ParameterNotes>
+                <RangeInfo>
+                  <Max>-1</Max>
+                  <Min>-1</Min>
+                </RangeInfo>
+              </ReturnParameter>
+            </ReturnParameters>
+          </CommandDefinition>
+          <!--Name="Get NVM"-->
+          <CommandDefinition>
+            <CommandName>Get NVM</CommandName>
+            <CommandType>Immediate</CommandType>
+            <CommandExpression></CommandExpression>
+            <CommandNotes>Instructs the instrument to report the integer value of the specified NV memory index.</CommandNotes>
+            <ReturnExpression>{}</ReturnExpression>
+            <Timeout>4000</Timeout>
+            <Parameters>
+              <Parameter>
+                <ParameterId>1</ParameterId>
+                <ParameterName>Index</ParameterName>
+                <ParameterType>String</ParameterType>
+                <ParameterExpression>{Value}</ParameterExpression>
+                <ParameterUnits></ParameterUnits>
+                <ParameterDefault></ParameterDefault>
+                <ParameterNotes>Parameter Index Values: Vary depending on product-specific memory map definitions.</ParameterNotes>
+                <RangeInfo>
+                  <Max>29</Max>
+                  <Min>1</Min>
+                </RangeInfo>
+              </Parameter>
+            </Parameters>
+            <ReturnParameters>
+              <ReturnParameter>
+                <ParameterId>0</ParameterId>
+                <ParameterName>Value</ParameterName>
+                <ParameterType>String</ParameterType>
+                <ParameterExpression>{}</ParameterExpression>
+                <ParameterUnits></ParameterUnits>
+                <ParameterDefault></ParameterDefault>
+                <ParameterNotes>Reports value at NV memory index. Possible error is 'Invalid parameter index'.</ParameterNotes>
+                <RangeInfo>
+                  <Max>-1</Max>
+                  <Min>-1</Min>
+                </RangeInfo>
+              </ReturnParameter>
+            </ReturnParameters>
+          </CommandDefinition>
+          <!--Name="Get Value Of NVM Index"-->
+          <CommandDefinition>
+            <CommandName>Get Value Of NVM Index</CommandName>
+            <CommandType>Immediate</CommandType>
+            <CommandExpression>@</CommandExpression>
+            <CommandNotes>Instructs the instrument to report the value of the current NV memory location. For system use only.</CommandNotes>
+            <ReturnExpression>{0}</ReturnExpression>
+            <Timeout>5000</Timeout>
+            <ReturnParameters>
+              <ReturnParameter>
+                <ParameterId>0</ParameterId>
+                <ParameterName>Setting</ParameterName>
+                <ParameterType>String</ParameterType>
+                <ParameterExpression>{}</ParameterExpression>
+                <ParameterUnits></ParameterUnits>
+                <ParameterDefault>0</ParameterDefault>
+                <ParameterNotes></ParameterNotes>
+                <RangeInfo>
+                  <Max>-1</Max>
+                  <Min>-1</Min>
+                </RangeInfo>
+              </ReturnParameter>
+            </ReturnParameters>
+          </CommandDefinition>
+          <!--Name="Move To NVM Index"-->
+          <CommandDefinition>
+            <CommandName>Move To NVM Index</CommandName>
+            <CommandType>Buffered</CommandType>
+            <CommandExpression>@{1}</CommandExpression>
+            <CommandNotes>Instructs the instrument to move to the specified NV memory index.</CommandNotes>
+            <ReturnExpression>{}</ReturnExpression>
+            <Timeout>4000</Timeout>
+            <Parameters>
+              <Parameter>
+                <ParameterId>1</ParameterId>
+                <ParameterName>Index</ParameterName>
+                <ParameterType>String</ParameterType>
+                <ParameterExpression>{Value}</ParameterExpression>
+                <ParameterUnits></ParameterUnits>
+                <ParameterDefault></ParameterDefault>
+                <ParameterNotes>Parameter Index Values: Vary depending on product-specific memory map definitions.</ParameterNotes>
+                <RangeInfo>
+                  <Max>29</Max>
+                  <Min>1</Min>
+                </RangeInfo>
+              </Parameter>
+            </Parameters>
+            <ReturnParameters>
+            </ReturnParameters>
+          </CommandDefinition>
+          <!--Name="Serial Number"-->
+          <CommandDefinition>
+            <CommandName>Serial Number</CommandName>
+            <CommandType>Buffered</CommandType>
+            <CommandExpression>.sn</CommandExpression>
+            <CommandNotes>Instructs the instrument to report the Serial Number. For system use only.</CommandNotes>
+            <ReturnExpression>{0}</ReturnExpression>
+            <Timeout>5000</Timeout>
+            <ReturnParameters>
+              <ReturnParameter>
+                <ParameterId>0</ParameterId>
+                <ParameterName>Serial Number</ParameterName>
+                <ParameterType>String</ParameterType>
+                <ParameterExpression>{}</ParameterExpression>
+                <ParameterUnits></ParameterUnits>
+                <ParameterDefault>ABCD1234</ParameterDefault>
+                <ParameterNotes></ParameterNotes>
+                <RangeInfo>
+                  <Max>-1</Max>
+                  <Min>-1</Min>
+                </RangeInfo>
+              </ReturnParameter>
+            </ReturnParameters>
+          </CommandDefinition>
+          <!--Name="Set Instrument Type"-->
+          <CommandDefinition>
+            <CommandName>Set Instrument Type</CommandName>
+            <CommandType>Buffered</CommandType>
+            <CommandExpression>@2={0}</CommandExpression>
+            <CommandNotes>Instructs the instrument to configure itself as a particular type. All necessary machine settings are updated.</CommandNotes>
+            <ReturnExpression>{}</ReturnExpression>
+            <Timeout>4000</Timeout>
+            <Parameters>
+              <Parameter>
+                <ParameterId>0</ParameterId>
+                <ParameterName>Type</ParameterName>
+                <ParameterType>String</ParameterType>
+                <ParameterExpression>{Value}</ParameterExpression>
+                <ParameterUnits></ParameterUnits>
+                <ParameterDefault>0</ParameterDefault>
+                <ParameterNotes>
+                  0 : 4020 Syringe Pump,
+                  1 : 4120 Dual w/Tee Syringe Pump,
+                  2 : 4220 Dual Syringe Pump,
+                  3 : 4060 Syringe Pump,
+                  4 : 4260 Dual Syringe Pump
+                </ParameterNotes>
+                <RangeInfo>
+                  <Max>4</Max>
+                  <Min>0</Min>
+                </RangeInfo>
+              </Parameter>
+            </Parameters>
+            <ReturnParameters>
+            </ReturnParameters>
+          </CommandDefinition>
+          <!--Name="Set NVM"-->
+          <CommandDefinition>
+            <CommandName>Set NVM</CommandName>
+            <CommandType>Buffered</CommandType>
+            <CommandExpression>@{0}={1}</CommandExpression>
+            <CommandNotes>Instructs the instrument to set the specified NV memory integer parameters.</CommandNotes>
+            <ReturnExpression>{}</ReturnExpression>
+            <Timeout>10000</Timeout>
+            <Parameters>
+              <Parameter>
+                <ParameterId>0</ParameterId>
+                <ParameterName>Index</ParameterName>
+                <ParameterType>String</ParameterType>
+                <ParameterExpression>{Value}</ParameterExpression>
+                <ParameterUnits></ParameterUnits>
+                <ParameterDefault></ParameterDefault>
+                <ParameterNotes>Parameter Index Values: Vary depending on product-specific memory map definitions.</ParameterNotes>
+                <RangeInfo>
+                  <Max>29</Max>
+                  <Min>1</Min>
+                </RangeInfo>
+              </Parameter>
+              <Parameter>
+                <ParameterId>1</ParameterId>
+                <ParameterName>Value</ParameterName>
+                <ParameterType>String</ParameterType>
+                <ParameterExpression>{Value}</ParameterExpression>
+                <ParameterUnits></ParameterUnits>
+                <ParameterDefault></ParameterDefault>
+                <ParameterNotes>Integer Parameter Value: Vary depending on product-specific memory map definitions.</ParameterNotes>
+                <RangeInfo>
+                  <Max>-1</Max>
+                  <Min>-1</Min>
+                </RangeInfo>
+              </Parameter>
+            </Parameters>
+            <ReturnParameters>
+            </ReturnParameters>
+          </CommandDefinition>
+        </CommandDefinitions>
+      </Device>
+    </Devices>
+  </InstructionSet>
+</Gilson>
