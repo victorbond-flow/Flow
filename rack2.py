@@ -77,24 +77,24 @@ class Rack:
         return indices[0][0], indices[1][0]
 
     # ---------------------------------------------------------------------------------------
-    def get_vial_coordinates(self, vial_position):
-        """Return (x, y) coordinates in mm for the given vial position.
+   def get_vial_coordinates(self, vial_position):
+    """Return (x, y) coordinates in mm for the given vial position.
+    
+    Assumes this rack always has a staggered pattern:
+    every second column is shifted down by half the Y-spacing.
+    """
+    # Find which row and column this vial is in
+    row, col = self.get_vial_indices(vial_position)
 
-        Applies both the regular grid spacing and the staggered offset pattern.
-        """
-        row, col = self.get_vial_indices(vial_position)
+    # Compute X coordinate — each column is vial2vial_x apart
+    x = self.offset_x + col * self.vial2vial_x
 
-        # Base X position: each new column is vial2vial_x apart.
-        x = self.offset_x + col * self.vial2vial_x
+    # Compute Y coordinate — each row is vial2vial_y apart,
+    # but odd columns (1, 3, 5...) are shifted downward.
+    y = self.offset_y + row * self.vial2vial_y + (self.vial2vial_y / 2 if col % 2 == 1 else 0)
 
-        # Base Y position: each row is vial2vial_y apart.
-        y = self.offset_y + row * self.vial2vial_y
+    return x, y
 
-        # Apply staggered (cans-of-beans) offset.
-        if self.staggered and (col % 2 == 1):
-            y += self.vial2vial_y / 2
-
-        return x, y
 
 
 #############################################################################################
@@ -104,26 +104,43 @@ class Rack:
 #############################################################################################
 
 class Rackcommands:
-    """Commands connected to the Rack of the flow setup."""
+    """Connects a Gilson session to a Rack and handles vial movements."""
 
-    def __init__(self, rack, rack_position=1,
-                 rack_position_offset_x=92, rack_position_offset_y=0):
+    def __init__(self, gilson_session, rack,
+                 rack_position=1, rack_offset_x=92, rack_offset_y=0):
+        self.gilson = gilson_session
         self.rack = rack
         self.rack_position = rack_position
-        self.rack_position_offset_x = rack_position_offset_x
-        self.rack_position_offset_y = rack_position_offset_y
+        self.rack_offset_x = rack_offset_x
+        self.rack_offset_y = rack_offset_y
 
-    def get_xy_command(self, vial_pos):
-        """Return a Gilson RX command string for moving to a given vial."""
+    def go_to_vial(self, vial_pos, send=True):
+        """Move to a given vial (or return the Gilson command string).
+
+        Parameters
+        ----------
+        vial_pos : int
+            The vial number you want to go to.
+        send : bool
+            If True → send the command to the Gilson.
+            If False → just return the "X.../Y..." command string.
+        """
+        # Get the (x, y) from the Rack object
         x, y = self.rack.get_vial_coordinates(vial_pos)
 
-        # Apply rack-level offset (if multiple racks are installed)
-        x += (self.rack_position - 1) * self.rack_position_offset_x
-        y += (self.rack_position - 1) * self.rack_position_offset_y
+        # Apply rack-level offsets if needed (e.g., multiple racks)
+        x += (self.rack_position - 1) * self.rack_offset_x
+        y += (self.rack_position - 1) * self.rack_offset_y
 
-        # Construct the command string (e.g. "X123.4/Y567.8")
+        # Format the Gilson command
         command = f"X{x:.2f}/Y{y:.2f}"
-        return command
+
+        if send:
+            print(f"Moving to vial {vial_pos} at ({x:.2f}, {y:.2f}) mm")
+            self.gilson.send_command(command)  # or .move_to(x, y), depending on your driver
+        else:
+            return command
+
 
 
 #############################################################################################
