@@ -1,4 +1,5 @@
 import numpy as np
+from gilson_ethernet2 import GilsonSession
 # from loguru import logger  # Optional logging
 
 #############################################################################################
@@ -132,14 +133,14 @@ class Rackcommands:
         x += (self.rack_position - 1) * self.rack_offset_x
         y += (self.rack_position - 1) * self.rack_offset_y
 
-        # Format the Gilson command
-        command = f"X{x:.2f}/Y{y:.2f}"
+        if not send:
+            return x, y
 
-        if send:
-            print(f"Moving to vial {vial_pos} at ({x:.2f}, {y:.2f}) mm")
-            self.gilson.send_command(command)  # or .move_to(x, y), depending on your driver
-        else:
-            return command
+        # --- Otherwise, move using GilsonSession’s own safe method ---
+        print(f"Moving to vial {vial_pos} at ({x:.2f}, {y:.2f}) mm")
+        self.gilson.move_xy(x, y)  # ✅ uses your built-in motion safety
+
+        return x, y
 
 
 
