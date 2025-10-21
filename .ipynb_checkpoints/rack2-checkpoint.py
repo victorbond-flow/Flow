@@ -38,27 +38,36 @@ class Rack:
                  staggered=True):
 
         self.n_cols, self.n_rows = array_dimensions
-        self.array_dimensions = array_dimensions
         self.offset_x = offset_x
         self.offset_y = offset_y
         self.vial2vial_x = vial2vial_x
         self.vial2vial_y = vial2vial_y
         self.groundlevel_height = groundlevel_height
         self.staggered = staggered
-        self.rack_order = self.generate_vial_order()
+
+        # Build the vial numbering order automatically.
+        # Column-based serpentine (S-shape) pattern.
+        self.rack_order = self._generate_serpentine_order()
 
     # ---------------------------------------------------------------------------------------
-    def generate_vial_order(self):
+    def _generate_serpentine_order(self):
         """Create an array that defines the vial numbering pattern.
 
-        Generate vial numbers in regular column-major order (top-to-bottom, left-to-right)."""
-        order = np.zeros((self.n_rows, self.n_cols), dtype=int)
+        For a 4×16 rack, this returns an array where:
+          - Col 0: 1–16 (top→bottom)
+          - Col 1: 17–32 (bottom→top)
+          - Col 2: 33–48 (top→bottom)
+          - Col 3: 49–64 (bottom→top)
+        """
+        rack_order = np.zeros((self.n_rows, self.n_cols), dtype=int)
         vial_number = 1
         for c in range(self.n_cols):
-            for r in range(self.n_rows):
-                order[r, c] = vial_number
-                vial_number += 1
-        return order
+            col_range = np.arange(vial_number, vial_number + self.n_rows)
+            if c % 2 == 1:
+                col_range = col_range[::-1]  # Reverse every second column
+            rack_order[:, c] = col_range
+            vial_number += self.n_rows
+        return rack_order
 
     # ---------------------------------------------------------------------------------------
     def get_vial_indices(self, vial_position):
@@ -69,23 +78,23 @@ class Rack:
         return indices[0][0], indices[1][0]
 
     # ---------------------------------------------------------------------------------------
-    def get_vial_coordinates(self, vial_position):
-        """Return (x, y) coordinates in mm for the given vial position.
-        
-        Assumes this rack always has a staggered pattern:
-        every second column is shifted down by half the Y-spacing.
-        """
-        # Find which row and column this vial is in
-        row, col = self.get_vial_indices(vial_position)
+   def get_vial_coordinates(self, vial_position):
+    """Return (x, y) coordinates in mm for the given vial position.
     
-        # Compute X coordinate — each column is vial2vial_x apart
-        x = self.offset_x + col * self.vial2vial_x
+    Assumes this rack always has a staggered pattern:
+    every second column is shifted down by half the Y-spacing.
+    """
+    # Find which row and column this vial is in
+    row, col = self.get_vial_indices(vial_position)
 
-        # Compute Y coordinate — each row is vial2vial_y apart,
-        # but odd columns (1, 3, 5...) are shifted downward.
-        y = self.offset_y + row * self.vial2vial_y + (self.vial2vial_y / 2 if col % 2 == 1 else 0)
+    # Compute X coordinate — each column is vial2vial_x apart
+    x = self.offset_x + col * self.vial2vial_x
 
-        return x, y
+    # Compute Y coordinate — each row is vial2vial_y apart,
+    # but odd columns (1, 3, 5...) are shifted downward.
+    y = self.offset_y + row * self.vial2vial_y + (self.vial2vial_y / 2 if col % 2 == 1 else 0)
+
+    return x, y
 
 
 
@@ -129,7 +138,7 @@ class Rackcommands:
 
         # --- Otherwise, move using GilsonSession’s own safe method ---
         print(f"Moving to vial {vial_pos} at ({x:.2f}, {y:.2f}) mm")
-        self.gilson.move_xy(x, y)  
+        self.gilson.move_xy(x, y)  # ✅ uses your built-in motion safety
 
         return x, y
 

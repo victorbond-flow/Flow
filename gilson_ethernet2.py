@@ -166,35 +166,47 @@ class GilsonSession:
 </Gilson>"""
         return self.send_raw_command(xml.strip(), expected_command="Admin")
     
-    def move_z_safe(self, target_z):
-        result = self.move_z(target_z)
-        self.current_z = target_z
-        return result
 
     def move_x(self, position):
         if self.current_z < self.Z_SAFE:
-            self.move_z_safe(self.Z_SAFE)
+            print(f"Z below safe limit ({self.current_z:.2f} < {self.Z_SAFE:.2f}) — raising first.")
+            self.move_z(self.Z_SAFE)
+            
         parameters = {"X Position": position}
         result = self.send_command("Move X", parameters=parameters)
         return f"Moved X to {position}. Result: {result}"
 
     def move_y(self, position):
         if self.current_z < self.Z_SAFE:
-            self.move_z_safe(self.Z_SAFE)
+            print(f"Z below safe limit ({self.current_z:.2f} < {self.Z_SAFE:.2f}) — raising first.")
+            self.move_z(self.Z_SAFE)
+            
         parameters = {"Y Position": position}
         result = self.send_command("Move Y", parameters=parameters)
         return f"Moved Y to {position}. Result: {result}"
 
     def move_z(self, position):
-        if self.current_z < self.Z_SAFE:
-            self.move_z_safe(self.Z_SAFE)
+        """Move Z to target, respecting lower and upper limits."""
+    
+        # Clamp to safe range
+        if position < self.Z_SAFE:
+            print(f"⚠️ Requested Z={position} below safe minimum ({self.Z_SAFE} mm). Clamping.")
+            position = self.Z_SAFE
+        elif position > self.Z_MAX_SAFE:
+            print(f"⚠️ Requested Z={position} above safe maximum ({self.Z_MAX_SAFE} mm). Clamping.")
+            position = self.Z_MAX_SAFE
+
         parameters = {"Z Position": position}
         result = self.send_command("Move Z", parameters=parameters)
+        self.current_z = position
         return f"Moved Z to {position}. Result: {result}"
+
 
     def move_xy(self, x_position, y_position):
         if self.current_z < self.Z_SAFE:
-            self.move_z_safe(self.Z_SAFE)
+            print(f"Z below safe limit ({self.current_z:.2f} < {self.Z_SAFE:.2f}) — raising first.")
+            self.move_z(self.Z_SAFE)
+            
         parameters = {
             "X Position": x_position,
             "Y Position": y_position
