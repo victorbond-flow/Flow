@@ -20,7 +20,7 @@ class Rack:
     Parameters
     ----------
     array_dimensions : tuple(int, int)
-        (n_columns, n_rows) — number of vials in each dimension.
+        (n_columns, n_rows) — number of vials in each dimension.                         #NOTE - THIS NEEDS UPDATED!!!
         e.g. (4, 16) for your 4-column × 16-row rack.
     offset_x, offset_y : float
         Base offset (mm) from the Gilson home position to vial (1,1).
@@ -32,6 +32,10 @@ class Rack:
         If True, every second column is offset in Y by ½ vial2vial_y
         (the “cans of beans” packing).
     """
+
+    # ---------------------------------------------------------------------------------------
+    # 1. INITIAL SETUP + STRUCTURE
+    # ---------------------------------------------------------------------------------------
 
     def __init__(self, array_dimensions, offset_x, offset_y,
                  vial2vial_x, vial2vial_y, groundlevel_height,
@@ -46,6 +50,8 @@ class Rack:
         self.groundlevel_height = groundlevel_height
         self.staggered = staggered
         self.rack_order = self.generate_vial_order()
+        self.vials = {vial_num: Vial(vial_volume_max, vial_usedvolume_max, vial_height, vial_free_depth)
+                      for vial_num in self.rack_order.flatten()}
 
     # ---------------------------------------------------------------------------------------
     def generate_vial_order(self):
@@ -59,8 +65,16 @@ class Rack:
                 order[r, c] = vial_number
                 vial_number += 1
         return order
+        
+    #----------------------------------------------------------------------------------------
+    def all_vial_numbers(self):
+        """Return a list of all vial numbers in the rack"""
+        return list(self.vials.keys())
 
     # ---------------------------------------------------------------------------------------
+    # 2. GEOMETRY + POSITION METHODS
+    # ---------------------------------------------------------------------------------------
+    
     def get_vial_indices(self, vial_position):
         """Return (row, col) indices for a given vial number."""
         indices = np.where(self.rack_order == vial_position)
@@ -87,7 +101,47 @@ class Rack:
 
         return x, y
 
+    # ------------------------------------------------------------------------------------
+    # 3. NEW - VIAL MANAGEMENT METHODS
+    # ------------------------------------------------------------------------------------
+    def fill_vial(self, vials, volume, substance):
+        """Record that specified vials have been filled manually"""
+        if isinstance(vials, int):
+            vials = [vials]
 
+        # Verify that all vials exist first
+        for v in vials:
+            if v not in self.vials:
+                raise ValueError(f"Vial {v} does not exist in this rack.")
+
+        # Check that the contents are consistent (all or nothing - subject to change)
+        for v in vials:
+            vial = self.vials[v]
+            if vial.contents is not None and vial.contents != substance:
+                raise ValueError(f"Vial {v} contains {vial.contents}. Empty before filling with {substance}.")
+
+        # Proceed to fill all
+        for v in vials:
+            self.vials[v].fill(volume, substance)
+
+    def empty_vial(self, vials):
+        """Empty one or more vials."""
+        if isinstance(vials, int):
+            vials = [vials]
+        for v in vials:
+            if v not in self.vials:
+                raise ValueError(f"Vial {v} does not exist in this rack.")
+            self.vials[v].empty()
+
+    def get_vial_status(self, vials=None):
+        """Return readable status for specified vials or all if none specified"""
+        if vials is None:
+            vials = self.all_vial_numbers()
+        elif isinstance(vials, int):
+            vials = [vials]
+
+        return {v: self.vials[v].get_vial_status() for v in vials}
+    
 
 #############################################################################################
 # Rackcommands
@@ -133,11 +187,19 @@ class Rackcommands:
 
         return x, y
 
+        
+    # The method below is a scaffold to build on later - will be useful for automating a sequence of movements between vials
+    def move_sequence(self, vials):
+    for v in vials:
+        self.go_to_vial(v)
+
+
 
 
 #############################################################################################
-# Vial + SetupVolumes (unchanged from rack.py)
+# Vial + SetupVolumes classes 
 # -------------------------------------------------------------------------------------------
+# Vial
 #############################################################################################
 
 class Vial:
@@ -148,10 +210,50 @@ class Vial:
         self.vial_height = vial_height                  # height in mm
         self.vial_free_depth = vial_free_depth          # depth in mm
         self.sum_liquid_level = 0
+        self.current_volume = 0.0                       # current volume in mL
+        self.contents = None                            # substance string (e.g., "0.5mM Reagent A")
 
+    def fill(self, volume, substance):
+        """ Logs that the vial has been filled manually.
+
+        Parameters
+        ----------
+        volume : float --- volume (mL) to record
+        substance : str --- Name of substance being added
+        """
+
+        if self.contents is not None and self.contents != substance:
+            raise ValueError(f"Vial contains {self.contents}. Empty before filling with {substance}.")
+
+        if volume > self.vial_volume_max:
+            print(f"Volume {volume} exceeds vial max ({self.vial_volume_max}). Setting volume to max...")
+            volume = self.vial_volume_max
+
+        self.current_volume = volume
+        self.contents = substance
+        print(f"Vial filled with {volume} mL of {substance}.")
+
+    def empty(self):
+        """Empty the vial and reset contents"""
+        self.current_volume = 0.0
+        self.contents = None
+        print("Vial emptied - clean or replace before refill")
+
+    def get_vial_status(self):
+        if self.contents:
+            return f"Vial contains {self.current_volume} mL of {self.contents}."
+        else:
+            return "Vial is empty."
+            
 
 class SetupVolumes:
-    """Representation for all volumes within the flow setup to calculate rinsing times."""
+   """
+    Represents the physical volumes (in mL) of different parts of the flow setup.
+    These are used to calculate how long it takes to rinse, fill, or reach steady state
+    based on given flow rates.
+
+    Essentially: this class turns *flow rates* and *setup geometry* into *timing data*.
+    """
     def __init__(self, volume_valve_to_needle, volume_reactor_to_valve, volume_before_reactor,
                  volume_reactor, volume_only_pump_a, volume_only_pump_b, volume_pump_a_and_pump_b,
                  excess=1.5):
@@ -164,17 +266,20 @@ class SetupVolumes:
         self.volume_only_pump_b = volume_only_pump_b
         self.volume_pump_a_and_pump_b = volume_pump_a_and_pump_b
 
+#This calculates the time in seconds to fill the volume between valve and needs, given a total flowrate.
     def get_time_fill_needle(self, flowrate_a, flowrate_b, flowrate_sum):
         """Return time in sec to fill the needle at a certain flow rate."""
         duration = ((self.volume_valve_to_needle / flowrate_sum) * self.excess) * 60
         return duration
-
+        
+#This calculates the the time it takes to reach steady state after switching feeds
     def get_time_stady_state_rinsing(self, flowrate_a, flowrate_b, flowrate_sum, stady_state_rinsing_factor):
         """Return time in sec it takes to reach steady state."""
         duration = ((((self.volume_reactor * stady_state_rinsing_factor) / flowrate_b)
                      + (self.volume_pump_a_and_pump_b / flowrate_sum)) * self.excess) * 60
         return duration
 
+#This calculates the time it takes to fill both the volume before the reactor, and the reactor itself
     def get_time_fill_reactor(self, flowrate_a, flowrate_b, flowrate_sum):
         """Return time in sec to fill the reactor."""
         duration = (((self.volume_before_reactor + self.volume_reactor) / flowrate_b)
