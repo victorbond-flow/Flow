@@ -7,9 +7,7 @@ from gilson_ethernet2 import GilsonSession
 # -------------------------------------------------------------------------------------------
 # Defines classes to represent the physical layout of a Gilson rack and related operations.
 # This version supports:
-#   • Non-rectangular (staggered) vial layouts
-#   • Serpentine (S-shaped) numbering pattern
-#   • Modular rack + command structure for future automation
+#UPDATE ME
 #############################################################################################
 
 class Rack:
