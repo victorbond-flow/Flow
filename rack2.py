@@ -33,10 +33,9 @@ class Rack:
         (the “cans of beans” packing).
     """
 
-    # ---------------------------------------------------------------------------------------
-    # 1. INITIAL SETUP + STRUCTURE
-    # ---------------------------------------------------------------------------------------
-
+# --------------------------------------------------------------------------------------------------------------------------------------------------------
+# 1. INITIAL SETUP + STRUCTURE
+# --------------------------------------------------------------------------------------------------------------------------------------------------------
     def __init__(self, array_dimensions, offset_x, offset_y,
              vial2vial_x, vial2vial_y, groundlevel_height,
              staggered=True,
@@ -55,7 +54,7 @@ class Rack:
         self.vials = {vial_num: Vial(vial_volume_max, vial_usedvolume_max, vial_height, vial_free_depth)
                       for vial_num in self.rack_order.flatten()}
 
-    # ---------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------------------------------------------------------------
     def generate_vial_order(self):
         """Create an array that defines the vial numbering pattern.
 
@@ -68,14 +67,14 @@ class Rack:
                 vial_number += 1
         return order
         
-    #----------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------------------------------------------------------------------
     def all_vial_numbers(self):
         """Return a list of all vial numbers in the rack"""
         return list(self.vials.keys())
 
-    # ---------------------------------------------------------------------------------------
-    # 2. GEOMETRY + POSITION METHODS
-    # ---------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------------------------------------------------------------
+# 2. GEOMETRY + POSITION METHODS
+# --------------------------------------------------------------------------------------------------------------------------------------------------------
     
     def get_vial_indices(self, vial_position):
         """Return (row, col) indices for a given vial number."""
@@ -84,7 +83,7 @@ class Rack:
             raise ValueError(f"No vial with position {vial_position}")
         return indices[0][0], indices[1][0]
 
-    # ---------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------------------------------------------------------------
     def get_vial_coordinates(self, vial_position):
         """Return (x, y) coordinates in mm for the given vial position.
         
@@ -103,9 +102,9 @@ class Rack:
 
         return x, y
 
-    # ------------------------------------------------------------------------------------
-    # 3. NEW - VIAL MANAGEMENT METHODS
-    # ------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------
+# 3. NEW - VIAL MANAGEMENT METHODS
+# ------------------------------------------------------------------------------------
     def fill_vial(self, vials, volume, substance):
         """Record that specified vials have been filled manually"""
         if isinstance(vials, int):
@@ -126,6 +125,7 @@ class Rack:
         for v in vials:
             self.vials[v].fill(volume, substance)
 
+#-----------------------------------------------------------------------------------------------------------------------------
     def empty_vial(self, vials):
         """Empty one or more vials."""
         if isinstance(vials, int):
@@ -134,7 +134,8 @@ class Rack:
             if v not in self.vials:
                 raise ValueError(f"Vial {v} does not exist in this rack.")
             self.vials[v].empty()
-
+            
+#--------------------------------------------------------------------------------------------------------------------------------
     def get_vial_status(self, vials=None):
         """Return readable status for specified vials or all if none specified"""
         if vials is None:
@@ -162,6 +163,7 @@ class Rackcommands:
         self.rack_offset_x = rack_offset_x
         self.rack_offset_y = rack_offset_y
 
+#---------------------------------------------------------------------------------------------------------------------------------------------------------
     def go_to_vial(self, vial_pos, send=True):
         """Move to a given vial (or return the Gilson command string).
 
@@ -194,7 +196,7 @@ class Rackcommands:
 
         return x, y
 
-        
+#---------------------------------------------------------------------------------------------------------------------------------------------------------
     # The method below is a scaffold to build on later - will be useful for automating a sequence of movements between vials
     def move_sequence(self, vials):
         for v in vials:
@@ -218,7 +220,7 @@ class Vial:
         self.min_usable_fraction = 0.10                 
         self.vial_min_usable_volume = self.vial_volume_max * self.min_usable_fraction               # Defines a "functional empty" state, 10% of max volume
 
-# -----------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------------------------------------------------------------
     def fill(self, volume, substance):
         """ Logs that the vial has been filled manually.
 
@@ -239,14 +241,14 @@ class Vial:
         self.contents = substance
         print(f"Vial filled with {volume} mL of {substance}.")
 
-# ---------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------------------------------------------------------------
     def empty(self):
         """Empty the vial and reset contents"""
         self.current_volume = 0.0
         self.contents = None
         print("Vial emptied - clean or replace before refill")
 
-# ---------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------------------------------------------------------------
     def consume_volume(self, volume):
         """Reduce the volume after withdrawal (used by Pump class)"""
         if self.current_volume == 0:
@@ -259,12 +261,12 @@ class Vial:
         self.current_volume -= volume
         print(f"Withdrawn {volume} mL. Remaining: {self.current_volume:.2f} mL of {self.contents}.")
         
-# ---------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------------------------------------------------------------
     def is_usable(self):
         """Return True if vial still has sufficient volume for use"""
         return self.current_volume > self.vial_min_usable_volume
 
-# --------------------------------------------------------------------------------------   
+# -------------------------------------------------------------------------------------------------------------------------------------------------------   
     def get_vial_status(self):
         if self.contents:
             return f"Vial contains {self.current_volume} mL of {self.contents}."
