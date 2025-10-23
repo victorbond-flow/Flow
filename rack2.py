@@ -194,12 +194,8 @@ class Rackcommands:
         self.go_to_vial(v)
 
 
-
-
 #############################################################################################
-# Vial + SetupVolumes classes 
-# -------------------------------------------------------------------------------------------
-# Vial
+# Vial Class
 #############################################################################################
 
 class Vial:
@@ -212,7 +208,10 @@ class Vial:
         self.sum_liquid_level = 0
         self.current_volume = 0.0                       # current volume in mL
         self.contents = None                            # substance string (e.g., "0.5mM Reagent A")
+        self.min_usable_fraction = 0.10                 
+        self.vial_min_usable_volume = self.vial_volume_max * self.min_usable_fraction               # Defines a "functional empty" state, 10% of max volume
 
+# -----------------------------------------------------------------------------------------
     def fill(self, volume, substance):
         """ Logs that the vial has been filled manually.
 
@@ -233,18 +232,42 @@ class Vial:
         self.contents = substance
         print(f"Vial filled with {volume} mL of {substance}.")
 
+# ---------------------------------------------------------------------------------------
     def empty(self):
         """Empty the vial and reset contents"""
         self.current_volume = 0.0
         self.contents = None
         print("Vial emptied - clean or replace before refill")
 
+# ---------------------------------------------------------------------------------------
+    def consume_volume(self, volume):
+        """Reduce the volume after withdrawal (used by Pump class)"""
+        if self.current_volume == 0:
+            raise ValueError("Vial is empty - cannot withdraw.")
+            
+        if self.current_volume - volume < self.vial_min_usable_volume:
+            raise ValueError(f"Withdrawal of {volume} mL would drop the volume below safe working limit"
+                             f"({self.vial_min_usable_volume:.2f} mL). Refill or replace vial.")
+
+        self.current_volume -= volume
+        print(f"Withdrawn {volume} mL. Remaining: {self.current_volume:.2f} mL of {self.contents}.")
+        
+# ---------------------------------------------------------------------------------------
+    def is_usable(self):
+        """Return True if vial still has sufficient volume for use"""
+        return self.current_volume > self.vial_min_usable_volume
+
+# --------------------------------------------------------------------------------------   
     def get_vial_status(self):
         if self.contents:
             return f"Vial contains {self.current_volume} mL of {self.contents}."
         else:
             return "Vial is empty."
-            
+
+    
+###############################################################################################
+# SetupVolumes Class
+###############################################################################################
 
 class SetupVolumes:
    """
@@ -266,20 +289,20 @@ class SetupVolumes:
         self.volume_only_pump_b = volume_only_pump_b
         self.volume_pump_a_and_pump_b = volume_pump_a_and_pump_b
 
-#This calculates the time in seconds to fill the volume between valve and needs, given a total flowrate.
+# This calculates the time in seconds to fill the volume between valve and needs, given a total flowrate.
     def get_time_fill_needle(self, flowrate_a, flowrate_b, flowrate_sum):
         """Return time in sec to fill the needle at a certain flow rate."""
         duration = ((self.volume_valve_to_needle / flowrate_sum) * self.excess) * 60
         return duration
         
-#This calculates the the time it takes to reach steady state after switching feeds
+# This calculates the the time it takes to reach steady state after switching feeds
     def get_time_stady_state_rinsing(self, flowrate_a, flowrate_b, flowrate_sum, stady_state_rinsing_factor):
         """Return time in sec it takes to reach steady state."""
         duration = ((((self.volume_reactor * stady_state_rinsing_factor) / flowrate_b)
                      + (self.volume_pump_a_and_pump_b / flowrate_sum)) * self.excess) * 60
         return duration
 
-#This calculates the time it takes to fill both the volume before the reactor, and the reactor itself
+# This calculates the time it takes to fill both the volume before the reactor, and the reactor itself
     def get_time_fill_reactor(self, flowrate_a, flowrate_b, flowrate_sum):
         """Return time in sec to fill the reactor."""
         duration = (((self.volume_before_reactor + self.volume_reactor) / flowrate_b)
