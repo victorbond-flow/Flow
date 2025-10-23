@@ -181,7 +181,12 @@ class Rackcommands:
         if not send:
             return x, y
 
-        # --- Otherwise, move using GilsonSession’s own safe method ---
+        # ---- NEW SAFETY STEP: Lift Z to safe Z before XY move ---
+        if self.gilson.current_z < self.gilson.Z_SAFE:
+            print(f"Raising to Z_SAFE ({self.gilson.Z_SAFE} mm) before XY move...")
+            self.gilson.move_z(self.gilson.Z_SAFE)
+
+        # --- Then move in XY plane safely ---
         print(f"Moving to vial {vial_pos} at ({x:.2f}, {y:.2f}) mm")
         self.gilson.move_xy(x, y)  
 

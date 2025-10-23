@@ -16,7 +16,8 @@ class GilsonSession:
         self.sequence_number = 40
         self._connect()
         self.send_admin_command()
-        self.Z_SAFE = 175
+        self.Z_SAFE = 45
+        self.Z_MAX_SAFE 120
         self.current_z = 0
         
 # This function connects to the Gilsons admin port. The Gilson replies with a different port number where it'll handle commands, the script opens that second connection and stores it as self.session_socket
@@ -185,21 +186,40 @@ class GilsonSession:
         result = self.send_command("Move Y", parameters=parameters)
         return f"Moved Y to {position}. Result: {result}"
 
-    def move_z(self, position):
-        """Move Z to target, respecting lower and upper limits."""
+    def move_z(self, position, allow_in_vial=False):
+    """Move Z to target, respecting safe working limits.
     
-        # Clamp to safe range
+    Parameters
+    ----------
+    position : float
+        Target Z position (mm)
+    allow_in_vial : bool, optional
+        If True, allows Z movement below Z_SAFE (into vials), 
+        but not below Z_WORKING_MIN.
+    """
+
+    if allow_in_vial:
+        # Clamp within working depth range
+        if position < self.Z_WORKING_MIN:
+            print(f"⚠️ Requested Z={position} below working minimum ({self.Z_WORKING_MIN} mm). Clamping.")
+            position = self.Z_WORKING_MIN
+        elif position > self.Z_MAX_SAFE:
+            print(f"⚠️ Requested Z={position} above safe maximum ({self.Z_MAX_SAFE} mm). Clamping.")
+            position = self.Z_MAX_SAFE
+    else:
+        # Normal mode — no vial access allowed
         if position < self.Z_SAFE:
-            print(f"⚠️ Requested Z={position} below safe minimum ({self.Z_SAFE} mm). Clamping.")
+            print(f"⚠️ Requested Z={position} below safe height ({self.Z_SAFE} mm). Clamping to Z_SAFE.")
             position = self.Z_SAFE
         elif position > self.Z_MAX_SAFE:
             print(f"⚠️ Requested Z={position} above safe maximum ({self.Z_MAX_SAFE} mm). Clamping.")
             position = self.Z_MAX_SAFE
 
-        parameters = {"Z Position": position}
-        result = self.send_command("Move Z", parameters=parameters)
-        self.current_z = position
-        return f"Moved Z to {position}. Result: {result}"
+    parameters = {"Z Position": position}
+    result = self.send_command("Move Z", parameters=parameters)
+    self.current_z = position
+    return f"Moved Z to {position}. Result: {result}"
+
 
 
     def move_xy(self, x_position, y_position):
