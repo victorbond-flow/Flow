@@ -17,7 +17,7 @@ class GilsonSession:
         self._connect()
         self.send_admin_command()
         self.Z_SAFE = 45
-        self.Z_MAX_SAFE 120
+        self.Z_MAX_SAFE = 120
         self.current_z = 0
         
 # This function connects to the Gilsons admin port. The Gilson replies with a different port number where it'll handle commands, the script opens that second connection and stores it as self.session_socket
@@ -187,38 +187,38 @@ class GilsonSession:
         return f"Moved Y to {position}. Result: {result}"
 
     def move_z(self, position, allow_in_vial=False):
-    """Move Z to target, respecting safe working limits.
-    
-    Parameters
-    ----------
-    position : float
+        """Move Z to target, respecting safe working limits.
+        
+        Parameters
+        ----------
+        position : float
         Target Z position (mm)
-    allow_in_vial : bool, optional
+        allow_in_vial : bool, optional
         If True, allows Z movement below Z_SAFE (into vials), 
         but not below Z_WORKING_MIN.
-    """
-
-    if allow_in_vial:
-        # Clamp within working depth range
-        if position < self.Z_WORKING_MIN:
-            print(f"⚠️ Requested Z={position} below working minimum ({self.Z_WORKING_MIN} mm). Clamping.")
-            position = self.Z_WORKING_MIN
-        elif position > self.Z_MAX_SAFE:
-            print(f"⚠️ Requested Z={position} above safe maximum ({self.Z_MAX_SAFE} mm). Clamping.")
-            position = self.Z_MAX_SAFE
-    else:
-        # Normal mode — no vial access allowed
-        if position < self.Z_SAFE:
-            print(f"⚠️ Requested Z={position} below safe height ({self.Z_SAFE} mm). Clamping to Z_SAFE.")
-            position = self.Z_SAFE
-        elif position > self.Z_MAX_SAFE:
-            print(f"⚠️ Requested Z={position} above safe maximum ({self.Z_MAX_SAFE} mm). Clamping.")
-            position = self.Z_MAX_SAFE
-
-    parameters = {"Z Position": position}
-    result = self.send_command("Move Z", parameters=parameters)
-    self.current_z = position
-    return f"Moved Z to {position}. Result: {result}"
+        """
+    
+        if allow_in_vial:
+            # Clamp within working depth range
+            if position < self.Z_WORKING_MIN:
+                print(f"⚠️ Requested Z={position} below working minimum ({self.Z_WORKING_MIN} mm). Clamping.")
+                position = self.Z_WORKING_MIN
+            elif position > self.Z_MAX_SAFE:
+                print(f"⚠️ Requested Z={position} above safe maximum ({self.Z_MAX_SAFE} mm). Clamping.")
+                position = self.Z_MAX_SAFE
+        else:
+            # Normal mode — no vial access allowed
+            if position < self.Z_SAFE:
+                print(f"⚠️ Requested Z={position} below safe height ({self.Z_SAFE} mm). Clamping to Z_SAFE.")
+                position = self.Z_SAFE
+            elif position > self.Z_MAX_SAFE:
+                print(f"⚠️ Requested Z={position} above safe maximum ({self.Z_MAX_SAFE} mm). Clamping.")
+                position = self.Z_MAX_SAFE
+    
+        parameters = {"Z Position": position}
+        result = self.send_command("Move Z", parameters=parameters)
+        self.current_z = position
+        return f"Moved Z to {position}. Result: {result}"
 
 
 
@@ -233,10 +233,24 @@ class GilsonSession:
         }
         result = self.send_command("Move XY", parameters=parameters)
         return f"Moved to X={x_position}, Y={y_position}. Result: {result}"
-    
+
+# ------------------------------------------------------------------------------------------------------------
     def home(self):
+        # Ensure Z is at least safe before homing X/Y
+        if self.current_z < self.Z_SAFE:
+            print(f"Z below safe limit ({self.current_z:.2f} < {self.Z_SAFE:.2f}) — raising first.")
+            self.move_z(self.Z_SAFE)
+
+        # Send home command
         self.send_command("Home")
-        print("All axes homed successfully")
+    
+        # Immediately move Z to your max safe height
+        if self.current_z > self.Z_MAX_SAFE:
+            print(f"Z exceeded max safe height ({self.current_z:.2f} > {self.Z_MAX_SAFE:.2f}) — lowering to safe max.")
+        self.move_z(self.Z_MAX_SAFE)
+    
+        print("All axes homed successfully and Z is within safe limits")
+
 
     def close(self):
         if self.session_socket:

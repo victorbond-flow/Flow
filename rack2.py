@@ -38,8 +38,10 @@ class Rack:
     # ---------------------------------------------------------------------------------------
 
     def __init__(self, array_dimensions, offset_x, offset_y,
-                 vial2vial_x, vial2vial_y, groundlevel_height,
-                 staggered=True):
+             vial2vial_x, vial2vial_y, groundlevel_height,
+             staggered=True,
+             vial_volume_max=None, vial_usedvolume_max=None,
+             vial_height=None, vial_free_depth=None):
 
         self.n_cols, self.n_rows = array_dimensions
         self.array_dimensions = array_dimensions
@@ -195,8 +197,8 @@ class Rackcommands:
         
     # The method below is a scaffold to build on later - will be useful for automating a sequence of movements between vials
     def move_sequence(self, vials):
-    for v in vials:
-        self.go_to_vial(v)
+        for v in vials:
+            self.go_to_vial(v)
 
 
 #############################################################################################
@@ -275,15 +277,21 @@ class Vial:
 ###############################################################################################
 
 class SetupVolumes:
-   """
+    """
     Represents the physical volumes (in mL) of different parts of the flow setup.
     These are used to calculate how long it takes to rinse, fill, or reach steady state
     based on given flow rates.
 
     Essentially: this class turns *flow rates* and *setup geometry* into *timing data*.
     """
-    def __init__(self, volume_valve_to_needle, volume_reactor_to_valve, volume_before_reactor,
-                 volume_reactor, volume_only_pump_a, volume_only_pump_b, volume_pump_a_and_pump_b,
+    def __init__(self,
+                 volume_valve_to_needle,
+                 volume_reactor_to_valve,
+                 volume_before_reactor,
+                 volume_reactor,
+                 volume_only_pump_a,
+                 volume_only_pump_b,
+                 volume_pump_a_and_pump_b,
                  excess=1.5):
         self.volume_valve_to_needle = volume_valve_to_needle
         self.volume_reactor_to_valve = volume_reactor_to_valve
