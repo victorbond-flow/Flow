@@ -19,10 +19,11 @@ class AL1000:
             #log_action('device_log.txt', "Connection to Knauer pump failed.")
         
     def command(self, code):
-        """ Sends command to device in bytes and retrieves the response """
-        #sending the command to device
-        self.ser.write(f'{code}\r'.encode())
-        #accepting the response
-        #byteData = self.ser.readline().decode().strip()
-        #give response
-        #return byteData
+        """Send command and print pump reply"""
+        self.ser.write(f"{code}\r".encode())
+        time.sleep(0.2)
+        response = self.ser.readline().decode(errors='ignore').strip()
+        print(f"Sent: {code} | Reply: {response}")
+        return response
+
+    
