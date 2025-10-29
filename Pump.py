@@ -27,7 +27,15 @@ class AL1000:
         full_cmd = f"@00{code}\r"
         self.ser.write(full_cmd.encode())
         time.sleep(1)  # may need 1–2 s for slower commands
-        response = self.ser.readline().decode(errors='ignore').strip()
+        time.sleep(0.2)  # allow pump to respond
+        raw = self.ser.read_until(b'\x03')  # read until ETX (0x03)
+        if raw.startswith(b'\x02'):  # strip STX/ETX if present
+            raw = raw[1:]
+        if raw.endswith(b'\x03'):
+            raw = raw[:-1]
+        print("Raw bytes:", raw)
+        response = raw.decode('ascii', errors='replace').strip()
+
         print(f"Sent: {full_cmd.strip()} | Reply: {response}")
         return response
 
