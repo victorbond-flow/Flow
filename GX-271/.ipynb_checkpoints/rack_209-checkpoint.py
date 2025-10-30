@@ -2,55 +2,70 @@ import numpy as np
 from gilson_ethernet2 import GilsonSession
 # from loguru import logger  # Optional logging
 
-#############################################################################################
-# rack2.py
+##########################################################################################################################
+# rack_209.py    Note - the number in the file name reflects the code associated with the specific rack on Gilsons website
 # -------------------------------------------------------------------------------------------
-# Defines classes to represent the physical layout of a Gilson rack and related operations.
-# This version supports:
-#UPDATE ME
-#############################################################################################
+# Specific implementation for the 6×16 rack used on the Gilson GX-271 autosampler.
+#
+# Defines the geometry, spacing, and coordinates for this particular rack.
+# The class can be imported directly to provide vial positions without 
+# needing to specify any geometry in the control notebook.
+#
+# Classes defined:
+#   - Rack : Hardcoded 6×16 rack with coordinate mapping
+#   - Rackcommands   : Interface between the rack and Gilson session
+#   - Vial           : Represents a single vial
+#   - SetupVolumes   : Helper class for flow system volume calculations
+#
+# NOTE: For other rack types, clone this file and update the hardcoded geometry.
+##########################################################################################################################
+
 
 class Rack:
     """Representation of a physical vial rack within the flow setup.
 
     Handles layout geometry, vial indexing, and coordinate generation.
 
-    Parameters
+    -----
+    This implementation is specific to the physical rack installed on the GX-271 autosampler.  
+    If using a different rack, create a new subclass or file with updated geometry parameters.
+
+    Attributes
     ----------
-    array_dimensions : tuple(int, int)
-        (n_columns, n_rows) — number of vials in each dimension.                         #NOTE - THIS NEEDS UPDATED!!!
-        e.g. (4, 16) for your 4-column × 16-row rack.
+    n_columns : int
+        Number of vial columns (default = 4 for this rack).
+    n_rows : int
+        Number of vial rows (default = 16 for this rack).
     offset_x, offset_y : float
-        Base offset (mm) from the Gilson home position to vial (1,1).
+        Base X/Y offsets (mm) from the Gilson home position to vial (1,1).
     vial2vial_x, vial2vial_y : float
-        Spacing between adjacent vials in mm.
+        Spacing between adjacent vials (mm).
     groundlevel_height : float
         Z-height reference for the deck surface (mm).
-    staggered : bool, optional
-        If True, every second column is offset in Y by ½ vial2vial_y
-        (the “cans of beans” packing).
+    staggered : bool
+        Whether the rack layout uses Y-axis staggering (½ vial2vial_y shift in alternate columns).
     """
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------
 # 1. INITIAL SETUP + STRUCTURE
 # --------------------------------------------------------------------------------------------------------------------------------------------------------
-    def __init__(self, array_dimensions, offset_x, offset_y,
-             vial2vial_x, vial2vial_y, groundlevel_height,
-             staggered=True,
-             vial_volume_max=None, vial_usedvolume_max=None,
-             vial_height=None, vial_free_depth=None):
-
-        self.n_cols, self.n_rows = array_dimensions
-        self.array_dimensions = array_dimensions
-        self.offset_x = offset_x
-        self.offset_y = offset_y
-        self.vial2vial_x = vial2vial_x
-        self.vial2vial_y = vial2vial_y
-        self.groundlevel_height = groundlevel_height
-        self.staggered = staggered
+    def __init__(self):
+        self.n_cols = 6
+        self.n_rows = 16
+        self.array_dimensions = (self.n_cols, self.n_rows)
+        self.offset_x = 35.5
+        self.offset_y = 7.2
+        self.vial2vial_x = 16.54
+        self.vial2vial_y = 17.77
+        self.groundlevel_height = 0.0
+        self.staggered = True
         self.rack_order = self.generate_vial_order()
-        self.vials = {vial_num: Vial(vial_volume_max, vial_usedvolume_max, vial_height, vial_free_depth)
-                      for vial_num in self.rack_order.flatten()}
+        self.vials = {vial_num: Vial(self.vial_volume_max, self.vial_usedvolume_max, self.vial_height, self.vial_free_depth)
+        for vial_num in self.rack_order.flatten()}
+        self.Z_SAFE = 45.0
+        self.Z_MAX_SAFE = 120.0
+        self.Z_WORKING_MIN = 11.0
+
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------
     def generate_vial_order(self):
