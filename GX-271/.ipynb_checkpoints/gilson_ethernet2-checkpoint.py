@@ -16,7 +16,9 @@ class GilsonSession:
         self.sequence_number = 40
         self._connect()
         self.send_admin_command()
-        
+        self.Z_SAFE = 45
+        self.Z_MAX_SAFE = 120
+        self.current_z = 0
         
 # This function connects to the Gilsons admin port. The Gilson replies with a different port number where it'll handle commands, the script opens that second connection and stores it as self.session_socket
     def _connect(self):

@@ -157,6 +157,15 @@ class Rack:
             vials = [vials]
 
         return {v: self.vials[v].get_vial_status() for v in vials}
+
+#---------------------------------------------------------------------------------------------------------------------------------
+# Z-height safety
+#---------------------------------------------------------------------------------------------------------------------------------
+    self.z_limits = {
+        "safe": 45.0,
+        "max_safe": 120.0,
+        "working_min": 11.0
+    }
     
 
 #############################################################################################
@@ -175,6 +184,9 @@ class Rackcommands:
         self.rack_position = rack_position
         self.rack_offset_x = rack_offset_x
         self.rack_offset_y = rack_offset_y
+
+        #load z-safety limits from rack
+        self.z_limits = rack.z_limits
 
 #---------------------------------------------------------------------------------------------------------------------------------------------------------
     def go_to_vial(self, vial_pos, send=True):
