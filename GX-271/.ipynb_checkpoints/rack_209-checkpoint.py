@@ -50,21 +50,53 @@ class Rack:
 # 1. INITIAL SETUP + STRUCTURE
 # --------------------------------------------------------------------------------------------------------------------------------------------------------
     def __init__(self):
+        # --- Rack geometry ---
         self.n_cols = 6
         self.n_rows = 16
         self.array_dimensions = (self.n_cols, self.n_rows)
-        self.offset_x = 35.5
-        self.offset_y = 7.2
+    
+        # position of vial (1,1)
+        self.offset_x = 35.5   # mm
+        self.offset_y = 7.2    # mm
+    
+        # spacing between vials
         self.vial2vial_x = 16.54
         self.vial2vial_y = 17.77
+    
+        # general rack parameters
         self.groundlevel_height = 0.0
         self.staggered = True
-        self.rack_order = self.generate_vial_order()
-        self.vials = {vial_num: Vial(self.vial_volume_max, self.vial_usedvolume_max, self.vial_height, self.vial_free_depth)
-        for vial_num in self.rack_order.flatten()}
+    
+        # --- Vial parameters ---
+        self.vial_volume_max = 2.0
+        self.vial_usedvolume_max = 1.8
+        self.vial_height = 32.0
+        self.vial_free_depth = 2.0
+    
+        # --- Z safety limits ---
         self.Z_SAFE = 45.0
         self.Z_MAX_SAFE = 120.0
         self.Z_WORKING_MIN = 11.0
+    
+        # store them together as dict for convenience
+        self.z_limits = {
+            "safe": self.Z_SAFE,
+            "max_safe": self.Z_MAX_SAFE,
+            "working_min": self.Z_WORKING_MIN,
+        }
+    
+        # --- Build rack order + vial objects ---
+        self.rack_order = self.generate_vial_order()
+        self.vials = {
+            vial_num: Vial(
+                self.vial_volume_max,
+                self.vial_usedvolume_max,
+                self.vial_height,
+                self.vial_free_depth,
+            )
+            for vial_num in self.rack_order.flatten()
+        }
+
 
 
 # --------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -169,12 +201,17 @@ class Rackcommands:
     """Connects a Gilson session to a Rack and handles vial movements."""
 
     def __init__(self, gilson_session, rack,
-                 rack_position=1, rack_offset_x=92, rack_offset_y=0):
+                 rack_position=1, rack_offset_x=92, rack_offset_y=0, rack_home_x=3.8, rack_home_y=2.3):
         self.gilson = gilson_session
         self.rack = rack
         self.rack_position = rack_position
         self.rack_offset_x = rack_offset_x
         self.rack_offset_y = rack_offset_y
+        self.rack_home_x = rack_home_x
+        self.rack_home_y = rack_home_y
+
+        #load z-safety limits from rack
+        self.z_limits = rack.z_limits
 
 #---------------------------------------------------------------------------------------------------------------------------------------------------------
     def go_to_vial(self, vial_pos, send=True):
@@ -208,6 +245,13 @@ class Rackcommands:
         self.gilson.move_xy(x, y)  
 
         return x, y
+
+
+    def move_into_vial(self):
+        """Lower probe safely into the vial to the working minimum height."""
+        target_z = self.z_limits["working_min"]
+        print(f"Lowering probe to working minimum Z = {target_z} mm")
+        self.gilson.move_z(target_z, allow_in_vial=True)
 
 #---------------------------------------------------------------------------------------------------------------------------------------------------------
     # The method below is a scaffold to build on later - will be useful for automating a sequence of movements between vials
