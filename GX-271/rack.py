@@ -72,10 +72,7 @@ class Rack:
         """Return a list of all vial numbers in the rack"""
         return list(self.vials.keys())
 
-# --------------------------------------------------------------------------------------------------------------------------------------------------------
-# 2. GEOMETRY + POSITION METHODS
-# --------------------------------------------------------------------------------------------------------------------------------------------------------
-    
+#---------------------------------------------------------------------------------------------------------------------------------------------------------
     def get_vial_indices(self, vial_position):
         """Return (row, col) indices for a given vial number."""
         indices = np.where(self.rack_order == vial_position)
@@ -97,50 +94,25 @@ class Rack:
             y += self.vial2vial_y / 2
     
         return x, y
+#---------------------------------------------------------------------------------------------------------------------------------------------------------
+# --- Convenience wrappers for single-vial operations ---
+    def fill_vial(self, vial_num, volume, substance):
+        """Fill a single vial (thin wrapper)."""
+        self.vials[vial_num].fill(volume, substance)
+
+    def empty_vial(self, vial_num):
+        """Empty a single vial (thin wrapper)."""
+        self.vials[vial_num].empty()
+
+    def consume_vial(self, vial_num, volume):
+        """Withdraw volume from a single vial."""
+        self.vials[vial_num].consume_volume(volume)
+
+    def get_vial_status(self, vial_num):
+        """Return status of a single vial."""
+        return self.vials[vial_num].get_vial_status()
 
 
-# ------------------------------------------------------------------------------------
-# 3. NEW - VIAL MANAGEMENT METHODS
-# ------------------------------------------------------------------------------------
-    def fill_vial(self, vials, volume, substance):
-        """Record that specified vials have been filled manually"""
-        if isinstance(vials, int):
-            vials = [vials]
-
-        # Verify that all vials exist first
-        for v in vials:
-            if v not in self.vials:
-                raise ValueError(f"Vial {v} does not exist in this rack.")
-
-        # Check that the contents are consistent (all or nothing - subject to change)
-        for v in vials:
-            vial = self.vials[v]
-            if vial.contents is not None and vial.contents != substance:
-                raise ValueError(f"Vial {v} contains {vial.contents}. Empty before filling with {substance}.")
-
-        # Proceed to fill all
-        for v in vials:
-            self.vials[v].fill(volume, substance)
-
-#-----------------------------------------------------------------------------------------------------------------------------
-    def empty_vial(self, vials):
-        """Empty one or more vials."""
-        if isinstance(vials, int):
-            vials = [vials]
-        for v in vials:
-            if v not in self.vials:
-                raise ValueError(f"Vial {v} does not exist in this rack.")
-            self.vials[v].empty()
-            
-#--------------------------------------------------------------------------------------------------------------------------------
-    def get_vial_status(self, vials=None):
-        """Return readable status for specified vials or all if none specified"""
-        if vials is None:
-            vials = self.all_vial_numbers()
-        elif isinstance(vials, int):
-            vials = [vials]
-
-        return {v: self.vials[v].get_vial_status() for v in vials}
 
 
 #############################################################################################
@@ -149,7 +121,7 @@ class Rack:
 # rack-specific configuration for the GX-271 6×16 rack (Gilson rack code 209)
 #############################################################################################
 
-class Rack_209
+class Rack_209:
     """
     Rack-specific wrapper class following the architecture used by Anna.
 
@@ -282,124 +254,4 @@ class Rackcommands:
         for v in vials:
             self.go_to_vial(v)
 
-
-#############################################################################################
-# Vial Class
-#############################################################################################
-
-class Vial:
-    """Representation for a Vial within the flow setup."""
-    def __init__(self, vial_volume_max, vial_usedvolume_max, vial_height, vial_free_depth):
-        self.vial_volume_max = vial_volume_max          # volume in mL
-        self.vial_usedvolume_max = vial_usedvolume_max  # volume in mL
-        self.vial_height = vial_height                  # height in mm
-        self.vial_free_depth = vial_free_depth          # depth in mm
-        self.sum_liquid_level = 0
-        self.current_volume = 0.0                       # current volume in mL
-        self.contents = None                            # substance string (e.g., "0.5mM Reagent A")
-        self.min_usable_fraction = 0.10                 
-        self.vial_min_usable_volume = self.vial_volume_max * self.min_usable_fraction               # Defines a "functional empty" state, 10% of max volume
-
-# --------------------------------------------------------------------------------------------------------------------------------------------------------
-    def fill(self, volume, substance):
-        """ Logs that the vial has been filled manually.
-
-        Parameters
-        ----------
-        volume : float --- volume (mL) to record
-        substance : str --- Name of substance being added
-        """
-
-        if self.contents is not None and self.contents != substance:
-            raise ValueError(f"Vial contains {self.contents}. Empty before filling with {substance}.")
-
-        if volume > self.vial_volume_max:
-            print(f"Volume {volume} exceeds vial max ({self.vial_volume_max}). Setting volume to max...")
-            volume = self.vial_volume_max
-
-        self.current_volume = volume
-        self.contents = substance
-        print(f"Vial filled with {volume} mL of {substance}.")
-
-# --------------------------------------------------------------------------------------------------------------------------------------------------------
-    def empty(self):
-        """Empty the vial and reset contents"""
-        self.current_volume = 0.0
-        self.contents = None
-        print("Vial emptied - clean or replace before refill")
-
-# --------------------------------------------------------------------------------------------------------------------------------------------------------
-    def consume_volume(self, volume):
-        """Reduce the volume after withdrawal (used by Pump class)"""
-        if self.current_volume == 0:
-            raise ValueError("Vial is empty - cannot withdraw.")
-            
-        if self.current_volume - volume < self.vial_min_usable_volume:
-            raise ValueError(f"Withdrawal of {volume} mL would drop the volume below safe working limit"
-                             f"({self.vial_min_usable_volume:.2f} mL). Refill or replace vial.")
-
-        self.current_volume -= volume
-        print(f"Withdrawn {volume} mL. Remaining: {self.current_volume:.2f} mL of {self.contents}.")
-        
-# --------------------------------------------------------------------------------------------------------------------------------------------------------
-    def is_usable(self):
-        """Return True if vial still has sufficient volume for use"""
-        return self.current_volume > self.vial_min_usable_volume
-
-# -------------------------------------------------------------------------------------------------------------------------------------------------------   
-    def get_vial_status(self):
-        if self.contents:
-            return f"Vial contains {self.current_volume} mL of {self.contents}."
-        else:
-            return "Vial is empty."
-
     
-###############################################################################################
-# SetupVolumes Class
-###############################################################################################
-
-class SetupVolumes:
-    """
-    Represents the physical volumes (in mL) of different parts of the flow setup.
-    These are used to calculate how long it takes to rinse, fill, or reach steady state
-    based on given flow rates.
-
-    Essentially: this class turns *flow rates* and *setup geometry* into *timing data*.
-    """
-    def __init__(self,
-                 volume_valve_to_needle,
-                 volume_reactor_to_valve,
-                 volume_before_reactor,
-                 volume_reactor,
-                 volume_only_pump_a,
-                 volume_only_pump_b,
-                 volume_pump_a_and_pump_b,
-                 excess=1.5):
-        self.volume_valve_to_needle = volume_valve_to_needle
-        self.volume_reactor_to_valve = volume_reactor_to_valve
-        self.volume_before_reactor = volume_before_reactor
-        self.volume_reactor = volume_reactor
-        self.excess = excess
-        self.volume_only_pump_a = volume_only_pump_a
-        self.volume_only_pump_b = volume_only_pump_b
-        self.volume_pump_a_and_pump_b = volume_pump_a_and_pump_b
-
-# This calculates the time in seconds to fill the volume between valve and needs, given a total flowrate.
-    def get_time_fill_needle(self, flowrate_a, flowrate_b, flowrate_sum):
-        """Return time in sec to fill the needle at a certain flow rate."""
-        duration = ((self.volume_valve_to_needle / flowrate_sum) * self.excess) * 60
-        return duration
-        
-# This calculates the the time it takes to reach steady state after switching feeds
-    def get_time_stady_state_rinsing(self, flowrate_a, flowrate_b, flowrate_sum, stady_state_rinsing_factor):
-        """Return time in sec it takes to reach steady state."""
-        duration = ((((self.volume_reactor * stady_state_rinsing_factor) / flowrate_b)
-                     + (self.volume_pump_a_and_pump_b / flowrate_sum)) * self.excess) * 60
-        return duration
-
-# This calculates the time it takes to fill both the volume before the reactor, and the reactor itself
-    def get_time_fill_reactor(self, flowrate_a, flowrate_b, flowrate_sum):
-        """Return time in sec to fill the reactor."""
-        duration = (((self.volume_before_reactor + self.volume_reactor) / flowrate_b)
-                    * self.excess) * 60
-        return duration
