@@ -2,23 +2,31 @@ import numpy as np
 from gilson_ethernet2 import GilsonSession
 # from loguru import logger  # Optional logging
 
-##########################################################################################################################
-# rack_209.py    Note - the number in the file name reflects the code associated with the specific rack on Gilsons website
-# -------------------------------------------------------------------------------------------
-# Specific implementation for the 6×16 rack used on the Gilson GX-271 autosampler.
+# ==========================================================================================
+# rack.py
+# ------------------------------------------------------------------------------------------
+# Provides the rack geometry, vial objects, and autosampler movement logic used to control
+# the Gilson GX-271 (or compatible) autosampler.
 #
-# Defines the geometry, spacing, and coordinates for this particular rack.
-# The class can be imported directly to provide vial positions without 
-# needing to specify any geometry in the control notebook.
+# Contains three main classes:
 #
-# Classes defined:
-#   - Rack : Hardcoded 6×16 rack with coordinate mapping
-#   - Rackcommands   : Interface between the rack and Gilson session
-#   - Vial           : Represents a single vial
-#   - SetupVolumes   : Helper class for flow system volume calculations
+#   • Rack
+#       Generic rack geometry (rows, columns, spacing, staggered layout).
+#       Computes vial coordinates but includes no instrument-specific logic.
 #
-# NOTE: For other rack types, clone this file and update the hardcoded geometry.
-##########################################################################################################################
+#   • Rack_209
+#       Concrete implementation of the Gilson 6×16 rack (code 209).
+#       Creates a Rack instance with hard-coded geometry, instantiates all Vial objects,
+#       defines Z-safety limits, and constructs a Rackcommands object.
+#
+#   • Rackcommands
+#       Uses the Rack geometry + GilsonSession to perform safe probe movements:
+#       moving to vials, lowering into vials, and stepping through vial sequences.
+#
+# Structure keeps geometry, configuration, and movement control cleanly separated and easy
+# to modify for new racks or autosampler setups.
+# ==========================================================================================
+
 
 
 class Rack:
@@ -26,9 +34,6 @@ class Rack:
     Generic rack geometry class
     Does NOT contain rack-specific geometry or vial/Z information
     """
-
-# --------------------------------------------------------------------------------------------------------------------------------------------------------
-# 1. INITIAL SETUP + STRUCTURE
 # --------------------------------------------------------------------------------------------------------------------------------------------------------
     def __init__(self,
                  n_cols,
@@ -250,7 +255,7 @@ class Rackcommands:
     # --------------------------------------------------------------------------------------------
 
     def move_sequence(self, vials):
-        """Move through a sequence of vials in order."""
+        """Move through a sequence of vials in order. Note - scaffold class, may be useful later"""
         for v in vials:
             self.go_to_vial(v)
 
