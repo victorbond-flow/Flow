@@ -255,6 +255,22 @@ class GilsonSession:
     
         print("All axes homed successfully and Z is within safe limits")
 
+    def get_error(self):
+        # Reads the error number and describes the error
+        return self.send_command("Get Error")
+
+    def clear_error(self):
+        # Clears error state
+        return self.send_command("Clear Error")
+
+    def status(self):
+        # Returns XYZ position, motor status, and error if any
+        return self.send_command("Get Status")
+
+    def reset(self):
+        # Resets the autosampler
+        return self.send_command("Reset")
+
 
     def close(self):
         if self.session_socket:

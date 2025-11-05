@@ -101,6 +101,7 @@ class Rack:
         return x, y
 #---------------------------------------------------------------------------------------------------------------------------------------------------------
 # --- Convenience wrappers for single-vial operations ---
+    
     def fill_vial(self, vial_num, volume, substance):
         """Fill a single vial (thin wrapper)."""
         self.vials[vial_num].fill(volume, substance)
