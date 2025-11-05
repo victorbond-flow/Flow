@@ -100,23 +100,23 @@ class Rack:
     
         return x, y
 #---------------------------------------------------------------------------------------------------------------------------------------------------------
-# --- Convenience wrappers for single-vial operations ---
+# --- Convenience wrappers for single-vial operations (MORE USEFUL LATER - HENCE, COMMENTED OUT 05/11/25--------------------------
     
-    def fill_vial(self, vial_num, volume, substance):
-        """Fill a single vial (thin wrapper)."""
-        self.vials[vial_num].fill(volume, substance)
+    #def fill_vial(self, vial_num, volume, substance):
+        #"""Fill a single vial (thin wrapper)."""
+        #self.vials[vial_num].fill(volume, substance)
 
-    def empty_vial(self, vial_num):
-        """Empty a single vial (thin wrapper)."""
-        self.vials[vial_num].empty()
+    #def empty_vial(self, vial_num):
+        #"""Empty a single vial (thin wrapper)."""
+       # self.vials[vial_num].empty()
 
-    def consume_vial(self, vial_num, volume):
-        """Withdraw volume from a single vial."""
-        self.vials[vial_num].consume_volume(volume)
+   # def consume_vial(self, vial_num, volume):
+       # """Withdraw volume from a single vial."""
+        #self.vials[vial_num].consume_volume(volume)
 
-    def get_vial_status(self, vial_num):
-        """Return status of a single vial."""
-        return self.vials[vial_num].get_vial_status()
+   # def get_vial_status(self, vial_num):
+      #  """Return status of a single vial."""
+       # return self.vials[vial_num].get_vial_status()
 
 
 
@@ -208,6 +208,9 @@ class Rackcommands:
         self.rack_home_x = rack_home_x
         self.rack_home_y = rack_home_y
 
+        # NEW - store geometry name for debugging
+        self.rack_name = getattr(rack, "name", f"Rack-{rack_position}")
+
         # Use rack-defined Z safety limits if they exist
         if hasattr(rack, "z_limits"):
             self.z_limits = rack.z_limits
@@ -254,6 +257,11 @@ class Rackcommands:
         self.gilson.move_z(target_z, allow_in_vial=True)
 
     # --------------------------------------------------------------------------------------------
+    
+
+
+
+        
 
     def move_sequence(self, vials):
         """Move through a sequence of vials in order. Note - scaffold class, may be useful later"""

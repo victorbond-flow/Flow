@@ -17,6 +17,12 @@ class GilsonSession:
         self._connect()
         self.send_admin_command()
 
+        # Keep track of racks - Key = rack number, value = Rackcommands instance
+        self.racks = {}
+        if racks:
+            for i, rack_obj in enumerate(racks, start=1):
+                self.add_rack(rack_obj, rack_position=i)
+        
         #Z safety / position
         self.Z_SAFE = 45
         self.Z_MAX_SAFE = 120
@@ -170,8 +176,11 @@ class GilsonSession:
   </CommandData>
 </Gilson>"""
         return self.send_raw_command(xml.strip(), expected_command="Admin")
-    
 
+##########################################################################################################################################################
+##### -------------------------------------------------- HELPER COMMANDS ----------------------------------------------------------------------------#####
+##########################################################################################################################################################
+    
     def move_x(self, position):
         if self.current_z < self.Z_SAFE:
             print(f"Z below safe limit ({self.current_z:.2f} < {self.Z_SAFE:.2f}) — raising first.")
@@ -238,7 +247,6 @@ class GilsonSession:
         result = self.send_command("Move XY", parameters=parameters)
         return f"Moved to X={x_position}, Y={y_position}. Result: {result}"
 
-# ------------------------------------------------------------------------------------------------------------
     def home(self):
         # Ensure Z is at least safe before homing X/Y
         if self.current_z < self.Z_SAFE:
@@ -270,6 +278,26 @@ class GilsonSession:
     def reset(self):
         # Resets the autosampler
         return self.send_command("Reset")
+
+    def add_rack(self, rack_obj, rack_position=1):
+    # Add a rack object manually to the session
+     if rack_position in self.racks:
+        print(f"⚠️ Rack position {rack_position} already has a rack, overwriting.")
+     self.racks[rack_position] = Rackcommands(self, rack_obj, rack_position=rack_position)
+     print(f"Rack added at position {rack_position}.")
+
+    def go_to_vial(self, vial_pos, rack_num=1):
+        if rack_num not in self.racks:
+            raise ValueError(f"No rack at position {rack_num}")
+        return self.racks[rack_num].go_to_vial(vial_pos)
+
+    def move_into_vial(self, rack_num=1):
+        if rack_num not in self.racks:
+            raise ValueError(f"No rack at position {rack_num}")
+        return self.racks[rack_num].move_into_vial()
+
+
+    
 
 
     def close(self):
