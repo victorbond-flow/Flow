@@ -1,0 +1,13 @@
+[06/11/25 15:40:21] | ERROR | EXCEPTION in go_to_vial after 0.003s: No rack at position 1
+[06/11/25 15:44:15] | ERROR | EXCEPTION in go_to_vial after 0.000s: 'Rack_209' object has no attribute 'get_vial_coordinates'
+[06/11/25 15:44:15] | ERROR | EXCEPTION in go_to_vial after 0.001s: 'Rack_209' object has no attribute 'get_vial_coordinates'
+[06/11/25 16:00:31] | ERROR | EXCEPTION in go_to_vial after 0.000s: 'Rack_209' object has no attribute 'get_vial_coordinates'
+[06/11/25 16:00:31] | ERROR | EXCEPTION in go_to_vial after 0.000s: 'Rack_209' object has no attribute 'get_vial_coordinates'
+[06/11/25 16:04:28] | ERROR | EXCEPTION in go_to_vial after 0.000s: 'Rack_209' object has no attribute 'get_vial_coordinates'
+[06/11/25 16:04:28] | ERROR | EXCEPTION in go_to_vial after 0.000s: 'Rack_209' object has no attribute 'get_vial_coordinates'
+[06/11/25 16:08:31] | ERROR | EXCEPTION in move_xy after 0.000s: name 'rack_num' is not defined
+[06/11/25 16:08:31] | ERROR | EXCEPTION in go_to_vial after 0.009s: name 'rack_num' is not defined
+[06/11/25 16:08:31] | ERROR | EXCEPTION in go_to_vial after 0.009s: name 'rack_num' is not defined
+[06/11/25 16:08:39] | ERROR | EXCEPTION in move_xy after 0.000s: name 'rack_num' is not defined
+[06/11/25 16:08:39] | ERROR | EXCEPTION in go_to_vial after 0.000s: name 'rack_num' is not defined
+[06/11/25 16:08:39] | ERROR | EXCEPTION in go_to_vial after 0.000s: name 'rack_num' is not defined

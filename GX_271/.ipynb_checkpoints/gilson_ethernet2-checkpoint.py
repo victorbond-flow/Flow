@@ -1,8 +1,10 @@
 import socket
 import time
 import xml.etree.ElementTree as ET
-from rack import Rack, Rack_209
 from rack_commands import Rackcommands
+from flow_logging import FlowLogger
+logger = FlowLogger()
+log_call = logger.log_call
 
 class GilsonSession:
     """
@@ -179,65 +181,78 @@ class GilsonSession:
 ##########################################################################################################################################################
 ##### -------------------------------------------------- HELPER COMMANDS ----------------------------------------------------------------------------#####
 ##########################################################################################################################################################
-    
+
+    @log_call
     def move_x(self, position):
-        if self.current_z < self.Z_SAFE:
-            print(f"Z below safe limit ({self.current_z:.2f} < {self.Z_SAFE:.2f}) — raising first.")
-            self.move_z(self.Z_SAFE)
+        z_safe = self.Z_SAFE
+        if rack_num and rack_num in self.racks:
+            z_safe = self.racks[rack_num].z_limits["safe"]
+
+        if self.current_z < z_safe:
+            print(f"Z below safe limit ({self.current_z:.2f} < {z_safe:.2f}) — raising first.")
+            self.move_z(z_safe, rack_num=rack_num)
             
         parameters = {"X Position": position}
         result = self.send_command("Move X", parameters=parameters)
         return f"Moved X to {position}. Result: {result}"
 
+    @log_call
     def move_y(self, position):
-        if self.current_z < self.Z_SAFE:
-            print(f"Z below safe limit ({self.current_z:.2f} < {self.Z_SAFE:.2f}) — raising first.")
-            self.move_z(self.Z_SAFE)
+        z_safe = self.Z_SAFE
+        if rack_num and rack_num in self.racks:
+            z_safe = self.racks[rack_num].z_limits["safe"]
+
+        if self.current_z < z_safe:
+            print(f"Z below safe limit ({self.current_z:.2f} < {z_safe:.2f}) — raising first.")
+            self.move_z(z_safe, rack_num=rack_num)
             
         parameters = {"Y Position": position}
         result = self.send_command("Move Y", parameters=parameters)
         return f"Moved Y to {position}. Result: {result}"
 
-    def move_z(self, position, allow_in_vial=False):
-        """Move Z to target, respecting safe working limits.
-        
-        Parameters
-        ----------
-        position : float
-        Target Z position (mm)
-        allow_in_vial : bool, optional
-        If True, allows Z movement below Z_SAFE (into vials), 
-        but not below Z_WORKING_MIN.
-        """
+    @log_call
+    def move_z(self, position, allow_in_vial=True, rack_num=None):
+        # Use rack-specific Z-limits if provided
+        if rack_num is not None:
+            if rack_num not in self.racks:
+                raise ValueError(f"No rack at position {rack_num}")
+            z_limits = self.racks[rack_num].z_limits
+        else:
+            z_limits = {
+                "safe": self.Z_SAFE,
+                "max_safe": self.Z_MAX_SAFE,
+                "working_min": self.Z_WORKING_MIN
+            }
     
         if allow_in_vial:
-            # Clamp within working depth range
-            if position < self.Z_WORKING_MIN:
-                print(f"⚠️ Requested Z={position} below working minimum ({self.Z_WORKING_MIN} mm). Clamping.")
-                position = self.Z_WORKING_MIN
-            elif position > self.Z_MAX_SAFE:
-                print(f"⚠️ Requested Z={position} above safe maximum ({self.Z_MAX_SAFE} mm). Clamping.")
-                position = self.Z_MAX_SAFE
+            if position < z_limits["working_min"]:
+                print(f"⚠️ Requested Z={position} below working minimum ({z_limits['working_min']} mm). Clamping.")
+                position = z_limits["working_min"]
+            elif position > z_limits["max_safe"]:
+                print(f"⚠️ Requested Z={position} above safe maximum ({z_limits['max_safe']} mm). Clamping.")
+                position = z_limits["max_safe"]
         else:
-            # Normal mode — no vial access allowed
-            if position < self.Z_SAFE:
-                print(f"⚠️ Requested Z={position} below safe height ({self.Z_SAFE} mm). Clamping to Z_SAFE.")
-                position = self.Z_SAFE
-            elif position > self.Z_MAX_SAFE:
-                print(f"⚠️ Requested Z={position} above safe maximum ({self.Z_MAX_SAFE} mm). Clamping.")
-                position = self.Z_MAX_SAFE
+            if position < z_limits["safe"]:
+                print(f"⚠️ Requested Z={position} below safe height ({z_limits['safe']} mm). Clamping to safe.")
+                position = z_limits["safe"]
+            elif position > z_limits["max_safe"]:
+                print(f"⚠️ Requested Z={position} above safe maximum ({z_limits['max_safe']} mm). Clamping.")
+                position = z_limits["max_safe"]
     
         parameters = {"Z Position": position}
         result = self.send_command("Move Z", parameters=parameters)
         self.current_z = position
         return f"Moved Z to {position}. Result: {result}"
 
+    @log_call
+    def move_xy(self, x_position, y_position, rack_num=None):
+        z_safe = self.Z_SAFE
+        if rack_num is not None and rack_num in self.racks:
+            z_safe = self.racks[rack_num].z_limits["safe"]
 
-
-    def move_xy(self, x_position, y_position):
-        if self.current_z < self.Z_SAFE:
-            print(f"Z below safe limit ({self.current_z:.2f} < {self.Z_SAFE:.2f}) — raising first.")
-            self.move_z(self.Z_SAFE)
+        if self.current_z < z_safe:
+            print(f"Z below safe limit ({self.current_z:.2f} < {z_safe:.2f}) — raising first.")
+            self.move_z(z_safe, rack_num=rack_num)
             
         parameters = {
             "X Position": x_position,
@@ -246,6 +261,7 @@ class GilsonSession:
         result = self.send_command("Move XY", parameters=parameters)
         return f"Moved to X={x_position}, Y={y_position}. Result: {result}"
 
+    @log_call
     def home(self):
         # Ensure Z is at least safe before homing X/Y
         if self.current_z < self.Z_SAFE:
@@ -289,20 +305,18 @@ class GilsonSession:
         rack_name = type(rack_obj).__name__
         print(f"Rack '{rack_name}' added at position {rack_position}.")
 
-
+    @log_call
     def go_to_vial(self, vial_pos, rack_num=1):
         if rack_num not in self.racks:
             raise ValueError(f"No rack at position {rack_num}")
         return self.racks[rack_num].go_to_vial(vial_pos)
 
+    @log_call
     def move_into_vial(self, rack_num=1):
         if rack_num not in self.racks:
             raise ValueError(f"No rack at position {rack_num}")
+        target_z = self.racks[rack_num].z_limits["working_min"]
         return self.racks[rack_num].move_into_vial()
-
-
-    
-
 
     def close(self):
         if self.session_socket:

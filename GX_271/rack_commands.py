@@ -1,3 +1,8 @@
+from flow_logging import FlowLogger
+
+logger = FlowLogger()
+log_call = logger.log_call
+
 #############################################################################################
 # Rackcommands
 # -------------------------------------------------------------------------------------------
@@ -37,37 +42,48 @@ class Rackcommands:
 
     # --------------------------------------------------------------------------------------------
 
+    @log_call
     def go_to_vial(self, vial_pos, send=True):
-        """Move the Gilson probe to the vial at vial_pos."""
-
-        # Get base geometry from rack
+        """Move the Gilson probe to the vial at vial_pos, respecting rack-specific Z limits."""
+    
+        # Get base XY coordinates from the rack
         x, y = self.rack.get_vial_coordinates(vial_pos)
-
+    
         # Apply rack stacking offsets
         x += (self.rack_position - 1) * self.rack_offset_x
         y += (self.rack_position - 1) * self.rack_offset_y
-
+    
+        # -----------------------------
+        # RACK-SPECIFIC Z SAFETY CHECK
+        # -----------------------------
+        safe_z = self.z_limits.get("safe", self.gilson.Z_SAFE)
+        if self.gilson.current_z < safe_z:
+            print(f"Raising to rack-safe Z ({safe_z} mm) before XY move...")
+            self.gilson.move_z(safe_z)
+    
         if not send:
             return x, y
-
-        # Safety: always raise Z before XY movement
-        if self.gilson.current_z < self.z_limits["safe"]:
-            print(f"Raising to Z_SAFE ({self.z_limits['safe']} mm) before XY move...")
-            self.gilson.move_z(self.z_limits["safe"])
-
+    
+        # Move XY
         print(f"Moving to vial {vial_pos} at ({x:.2f}, {y:.2f}) mm")
-        self.gilson.move_xy(x, y)
+        self.gilson.move_xy(x, y, rack_num=self.rack_position)
 
+    
         return x, y
 
+
     # --------------------------------------------------------------------------------------------
-
+    @log_call
     def move_into_vial(self):
-        """Lower probe into vial to minimum safe working depth."""
-
-        target_z = self.z_limits["working_min"]
-        print(f"Lowering probe to working minimum Z = {target_z} mm")
+        """Lower probe into vial to the rack-specific minimum safe working depth."""
+    
+        # Use the rack's working_min, fallback to GilsonSession default if not set
+        target_z = self.z_limits.get("working_min", self.gilson.Z_WORKING_MIN)
+        print(f"Lowering probe into vial to Z = {target_z} mm (rack-specific working min)")
+        
+        # Allow moving below Z_SAFE since we are entering the vial
         self.gilson.move_z(target_z, allow_in_vial=True)
+
 
     # --------------------------------------------------------------------------------------------
     

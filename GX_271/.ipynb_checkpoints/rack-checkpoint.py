@@ -1,7 +1,10 @@
 import numpy as np
 from vial import Vial
 from rack_commands import Rackcommands
-# from loguru import logger  # Optional logging
+from flow_logging import FlowLogger
+
+logger = FlowLogger()
+log_call = logger.log_call
 
 # ==========================================================================================
 # rack.py
@@ -185,6 +188,8 @@ class Rack_209:
             rack_home_y=rack_home_y
         )
 
+    def get_vial_coordinates(self, vial_pos):
+        return self.rack.get_vial_coordinates(vial_pos)
 
 
 
