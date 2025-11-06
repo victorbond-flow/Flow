@@ -1,6 +1,8 @@
 import socket
 import time
 import xml.etree.ElementTree as ET
+from rack import Rack, Rack_209
+from rack_commands import Rackcommands
 
 class GilsonSession:
     """
@@ -19,10 +21,7 @@ class GilsonSession:
 
         # Keep track of racks - Key = rack number, value = Rackcommands instance
         self.racks = {}
-        if racks:
-            for i, rack_obj in enumerate(racks, start=1):
-                self.add_rack(rack_obj, rack_position=i)
-        
+          
         #Z safety / position
         self.Z_SAFE = 45
         self.Z_MAX_SAFE = 120
@@ -280,11 +279,16 @@ class GilsonSession:
         return self.send_command("Reset")
 
     def add_rack(self, rack_obj, rack_position=1):
-    # Add a rack object manually to the session
-     if rack_position in self.racks:
-        print(f"⚠️ Rack position {rack_position} already has a rack, overwriting.")
-     self.racks[rack_position] = Rackcommands(self, rack_obj, rack_position=rack_position)
-     print(f"Rack added at position {rack_position}.")
+        # Add a rack object manually to the session
+        if rack_position in self.racks:
+            print(f"⚠️ Rack position {rack_position} already has a rack, overwriting.")
+    
+        self.racks[rack_position] = Rackcommands(self, rack_obj, rack_position=rack_position)
+    
+        # Show the rack class name in the output
+        rack_name = type(rack_obj).__name__
+        print(f"Rack '{rack_name}' added at position {rack_position}.")
+
 
     def go_to_vial(self, vial_pos, rack_num=1):
         if rack_num not in self.racks:
