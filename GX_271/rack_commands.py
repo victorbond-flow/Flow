@@ -80,12 +80,12 @@ class Rackcommands:
     @log_call
     def move_into_vial(self):
         """Lower probe into vial to the rack-specific minimum safe working depth.
-        Relationship to GilsonSession:
-        GilsonSession.move_into_vial() only routes the call to the correct rack.
+        Relationship to GilsonEthernet:
+        GilsonEthernet.move_into_vial() only routes the call to the correct rack.
         THIS method is responsible for deciding how far into the vial to go.
         """
     
-        # Use the rack's working_min, fallback to GilsonSession default if not set
+        # Use the rack's working_min, fallback to GilsonEthernet default if not set
         target_z = self.z_limits.get("working_min", self.gilson.Z_WORKING_MIN)
         print(f"Lowering probe into vial to Z = {target_z} mm (rack-specific working min)")
         

@@ -6,12 +6,12 @@ from flow_logging import FlowLogger
 logger = FlowLogger()
 log_call = logger.log_call
 
-class GilsonSession:
+class GilsonEthernet:
     """
     A class to manage a session with a Gilson Ethernet-controlled device.
     Handles connection, command formatting, sending, and response parsing.
     """
-# When the code runs g = GilsonSession('192.168.x.x'), this function automatically connects to the Gilson,   sets up internal variables, and sends a handshake command
+# When the code runs g = GilsonEthernet('192.168.x.x'), this function automatically connects to the Gilson,   sets up internal variables, and sends a handshake command
     def __init__(self, ip, admin_port=50185):
         self.ip = ip
         self.admin_port = admin_port
