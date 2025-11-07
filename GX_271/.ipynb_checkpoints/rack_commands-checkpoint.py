@@ -44,7 +44,11 @@ class Rackcommands:
 
     @log_call
     def go_to_vial(self, vial_pos, send=True):
-        """Move the Gilson probe to the vial at vial_pos, respecting rack-specific Z limits."""
+        """Move the Gilson probe to the vial at vial_pos, respecting rack-specific Z limits.
+        The 'send=False' option returns the calculated coordinates without moving,
+        which is useful for debugging or pre-checking vial positions.
+        
+        """
     
         # Get base XY coordinates from the rack
         x, y = self.rack.get_vial_coordinates(vial_pos)
@@ -75,7 +79,11 @@ class Rackcommands:
     # --------------------------------------------------------------------------------------------
     @log_call
     def move_into_vial(self):
-        """Lower probe into vial to the rack-specific minimum safe working depth."""
+        """Lower probe into vial to the rack-specific minimum safe working depth.
+        Relationship to GilsonSession:
+        GilsonSession.move_into_vial() only routes the call to the correct rack.
+        THIS method is responsible for deciding how far into the vial to go.
+        """
     
         # Use the rack's working_min, fallback to GilsonSession default if not set
         target_z = self.z_limits.get("working_min", self.gilson.Z_WORKING_MIN)

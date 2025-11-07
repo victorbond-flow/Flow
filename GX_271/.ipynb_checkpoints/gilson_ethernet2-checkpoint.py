@@ -108,7 +108,7 @@ class GilsonSession:
         self.sequence_number += 1
         return self.sequence_number
         
-#
+# This command constructs the XML block required for a Gilson command
     def make_command(self, command_name, device="GX-27x", device_id=35, sequence_number=None, command_type="Local", parameters=None):
         if sequence_number is None:
             sequence_number = self._get_next_sequence_number()
@@ -212,7 +212,20 @@ class GilsonSession:
 
     @log_call
     def move_z(self, position, allow_in_vial=True, rack_num=None):
-        # Use rack-specific Z-limits if provided
+        """Move the Z-axis to the specified height.
+        
+        
+        Z-axis movements enforce strict limits:
+        - working_min: the lowest allowed height inside a vial
+        - safe: the minimum safe height for horizontal motion
+        - max_safe: the upper safe limit
+        
+        Behaviour:
+        - If moving inside a vial (allow_in_vial=True), drooping too low is
+        clamped to the vial's working minimum.
+        - If allow_in_vial=False, Z cannot go below the safe height at all.
+        - If a rack_num is supplied, rack-specific limits override the globals."""
+
         if rack_num is not None:
             if rack_num not in self.racks:
                 raise ValueError(f"No rack at position {rack_num}")
@@ -307,12 +320,24 @@ class GilsonSession:
 
     @log_call
     def go_to_vial(self, vial_pos, rack_num=1):
+        """High-level wrapper for vial navigation.
+
+    This method does NOT compute coordinates or move the hardware directly.
+    Instead, it selects the correct rack (via rack_num) and then delegates 
+    the actual movement to Rackcommands.go_to_vial() for that rack."""
+        
         if rack_num not in self.racks:
             raise ValueError(f"No rack at position {rack_num}")
         return self.racks[rack_num].go_to_vial(vial_pos)
 
     @log_call
     def move_into_vial(self, rack_num=1):
+        """
+    High-level wrapper for lowering into a vial.
+
+    This method selects which rack is being operated on (rack_num), then
+    hands off the actual Z-movement to Rackcommands.move_into_vial()."""
+        
         if rack_num not in self.racks:
             raise ValueError(f"No rack at position {rack_num}")
         target_z = self.racks[rack_num].z_limits["working_min"]
