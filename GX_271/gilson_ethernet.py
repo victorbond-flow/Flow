@@ -6,6 +6,37 @@ from flow_logging import FlowLogger
 logger = FlowLogger()
 log_call = logger.log_call
 
+#############################################################################################
+# gilson_ethernet.py
+# -------------------------------------------------------------------------------------------
+# High-level interface for controlling a Gilson autosampler over Ethernet.
+#
+# Responsibilities:
+#   - Connect to the Gilson device via its admin port and retrieve a session port
+#   - Manage a persistent session socket for sending and receiving commands
+#   - Construct properly formatted XML commands for the autosampler
+#   - Send commands (Local or Immediate) and parse XML responses into readable output
+#   - Track the current Z-axis position and enforce safety limits globally or per rack
+#   - Maintain a collection of Rackcommands instances for one or more racks
+#
+# Features:
+#   - High-level methods g.go_to_vial() and g.move_into_vial() delegate to the correct Rackcommands
+#   - Z-axis safety enforces working_min, safe, and max_safe heights
+#   - Rack-specific limits override global defaults where defined
+#   - Supports adding racks dynamically with add_rack()
+#   - Low-level access through send_command(), send_immediate_command(), and send_raw_command()
+#
+# Relationships:
+#   - Uses Rackcommands to handle probe movements for individual racks
+#   - Rackcommands relies on rack geometry and vial positions to compute XY coordinates
+#   - Z-safety and movement logic respect both global defaults and rack-specific overrides
+#
+# Notes:
+#   - The session automatically tracks sequence numbers for command matching
+#   - The class separates session management, command construction, and movement logic
+#   - Intended as the main user-facing interface for automated experiments
+#############################################################################################
+
 class GilsonEthernet:
     """
     A class to manage a session with a Gilson Ethernet-controlled device.

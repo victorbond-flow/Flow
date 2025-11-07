@@ -9,29 +9,33 @@ log_call = logger.log_call
 # ==========================================================================================
 # rack.py
 # ------------------------------------------------------------------------------------------
-# Provides the rack geometry, vial objects, and autosampler movement logic used to control
-# the Gilson GX-271 (or compatible) autosampler.
+#
+# rack.py – Gilson GX-271 / Compatible Autosampler Rack Definitions
+#
+# This module defines the geometry, vial objects, and safe probe movement logic
+# for racks used in the autosampler. It separates generic rack geometry from
+# rack-specific details and instrument control.
 #
 # Contains three main classes:
 #
 #   • Rack
-#       Generic rack geometry (rows, columns, spacing, staggered layout).
-#       Computes vial coordinates but includes no instrument-specific logic.
+#       A generic rack geometry container.
+#       Stores number of rows/columns, vial spacing, offsets, and optional staggered layouts.
+#       Can compute vial coordinates and indices.
+#       Does NOT include instrument-specific logic or Z-safety limits.
 #
 #   • Rack_209
 #       Concrete implementation of the Gilson 6×16 rack (code 209).
 #       Creates a Rack instance with hard-coded geometry, instantiates all Vial objects,
 #       defines Z-safety limits, and constructs a Rackcommands object.
+#       Concrete implementation of the Gilson 6×16 rack (code 209).
+#       Wraps a Rackcommands object linked to a GilsonEthernet session for probe movements.
+#       Provides a simple interface to query vial coordinates and interact with the rack
 #
-#   • Rackcommands
-#       Uses the Rack geometry + GilsonSession to perform safe probe movements:
+#   • Rackcommands (imported from rack_commands.py)
+#       Uses the Rack geometry + GilsonEthernet session to perform safe probe movements:
 #       moving to vials, lowering into vials, and stepping through vial sequences.
-#
-# Structure keeps geometry, configuration, and movement control cleanly separated and easy
-# to modify for new racks or autosampler setups.
 # ==========================================================================================
-
-
 
 class Rack:
     """
@@ -138,7 +142,7 @@ class Rack_209:
     This class:
     - Instantiates the generic Rack() (for now still the hardcoded version)
     - Creates all Vial objects
-    - Creates a Rackcommands object linked to a GilsonSession
+    - Creates a Rackcommands object linked to a GilsonEthernet
     - Allows uniform usage across different racks (Rack_4_16, Rack_209, etc.)
     """
     def __init__(self, gilson_session,

@@ -6,8 +6,27 @@ log_call = logger.log_call
 #############################################################################################
 # Rackcommands
 # -------------------------------------------------------------------------------------------
-# Generates coordinate-based motion commands for the autosampler.
+# Connects a Gilson autosampler session (GilsonEthernet) to a specific Rack instance
+# and provides safe, coordinate-based probe movement commands.
+#
+# Key responsibilities:
+#   - Translate vial numbers to XY coordinates based on rack geometry and offsets
+#   - Ensure Z-axis safety when moving between vials or lowering into vials
+#   - Provide wrappers for common actions like go_to_vial() and move_into_vial()
+#   - Support multi-rack layouts via rack_position and stacking offsets
+#   - Maintain separation between geometry, rack-specific limits, and instrument commands
+#
+# Relationships:
+#   - Relies on Rack to supply vial coordinates and geometry
+#   - Relies on GilsonEthernet to execute actual probe movements
+#   - GilsonEthernet.move_into_vial() simply routes the call to this class
+#
+# Notes:
+#   - Z-safety limits are taken from the rack if defined, otherwise fall back to
+#     GilsonEthernet defaults
+#   - move_sequence() is a scaffold for iterating through multiple vials in order
 #############################################################################################
+
 
 class Rackcommands:
     """Connects a Gilson session to a Rack and handles vial movements."""
