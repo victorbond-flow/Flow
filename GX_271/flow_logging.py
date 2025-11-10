@@ -4,6 +4,7 @@ from pathlib import Path
 import functools
 import time
 
+
 class FlowLogger:
     def __init__(self, log_dir=None):
         """
@@ -30,14 +31,13 @@ class FlowLogger:
 
         # ---- Shared log format (adds EXP:{experiment}) ----
         # Using {extra[experiment]} allows dynamic updating through bind()
-        log_format = "[{time:DD/MM/YY HH:mm:ss}] | {level} | EXP:{extra[experiment]} | {message}"
+        log_format = (
+            "[{time:DD/MM/YY HH:mm:ss}] | {level} | EXP:{extra[experiment]} | {message}"
+        )
 
         # Add file handlers, each with experiment tagging support
         logger.add(
-            self.log_dir / "DEBUG.txt",
-            level="DEBUG",
-            format=log_format,
-            enqueue=True
+            self.log_dir / "DEBUG.txt", level="DEBUG", format=log_format, enqueue=True
         )
 
         logger.add(
@@ -45,7 +45,7 @@ class FlowLogger:
             level="INFO",
             filter=lambda r: r["level"].name == "INFO",
             format=log_format,
-            enqueue=True
+            enqueue=True,
         )
 
         logger.add(
@@ -53,7 +53,7 @@ class FlowLogger:
             level="ERROR",
             filter=lambda r: r["level"].name == "ERROR",
             format=log_format,
-            enqueue=True
+            enqueue=True,
         )
 
         # Bind experiment=None initially
@@ -126,14 +126,11 @@ class FlowLogger:
     # ------------------------------------------------------------------
     # Simple log methods
     # ------------------------------------------------------------------
-    def info(self, msg): 
+    def info(self, msg):
         self.logger.info(msg)
 
-    def debug(self, msg): 
+    def debug(self, msg):
         self.logger.debug(msg)
 
-    def error(self, msg): 
+    def error(self, msg):
         self.logger.error(msg)
-
-
-

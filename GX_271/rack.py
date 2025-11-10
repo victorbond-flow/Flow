@@ -37,21 +37,25 @@ log_call = logger.log_call
 #       moving to vials, lowering into vials, and stepping through vial sequences.
 # ==========================================================================================
 
+
 class Rack:
     """
     Generic rack geometry class
     Does NOT contain rack-specific geometry or vial/Z information
     """
-# --------------------------------------------------------------------------------------------------------------------------------------------------------
-    def __init__(self,
-                 n_cols,
-                 n_rows,
-                 offset_x,
-                 offset_y,
-                 vial2vial_x,
-                 vial2vial_y,
-                 staggered=False):
-        
+
+    # --------------------------------------------------------------------------------------------------------------------------------------------------------
+    def __init__(
+        self,
+        n_cols,
+        n_rows,
+        offset_x,
+        offset_y,
+        vial2vial_x,
+        vial2vial_y,
+        staggered=False,
+    ):
+
         self.n_cols = n_cols
         self.n_rows = n_rows
         self.array_dimensions = (self.n_cols, self.n_rows)
@@ -67,8 +71,7 @@ class Rack:
         # Build rack order
         self.rack_order = self.generate_vial_order()
 
-
-# --------------------------------------------------------------------------------------------------------------------------------------------------------
+    # --------------------------------------------------------------------------------------------------------------------------------------------------------
     def generate_vial_order(self):
         """Generate vial numbers (column-major order, default Gilson behaviour)."""
         order = np.zeros((self.n_rows, self.n_cols), dtype=int)
@@ -79,13 +82,12 @@ class Rack:
                 vial_number += 1
         return order
 
-        
-#---------------------------------------------------------------------------------------------------------------------------------------------------------
+    # ---------------------------------------------------------------------------------------------------------------------------------------------------------
     def all_vial_numbers(self):
         """Return a list of all vial numbers in the rack"""
         return list(self.vials.keys())
 
-#---------------------------------------------------------------------------------------------------------------------------------------------------------
+    # ---------------------------------------------------------------------------------------------------------------------------------------------------------
     def get_vial_indices(self, vial_position):
         """Return (row, col) indices for a given vial number."""
         indices = np.where(self.rack_order == vial_position)
@@ -93,40 +95,40 @@ class Rack:
             raise ValueError(f"No vial with position {vial_position}")
         return indices[0][0], indices[1][0]
 
-# --------------------------------------------------------------------------------------------------------------------------------------------------------
+    # --------------------------------------------------------------------------------------------------------------------------------------------------------
     def get_vial_coordinates(self, vial_position):
         """Return (x, y) coordinates in mm for the given vial position."""
-    
+
         row, col = self.get_vial_indices(vial_position)
-    
+
         x = self.offset_x + col * self.vial2vial_x
         y = self.offset_y + row * self.vial2vial_y
-    
+
         # Optional: staggered pattern
         if self.staggered and (col % 2 == 1):
             y += self.vial2vial_y / 2
-    
+
         return x, y
-#---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+# ---------------------------------------------------------------------------------------------------------------------------------------------------------
 # --- Convenience wrappers for single-vial operations (MORE USEFUL LATER - HENCE, COMMENTED OUT 05/11/25--------------------------
-    
-    #def fill_vial(self, vial_num, volume, substance):
-        #"""Fill a single vial (thin wrapper)."""
-        #self.vials[vial_num].fill(volume, substance)
 
-    #def empty_vial(self, vial_num):
-        #"""Empty a single vial (thin wrapper)."""
-       # self.vials[vial_num].empty()
+# def fill_vial(self, vial_num, volume, substance):
+# """Fill a single vial (thin wrapper)."""
+# self.vials[vial_num].fill(volume, substance)
 
-   # def consume_vial(self, vial_num, volume):
-       # """Withdraw volume from a single vial."""
-        #self.vials[vial_num].consume_volume(volume)
+# def empty_vial(self, vial_num):
+# """Empty a single vial (thin wrapper)."""
+# self.vials[vial_num].empty()
 
-   # def get_vial_status(self, vial_num):
-      #  """Return status of a single vial."""
-       # return self.vials[vial_num].get_vial_status()
+# def consume_vial(self, vial_num, volume):
+# """Withdraw volume from a single vial."""
+# self.vials[vial_num].consume_volume(volume)
 
-
+# def get_vial_status(self, vial_num):
+#  """Return status of a single vial."""
+# return self.vials[vial_num].get_vial_status()
 
 
 #############################################################################################
@@ -134,6 +136,7 @@ class Rack:
 # -------------------------------------------------------------------------------------------
 # rack-specific configuration for the GX-271 6×16 rack (Gilson rack code 209)
 #############################################################################################
+
 
 class Rack_209:
     """
@@ -145,14 +148,18 @@ class Rack_209:
     - Creates a Rackcommands object linked to a GilsonEthernet
     - Allows uniform usage across different racks (Rack_4_16, Rack_209, etc.)
     """
-    def __init__(self, gilson_session,
-                 rack_position=1,
-                 rack_offset_x=92,
-                 rack_offset_y=0,
-                 rack_home_x=3.8,
-                 rack_home_y=2.3):
 
-        #Pass geometry into Rack()
+    def __init__(
+        self,
+        gilson_session,
+        rack_position=1,
+        rack_offset_x=92,
+        rack_offset_y=0,
+        rack_home_x=3.8,
+        rack_home_y=2.3,
+    ):
+
+        # Pass geometry into Rack()
         self.rack = Rack(
             n_cols=6,
             n_rows=16,
@@ -160,28 +167,28 @@ class Rack_209:
             offset_y=7.2,
             vial2vial_x=16.54,
             vial2vial_y=17.77,
-            staggered=True
+            staggered=True,
         )
 
-        #Rack-specific Z limits
+        # Rack-specific Z limits
         self.z_limits = {
             "safe": 45.0,
             "max_safe": 120.0,
             "working_min": 11.0,
         }
 
-        #Instantiate vial objects here now
+        # Instantiate vial objects here now
         self.vials = {
             vial_num: Vial(
                 vial_volume_max=2.0,
                 vial_usedvolume_max=1.8,
                 vial_height=32.0,
-                vial_free_depth=2.0
+                vial_free_depth=2.0,
             )
             for vial_num in self.rack.rack_order.flatten()
         }
 
-        #Create commands object
+        # Create commands object
         self.commands = Rackcommands(
             gilson_session,
             self.rack,
@@ -189,12 +196,8 @@ class Rack_209:
             rack_offset_x=rack_offset_x,
             rack_offset_y=rack_offset_y,
             rack_home_x=rack_home_x,
-            rack_home_y=rack_home_y
+            rack_home_y=rack_home_y,
         )
 
     def get_vial_coordinates(self, vial_pos):
         return self.rack.get_vial_coordinates(vial_pos)
-
-
-
-    

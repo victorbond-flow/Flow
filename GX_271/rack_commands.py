@@ -31,8 +31,16 @@ log_call = logger.log_call
 class Rackcommands:
     """Connects a Gilson session to a Rack and handles vial movements."""
 
-    def __init__(self, gilson_session, rack,
-                 rack_position=1, rack_offset_x=92, rack_offset_y=0, rack_home_x=3.8, rack_home_y=2.3):
+    def __init__(
+        self,
+        gilson_session,
+        rack,
+        rack_position=1,
+        rack_offset_x=92,
+        rack_offset_y=0,
+        rack_home_x=3.8,
+        rack_home_y=2.3,
+    ):
         self.gilson = gilson_session
         self.rack = rack
 
@@ -66,16 +74,16 @@ class Rackcommands:
         """Move the Gilson probe to the vial at vial_pos, respecting rack-specific Z limits.
         The 'send=False' option returns the calculated coordinates without moving,
         which is useful for debugging or pre-checking vial positions.
-        
+
         """
-    
+
         # Get base XY coordinates from the rack
         x, y = self.rack.get_vial_coordinates(vial_pos)
-    
+
         # Apply rack stacking offsets
         x += (self.rack_position - 1) * self.rack_offset_x
         y += (self.rack_position - 1) * self.rack_offset_y
-    
+
         # -----------------------------
         # RACK-SPECIFIC Z SAFETY CHECK
         # -----------------------------
@@ -83,17 +91,15 @@ class Rackcommands:
         if self.gilson.current_z < safe_z:
             print(f"Raising to rack-safe Z ({safe_z} mm) before XY move...")
             self.gilson.move_z(safe_z)
-    
+
         if not send:
             return x, y
-    
+
         # Move XY
         print(f"Moving to vial {vial_pos} at ({x:.2f}, {y:.2f}) mm")
         self.gilson.move_xy(x, y, rack_num=self.rack_position)
 
-    
         return x, y
-
 
     # --------------------------------------------------------------------------------------------
     @log_call
@@ -103,17 +109,18 @@ class Rackcommands:
         GilsonEthernet.go_into_vial() only routes the call to the correct rack.
         THIS method is responsible for deciding how far into the vial to go.
         """
-    
+
         # Use the rack's working_min, fallback to GilsonEthernet default if not set
         target_z = self.z_limits.get("working_min", self.gilson.Z_WORKING_MIN)
-        print(f"Lowering probe into vial to Z = {target_z} mm (rack-specific working min)")
-        
+        print(
+            f"Lowering probe into vial to Z = {target_z} mm (rack-specific working min)"
+        )
+
         # Allow moving below Z_SAFE since we are entering the vial
         self.gilson.move_z(target_z, allow_in_vial=True)
 
-
     # --------------------------------------------------------------------------------------------
-    
+
     def move_sequence(self, vials):
         """Move through a sequence of vials in order. Note - scaffold class, may be useful later"""
         for v in vials:

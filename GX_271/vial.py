@@ -2,25 +2,33 @@
 # Vial Class
 #############################################################################################
 
+
 class Vial:
     """Representation for a single vial within the flow setup."""
-    def __init__(self, vial_volume_max, vial_usedvolume_max, vial_height, vial_free_depth):
-        self.vial_volume_max = vial_volume_max          # volume in mL
+
+    def __init__(
+        self, vial_volume_max, vial_usedvolume_max, vial_height, vial_free_depth
+    ):
+        self.vial_volume_max = vial_volume_max  # volume in mL
         self.vial_usedvolume_max = vial_usedvolume_max  # volume in mL
-        self.vial_height = vial_height                  # height in mm
-        self.vial_free_depth = vial_free_depth          # depth in mm
-        self.current_volume = 0.0                       # current volume in mL
-        self.contents = None                            # substance string (e.g., "0.5mM Reagent A")
-        self.min_usable_fraction = 0.10                 
+        self.vial_height = vial_height  # height in mm
+        self.vial_free_depth = vial_free_depth  # depth in mm
+        self.current_volume = 0.0  # current volume in mL
+        self.contents = None  # substance string (e.g., "0.5mM Reagent A")
+        self.min_usable_fraction = 0.10
         self.vial_min_usable_volume = self.vial_volume_max * self.min_usable_fraction
 
     # ------------------------------------------------------------------------
     def fill(self, volume, substance):
         """Logs that the vial has been filled manually."""
         if self.contents is not None and self.contents != substance:
-            raise ValueError(f"Vial contains {self.contents}. Empty before filling with {substance}.")
+            raise ValueError(
+                f"Vial contains {self.contents}. Empty before filling with {substance}."
+            )
         if volume > self.vial_volume_max:
-            print(f"Volume {volume} exceeds vial max ({self.vial_volume_max}). Setting volume to max...")
+            print(
+                f"Volume {volume} exceeds vial max ({self.vial_volume_max}). Setting volume to max..."
+            )
             volume = self.vial_volume_max
         self.current_volume = volume
         self.contents = substance
@@ -39,10 +47,14 @@ class Vial:
         if self.current_volume == 0:
             raise ValueError("Vial is empty - cannot withdraw.")
         if self.current_volume - volume < self.vial_min_usable_volume:
-            raise ValueError(f"Withdrawal of {volume} mL would drop the volume below safe working limit"
-                             f"({self.vial_min_usable_volume:.2f} mL). Refill or replace vial.")
+            raise ValueError(
+                f"Withdrawal of {volume} mL would drop the volume below safe working limit"
+                f"({self.vial_min_usable_volume:.2f} mL). Refill or replace vial."
+            )
         self.current_volume -= volume
-        print(f"Withdrawn {volume} mL. Remaining: {self.current_volume:.2f} mL of {self.contents}.")
+        print(
+            f"Withdrawn {volume} mL. Remaining: {self.current_volume:.2f} mL of {self.contents}."
+        )
 
     # ------------------------------------------------------------------------
     def is_usable(self):
