@@ -97,7 +97,7 @@ class Rackcommands:
 
     # --------------------------------------------------------------------------------------------
     @log_call
-    def move_into_vial(self):
+    def go_into_vial(self):
         """Lower probe into vial to the rack-specific minimum safe working depth.
         Relationship to GilsonEthernet:
         GilsonEthernet.move_into_vial() only routes the call to the correct rack.

@@ -362,7 +362,7 @@ class GilsonEthernet:
         return self.racks[rack_num].go_to_vial(vial_pos)
 
     @log_call
-    def move_into_vial(self, rack_num=1):
+    def go_into_vial(self, rack_num=1):
         """
     High-level wrapper for lowering into a vial.
 
@@ -372,7 +372,7 @@ class GilsonEthernet:
         if rack_num not in self.racks:
             raise ValueError(f"No rack at position {rack_num}")
         target_z = self.racks[rack_num].z_limits["working_min"]
-        return self.racks[rack_num].move_into_vial()
+        return self.racks[rack_num].go_into_vial()
 
     def close(self):
         if self.session_socket:
