@@ -11,3 +11,4 @@
 [06/11/25 16:08:39] | ERROR | EXCEPTION in move_xy after 0.000s: name 'rack_num' is not defined
 [06/11/25 16:08:39] | ERROR | EXCEPTION in go_to_vial after 0.000s: name 'rack_num' is not defined
 [06/11/25 16:08:39] | ERROR | EXCEPTION in go_to_vial after 0.000s: name 'rack_num' is not defined
+[11/11/25 11:27:17] | ERROR | EXP:None | EXCEPTION in move_x after 0.000s: name 'rack_num' is not defined

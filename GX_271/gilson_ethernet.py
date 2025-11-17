@@ -440,3 +440,13 @@ class GilsonEthernet:
         if self.session_socket:
             self.session_socket.close()
             self.session_socket = None
+
+### ---------- TESTING CODE ON GX-241 --------------- ###
+
+    def send_gsioc(self, command, unit_id=30):
+        # GSIOC messages: /<unitID><command><CR>
+        msg = f"/{unit_id}{command}\r"
+        self.session_socket.sendall(msg.encode("ascii"))
+        time.sleep(0.2)
+        response = self.session_socket.recv(4096).decode("ascii", errors="ignore")
+        return response
