@@ -5,6 +5,7 @@ class ViciValco:
         self.port = port
         self.baudrate = baudrate
         self.ser = None
+        self.meanings = {"A": "load", "B": "inject"}
 
     def connect(self):
         """Open serial connection."""
@@ -23,29 +24,38 @@ class ViciValco:
             raise RuntimeError("Failed to open serial port")
 
     def go_to_pos(self, pos):
-        """Move valve to position A or B."""
-        self.ser.write(b"CP\r")
-        byteData = self.ser.readline().decode()
-        position = byteData[-2] if len(byteData) >= 2 else None
-
+        """Move to position A or B, and print functional meaning."""
+        ser = self.ser
+    
+        # Read current position
+        ser.write(b'CP\r')
+        byteData = ser.readline().decode()
+        position = byteData[-2]
+    
         if position != pos:
             if pos == 'A':
-                self.ser.write(b'CW\r')
-                print("Valve moved to position A")
+                ser.write(b'CW\r')
             elif pos == 'B':
-                self.ser.write(b'CC\r')
-                print("Valve moved to position B")
+                ser.write(b'CC\r')
+    
+            meaning = self.meanings.get(pos, "")
+            print(f"Valve moved to position {pos} ({meaning} position)")
         else:
-            print("Valve already at that position")
+            meaning = self.meanings.get(pos, "")
+            print(f"Valve already at {pos} ({meaning} position)")
+
 
     def read_pos(self):
-        """Return 'A' or 'B'."""
-        self.ser.write(b"CP\r")
-        byteData = self.ser.readline().decode()
+        """Read actual valve position, return A/B, print meaning."""
+        ser = self.ser
+        ser.write(b'CP\r')
+        byteData = ser.readline().decode()
+        pos = byteData[-2]
+        meaning = self.meanings.get(pos, "unknown")
+        print(f"Valve currently at {pos} ({meaning} position)")
+    
+        return pos
 
-        if len(byteData) >= 2:
-            return byteData[-2]
-        return None
 
     def change_pos(self):
         """Toggle between A and B."""
