@@ -10,47 +10,47 @@ from rack import Rack_209  # import any other modules as they are added
 
 
 class Tray:
-    """Represents the autosampler tray with multiple modules."""
+    """
+    Represents the autosampler tray layout.
+
+    Each module has:
+        - slot number (physical tray position)
+        - name (human-friendly key)
+        - module object (Rack_209, WashStation, etc.)
+        - absolute X/Y offsets of that slot
+    """
 
     def __init__(self):
-        self.modules = {}  # key = slot/position (int), value = module object
-        self.module_offsets = (
-            {}
-        )  # key = slot/position, value = dict of offsets (x_offset, y_offset)
+        # slot -> (name, module, x_offset, y_offset)
+        self.slots = {}
+        # name -> slot
+        self.name_to_slot = {}
 
-    def add_module(self, slot: int, module):
-        """
-        Add a module to the tray.
+    def add_module(self, slot: int, name: str, module, x_offset: float, y_offset: float):
+        if name in self.name_to_slot:
+            raise ValueError(f"Module name '{name}' already exists on tray!")
 
-        Parameters
-        ----------
-        slot : int
-            Slot/position on the tray (1, 2, 3,...)
-        module : object
-            Module object (Rack_209, etc.) which has its own offsets
-        """
-        self.modules[slot] = module
+        self.slots[slot] = {
+            "name": name,
+            "module": module,
+            "x_offset": x_offset,
+            "y_offset": y_offset
+        }
+        self.name_to_slot[name] = slot
 
-        # Extract offsets if available
-        offsets = {}
-        if hasattr(module, "rack_offset_x") and hasattr(module, "rack_offset_y"):
-            offsets = {
-                "x_offset": module.rack_offset_x,
-                "y_offset": module.rack_offset_y,
-            }
-        elif hasattr(module, "offset_x") and hasattr(module, "offset_y"):
-            offsets = {"x_offset": module.offset_x, "y_offset": module.offset_y}
+    def get_module(self, name: str):
+        slot = self.name_to_slot[name]
+        return self.slots[slot]["module"]
 
-        self.module_offsets[slot] = offsets
+    def get_offsets(self, name: str):
+        slot = self.name_to_slot[name]
+        d = self.slots[slot]
+        return d["x_offset"], d["y_offset"]
 
-    def get_module(self, slot: int):
-        """Return module at a given slot, or None if empty."""
-        return self.modules.get(slot, None)
+    def get_slot(self, name: str):
+        return self.name_to_slot[name]
 
-    def get_offsets(self, slot: int):
-        """Return offsets dict for a given slot, or empty dict if unknown."""
-        return self.module_offsets.get(slot, {})
+    def list_modules(self):
+        return list(self.name_to_slot.keys())
 
-    def list_slots(self):
-        """Return a sorted list of slots currently in the tray."""
-        return sorted(self.modules.keys())
+

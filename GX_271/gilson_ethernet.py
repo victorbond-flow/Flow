@@ -398,30 +398,72 @@ class GilsonEthernet:
         # Resets the autosampler
         return self.send_command("Reset")
 
-    def add_rack(self, rack_obj, rack_position=1):
-        # Add a rack object manually to the session
+    def add_rack(self, rack_obj, rack_position: int):
+        """Attach a rack object and set its authoritative rack_position."""
+
         if rack_position in self.racks:
-            print(f"⚠️ Rack position {rack_position} already has a rack, overwriting.")
+            raise ValueError(f"Rack position {rack_position} already occupied")
 
-        self.racks[rack_position] = Rackcommands(
-            self, rack_obj, rack_position=rack_position
-        )
+        # assign the authoritative rack_position on the rack object
+        rack_obj.rack_position = int(rack_position)
 
-        # Show the rack class name in the output
-        rack_name = type(rack_obj).__name__
-        print(f"Rack '{rack_name}' added at position {rack_position}.")
+        # If Rackcommands was constructed earlier and expects a parent ref,
+        # ensure it's set (backwards-compatible).
+        if hasattr(rack_obj, "commands"):
+            # prefer storing the parent reference so commands can read it
+            rack_obj.commands.rack_parent = rack_obj
+
+        self.racks[rack_position] = rack_obj
 
     @log_call
-    def go_to_vial(self, vial_pos, rack_num=1):
-        """High-level wrapper for vial navigation.
+    def go_to_vial(self, module_name: str, vial_pos: int, send=True):
+        """
+        Move the Gilson probe to a vial in a given module on the tray.
+    
+        Parameters
+        ----------
+        module_name : str
+            Name of the module (e.g. 'rack1', 'standards', 'wash')
+            as registered in Tray.add_module().
+        vial_pos : int
+            The vial number within that module.
+        send : bool, optional
+            If False, return the coordinates without moving.
+        
+        Returns
+        -------
+        (x, y) : tuple of floats
+            The absolute coordinates on the tray.
+        """
+    
+        # --- get module object from tray ---
+        rack = self.tray.get_module(module_name)
+    
+        # --- get tray/global offsets for that module ---
+        off_x, off_y = self.tray.get_offsets(module_name)
+    
+        # --- get vial coordinates relative to rack origin ---
+        x_rel, y_rel = rack.get_vial_coordinates(vial_pos)
+    
+        # --- calculate absolute tray coordinates ---
+        x = off_x + x_rel
+        y = off_y + y_rel
+    
+        # --- safety Z behaviour (rack defines Z limits) ---
+        safe_z = rack.z_limits.get("safe", 45.0)
+        if self.current_z < safe_z:
+            self.move_z(safe_z)
+    
+        # --- return only, if send=False ---
+        if not send:
+            return x, y
+    
+        # --- perform move ---
+        print(f"Moving to {module_name} vial {vial_pos} at ({x:.2f}, {y:.2f})")
+        self.move_xy(x, y)
+    
+        return x, y
 
-        This method does NOT compute coordinates or move the hardware directly.
-        Instead, it selects the correct rack (via rack_num) and then delegates
-        the actual movement to Rackcommands.go_to_vial() for that rack."""
-
-        if rack_num not in self.racks:
-            raise ValueError(f"No rack at position {rack_num}")
-        return self.racks[rack_num].go_to_vial(vial_pos)
 
     @log_call
     def go_into_vial(self, rack_num=1):
@@ -440,13 +482,3 @@ class GilsonEthernet:
         if self.session_socket:
             self.session_socket.close()
             self.session_socket = None
-
-### ---------- TESTING CODE ON GX-241 --------------- ###
-
-    def send_gsioc(self, command, unit_id=30):
-        # GSIOC messages: /<unitID><command><CR>
-        msg = f"/{unit_id}{command}\r"
-        self.session_socket.sendall(msg.encode("ascii"))
-        time.sleep(0.2)
-        response = self.session_socket.recv(4096).decode("ascii", errors="ignore")
-        return response

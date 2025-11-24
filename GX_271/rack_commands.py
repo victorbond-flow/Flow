@@ -34,26 +34,28 @@ class Rackcommands:
     def __init__(
         self,
         gilson_session,
-        rack,
-        rack_position=1,
-        rack_offset_x=92,
+        rack,               # generic Rack geometry object
+        rack_position=None, # optional, for compatibility only
+        rack_offset_x=0,
         rack_offset_y=0,
-        rack_home_x=3.8,
-        rack_home_y=2.3,
+        rack_home_x=None,
+        rack_home_y=None,
     ):
         self.gilson = gilson_session
-        self.rack = rack
-
-        # Position of this rack in a multi-rack deck layout
-        self.rack_position = rack_position
+        self.rack = rack                  # geometry
         self.rack_offset_x = rack_offset_x
         self.rack_offset_y = rack_offset_y
-
-        # Home positions (rack-origin reference)
         self.rack_home_x = rack_home_x
         self.rack_home_y = rack_home_y
 
-        # NEW - store geometry name for debugging
+        # compatibility: optional internal copy (prefer using rack_parent)
+        if rack_position is not None:
+            self.rack_position = int(rack_position)
+
+        # rack_parent will be attached by the rack wrapper (e.g. Rack_209)
+        self.rack_parent = None
+
+        # store geometry name for debugging
         self.rack_name = getattr(rack, "name", f"Rack-{rack_position}")
 
         # Use rack-defined Z safety limits if they exist
@@ -102,22 +104,40 @@ class Rackcommands:
         return x, y
 
     # --------------------------------------------------------------------------------------------
+    def _effective_rack_position(self):
+        # canonical way to find rack position:
+        if getattr(self, "rack_parent", None) and getattr(self.rack_parent, "rack_position", None) is not None:
+            return int(self.rack_parent.rack_position)
+        # fallback for legacy code:
+        if getattr(self, "rack_position", None) is not None:
+            return int(self.rack_position)
+        # final fallback if nothing set:
+        return 1
+        
     @log_call
-    def go_into_vial(self):
-        """Lower probe into vial to the rack-specific minimum safe working depth.
-        Relationship to GilsonEthernet:
-        GilsonEthernet.go_into_vial() only routes the call to the correct rack.
-        THIS method is responsible for deciding how far into the vial to go.
-        """
+    def go_into_vial(self, vial_pos, send=True):
+        # Get base XY coordinates from the rack geometry
+        x, y = self.rack.get_vial_coordinates(vial_pos)
 
-        # Use the rack's working_min, fallback to GilsonEthernet default if not set
-        target_z = self.z_limits.get("working_min", self.gilson.Z_WORKING_MIN)
-        print(
-            f"Lowering probe into vial to Z = {target_z} mm (rack-specific working min)"
-        )
+        # compute effective rack index for stacking offsets:
+        rp = self._effective_rack_position()
+        x += (rp - 1) * self.rack_offset_x
+        y += (rp - 1) * self.rack_offset_y
 
-        # Allow moving below Z_SAFE since we are entering the vial
-        self.gilson.move_z(target_z, allow_in_vial=True)
+        # RACK-SPECIFIC Z SAFETY CHECK
+        safe_z = self.rack_parent.z_limits.get("safe", self.gilson.Z_SAFE) if getattr(self, "rack_parent", None) else getattr(self.gilson, "Z_SAFE", 45.0)
+        if self.gilson.current_z < safe_z:
+            print(f"Raising to rack-safe Z ({safe_z} mm) before XY move...")
+            self.gilson.move_z(safe_z)
+
+        if not send:
+            return x, y
+
+        print(f"Moving to vial {vial_pos} at ({x:.2f}, {y:.2f}) mm (rack {rp})")
+        # pass the rack position for lower-level code if needed
+        self.gilson.move_xy(x, y, rack_num=rp)
+
+        return x, y
 
     # --------------------------------------------------------------------------------------------
 

@@ -140,26 +140,17 @@ class Rack:
 
 class Rack_209:
     """
-    Rack-specific wrapper class following the architecture used by Anna.
+    Rack-specific wrapper around the generic Rack() geometry.
 
     This class:
-    - Instantiates the generic Rack() (for now still the hardcoded version)
-    - Creates all Vial objects
-    - Creates a Rackcommands object linked to a GilsonEthernet
-    - Allows uniform usage across different racks (Rack_4_16, Rack_209, etc.)
+    - Instantiates the generic Rack with fixed geometry
+    - Creates Vial objects for each vial position
+    - Provides a method to get vial-relative coordinates
+    - Contains rack-specific Z safety limits
     """
 
-    def __init__(
-        self,
-        gilson_session,
-        rack_position=1,
-        rack_offset_x=92,
-        rack_offset_y=0,
-        rack_home_x=3.8,
-        rack_home_y=2.3,
-    ):
-
-        # Pass geometry into Rack()
+    def __init__(self):
+        # Create the generic Rack geometry (relative coordinates only)
         self.rack = Rack(
             n_cols=6,
             n_rows=16,
@@ -170,14 +161,14 @@ class Rack_209:
             staggered=True,
         )
 
-        # Rack-specific Z limits
+        # Rack-specific Z limits (kept here because Z depends on rack hardware)
         self.z_limits = {
             "safe": 45.0,
             "max_safe": 120.0,
             "working_min": 11.0,
         }
 
-        # Instantiate vial objects here now
+        # Instantiate vial objects (unchanged logic)
         self.vials = {
             vial_num: Vial(
                 vial_volume_max=2.0,
@@ -188,16 +179,10 @@ class Rack_209:
             for vial_num in self.rack.rack_order.flatten()
         }
 
-        # Create commands object
-        self.commands = Rackcommands(
-            gilson_session,
-            self.rack,
-            rack_position=rack_position,
-            rack_offset_x=rack_offset_x,
-            rack_offset_y=rack_offset_y,
-            rack_home_x=rack_home_x,
-            rack_home_y=rack_home_y,
-        )
-
     def get_vial_coordinates(self, vial_pos):
+        """
+        Return vial coordinates *relative to the rack origin*.
+        The Tray will add global offsets.
+        """
         return self.rack.get_vial_coordinates(vial_pos)
+
