@@ -259,107 +259,122 @@ class GilsonEthernet:
     ##########################################################################################################################################################
 
     @log_call
-    def move_x(self, position):
+    def move_x(self, position, module_name=None):
+        """
+        Move the X-axis, raising Z if below rack-specific safe height.
+        """
         z_safe = self.Z_SAFE
-        if rack_num and rack_num in self.racks:
-            z_safe = self.racks[rack_num].z_limits["safe"]
-
+        if module_name is not None:
+            rack = self.tray.get_module(module_name)
+            z_safe = rack.z_limits.get("safe", self.Z_SAFE)
+    
         if self.current_z < z_safe:
-            print(
-                f"Z below safe limit ({self.current_z:.2f} < {z_safe:.2f}) — raising first."
-            )
-            self.move_z(z_safe, rack_num=rack_num)
-
+            self.move_z(z_safe, module_name=module_name)
+    
         parameters = {"X Position": position}
         result = self.send_command("Move X", parameters=parameters)
         return f"Moved X to {position}. Result: {result}"
 
+
     @log_call
-    def move_y(self, position):
+    def move_y(self, position, module_name=None):
+        """
+        Move the Y-axis, raising Z if below rack-specific safe height.
+        """
         z_safe = self.Z_SAFE
-        if rack_num and rack_num in self.racks:
-            z_safe = self.racks[rack_num].z_limits["safe"]
-
+        if module_name is not None:
+            rack = self.tray.get_module(module_name)
+            z_safe = rack.z_limits.get("safe", self.Z_SAFE)
+    
         if self.current_z < z_safe:
-            print(
-                f"Z below safe limit ({self.current_z:.2f} < {z_safe:.2f}) — raising first."
-            )
-            self.move_z(z_safe, rack_num=rack_num)
-
+            self.move_z(z_safe, module_name=module_name)
+    
         parameters = {"Y Position": position}
         result = self.send_command("Move Y", parameters=parameters)
         return f"Moved Y to {position}. Result: {result}"
 
+
     @log_call
-    def move_z(self, position, allow_in_vial=True, rack_num=None):
-        """Move the Z-axis to the specified height.
-
-
+    def move_z(self, position, allow_in_vial=True, module_name=None):
+        """
+        Move the Z-axis to the specified height.
+    
         Z-axis movements enforce strict limits:
-        - working_min: the lowest allowed height inside a vial
-        - safe: the minimum safe height for horizontal motion
-        - max_safe: the upper safe limit
-
-        Behaviour:
-        - If moving inside a vial (allow_in_vial=True), drooping too low is
-        clamped to the vial's working minimum.
-        - If allow_in_vial=False, Z cannot go below the safe height at all.
-        - If a rack_num is supplied, rack-specific limits override the globals."""
-
-        if rack_num is not None:
-            if rack_num not in self.racks:
-                raise ValueError(f"No rack at position {rack_num}")
-            z_limits = self.racks[rack_num].z_limits
+        - working_min: lowest allowed height inside a vial (rack-specific)
+        - safe: minimum safe height for horizontal motion (rack-specific)
+        - max_safe: maximum safe height globally (never exceed)
+    
+        Parameters
+        ----------
+        position : float
+            Desired Z height.
+        allow_in_vial : bool, default=True
+            Whether this move is inside a vial. Clamps to working_min if True.
+        module_name : str, optional
+            If specified, uses this module's Z limits.
+    
+        Returns
+        -------
+        str
+            Description of move and result.
+        """
+        # Get Z limits
+        if module_name is not None:
+            rack = self.tray.get_module(module_name)
+            z_limits = getattr(rack, "z_limits", {})
         else:
-            z_limits = {
-                "safe": self.Z_SAFE,
-                "max_safe": self.Z_MAX_SAFE,
-                "working_min": self.Z_WORKING_MIN,
-            }
-
+            z_limits = {}
+    
+        # Fill missing keys with global defaults
+        z_limits.setdefault("safe", self.Z_SAFE)
+        z_limits.setdefault("max_safe", self.Z_MAX_SAFE)
+        z_limits.setdefault("working_min", self.Z_WORKING_MIN)
+    
+        # Clamp
         if allow_in_vial:
             if position < z_limits["working_min"]:
                 print(
-                    f"⚠️ Requested Z={position} below working minimum ({z_limits['working_min']} mm). Clamping."
+                    f"⚠️ Requested Z={position} below working minimum ({z_limits['working_min']} mm) for module '{module_name}'. Clamping."
                 )
                 position = z_limits["working_min"]
             elif position > z_limits["max_safe"]:
                 print(
-                    f"⚠️ Requested Z={position} above safe maximum ({z_limits['max_safe']} mm). Clamping."
+                    f"⚠️ Requested Z={position} above max safe ({z_limits['max_safe']} mm). Clamping."
                 )
                 position = z_limits["max_safe"]
         else:
             if position < z_limits["safe"]:
                 print(
-                    f"⚠️ Requested Z={position} below safe height ({z_limits['safe']} mm). Clamping to safe."
+                    f"⚠️ Requested Z={position} below safe height ({z_limits['safe']} mm) for module '{module_name}'. Clamping to safe."
                 )
                 position = z_limits["safe"]
             elif position > z_limits["max_safe"]:
                 print(
-                    f"⚠️ Requested Z={position} above safe maximum ({z_limits['max_safe']} mm). Clamping."
+                    f"⚠️ Requested Z={position} above max safe ({z_limits['max_safe']} mm). Clamping."
                 )
                 position = z_limits["max_safe"]
-
+    
+        # Send command
         parameters = {"Z Position": position}
         result = self.send_command("Move Z", parameters=parameters)
         self.current_z = position
         return f"Moved Z to {position}. Result: {result}"
 
+
     @log_call
-    def move_xy(self, x_position, y_position, rack_num=None):
+    def move_xy(self, x_position, y_position, module_name=None):
         z_safe = self.Z_SAFE
-        if rack_num is not None and rack_num in self.racks:
-            z_safe = self.racks[rack_num].z_limits["safe"]
-
+        if module_name is not None:
+            rack = self.tray.get_module(module_name)
+            z_safe = rack.z_limits.get("safe", self.Z_SAFE)
+    
         if self.current_z < z_safe:
-            print(
-                f"Z below safe limit ({self.current_z:.2f} < {z_safe:.2f}) — raising first."
-            )
-            self.move_z(z_safe, rack_num=rack_num)
-
+            self.move_z(z_safe, module_name=module_name)
+    
         parameters = {"X Position": x_position, "Y Position": y_position}
         result = self.send_command("Move XY", parameters=parameters)
         return f"Moved to X={x_position}, Y={y_position}. Result: {result}"
+
 
     @log_call
     def home(self):
@@ -398,23 +413,7 @@ class GilsonEthernet:
         # Resets the autosampler
         return self.send_command("Reset")
 
-    def add_rack(self, rack_obj, rack_position: int):
-        """Attach a rack object and set its authoritative rack_position."""
-
-        if rack_position in self.racks:
-            raise ValueError(f"Rack position {rack_position} already occupied")
-
-        # assign the authoritative rack_position on the rack object
-        rack_obj.rack_position = int(rack_position)
-
-        # If Rackcommands was constructed earlier and expects a parent ref,
-        # ensure it's set (backwards-compatible).
-        if hasattr(rack_obj, "commands"):
-            # prefer storing the parent reference so commands can read it
-            rack_obj.commands.rack_parent = rack_obj
-
-        self.racks[rack_position] = rack_obj
-
+    
     @log_call
     def go_to_vial(self, module_name: str, vial_pos: int, send=True):
         """
@@ -466,17 +465,55 @@ class GilsonEthernet:
 
 
     @log_call
-    def go_into_vial(self, rack_num=1):
+    def go_into_vial(self, module_name: str, vial_pos: int, send=True):
         """
-        High-level wrapper for lowering into a vial.
+        Move the Gilson probe into a specific vial of a module.
+    
+        Parameters
+        ----------
+        module_name : str
+            Name of the module as registered in Tray.add_module().
+        vial_pos : int
+            Vial number within that module.
+        send : bool, optional
+            If False, just return coordinates without moving.
+    
+        Returns
+        -------
+        (x, y, z) : tuple of floats
+            Absolute coordinates on the tray, including Z at working_min.
+        """
+    
+        # --- get module object from tray ---
+        rack = self.tray.get_module(module_name)
+    
+        # --- get tray/global offsets for that module ---
+        off_x, off_y = self.tray.get_offsets(module_name)
+    
+        # --- get vial coordinates relative to rack origin ---
+        x_rel, y_rel = rack.get_vial_coordinates(vial_pos)
+    
+        # --- calculate absolute tray coordinates ---
+        x_abs = off_x + x_rel
+        y_abs = off_y + y_rel
+    
+        # --- ensure Z is safely above target rack ---
+        safe_z = rack.z_limits["safe"]
+        if self.current_z < safe_z:
+            self.move_z(safe_z, module_name=module_name)
+    
+        # --- perform horizontal move ---
+        if send:
+            self.move_xy(x_abs, y_abs)
+    
+        # --- move down into vial using rack working_min ---
+        z_working = rack.z_limits["working_min"]
+        if send:
+            self.move_z(z_working)
+    
+        return x_abs, y_abs, z_working
 
-        This method selects which rack is being operated on (rack_num), then
-        hands off the actual Z-movement to Rackcommands.move_into_vial()."""
 
-        if rack_num not in self.racks:
-            raise ValueError(f"No rack at position {rack_num}")
-        target_z = self.racks[rack_num].z_limits["working_min"]
-        return self.racks[rack_num].go_into_vial()
 
     def close(self):
         if self.session_socket:

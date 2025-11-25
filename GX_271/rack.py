@@ -143,32 +143,30 @@ class Rack_209:
     Rack-specific wrapper around the generic Rack() geometry.
 
     This class:
-    - Instantiates the generic Rack with fixed geometry
-    - Creates Vial objects for each vial position
-    - Provides a method to get vial-relative coordinates
-    - Contains rack-specific Z safety limits
+    - Defines intrinsic rack geometry (relative coordinates)
+    - Creates Vial objects
+    - Provides vial-relative coordinate lookup
+    - Stores rack-specific Z-limits
     """
 
     def __init__(self):
-        # Create the generic Rack geometry (relative coordinates only)
+        # Generic Rack geometry (relative coords only — *no global offsets*)
         self.rack = Rack(
             n_cols=6,
             n_rows=16,
-            offset_x=35.5,
-            offset_y=7.2,
             vial2vial_x=16.54,
             vial2vial_y=17.77,
             staggered=True,
         )
 
-        # Rack-specific Z limits (kept here because Z depends on rack hardware)
+        # Rack-specific Z limits
         self.z_limits = {
             "safe": 45.0,
             "max_safe": 120.0,
             "working_min": 11.0,
         }
 
-        # Instantiate vial objects (unchanged logic)
+        # Instantiate vial objects
         self.vials = {
             vial_num: Vial(
                 vial_volume_max=2.0,
@@ -181,8 +179,9 @@ class Rack_209:
 
     def get_vial_coordinates(self, vial_pos):
         """
-        Return vial coordinates *relative to the rack origin*.
+        Return coordinates relative to the rack origin.
         The Tray will add global offsets.
         """
         return self.rack.get_vial_coordinates(vial_pos)
+
 
