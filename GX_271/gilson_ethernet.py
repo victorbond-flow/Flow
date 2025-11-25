@@ -1,7 +1,6 @@
 import socket
 import time
 import xml.etree.ElementTree as ET
-from rack_commands import Rackcommands
 from flow_logging import FlowLogger
 
 logger = FlowLogger()
@@ -46,20 +45,22 @@ class GilsonEthernet:
     """
 
     # When the code runs g = GilsonEthernet('192.168.x.x'), this function automatically connects to the Gilson,   sets up internal variables, and sends a handshake command
-    def __init__(self, ip, admin_port=50185):
+    def __init__(self, ip, admin_port=50185, tray=None):
         self.ip = ip
         self.admin_port = admin_port
         self.session_port = None
         self.session_socket = None
         self.sequence_number = 40
+        self.tray = tray
         self._connect()
         self.send_admin_command()
+        
 
         # Keep track of racks - Key = rack number, value = Rackcommands instance
         self.racks = {}
 
-        # Z safety / position
-        self.Z_SAFE = 45
+        # Global Z safety
+        self.Z_SAFE = 55
         self.Z_MAX_SAFE = 120
         self.Z_WORKING_MIN = 11
         self.current_z = self.Z_SAFE
@@ -260,38 +261,41 @@ class GilsonEthernet:
 
     def ensure_z_safe(self, module_name=None):
         """
-        Ensures the probe is at a safe Z height before any horizontal move.
-        
+        Ensure the probe is at a safe Z height before any horizontal move.
+    
         If module_name is None:
-            - Use GLOBAL limits (Z_SAFE, Z_MAX_SAFE).
-        
+            - Use GLOBAL limits only (Z_SAFE, Z_MAX_SAFE).
+    
         If module_name is provided:
-            - Identify the module object from self.modules
-            - Use module-specific safe height (module.z_limits["safe"])
-            - BUT never exceed global Z_MAX_SAFE.
+            - Resolve module from Tray
+            - Use module.z_limits["safe"] but never exceed global Z_MAX_SAFE
         """
     
-        # --- 1) If module name provided, resolve module + check it exists ---
+        # -------------------------------------------------------
+        # 1. Module-specific safety rules
+        # -------------------------------------------------------
         if module_name is not None:
-            if module_name not in self.modules:
-                raise ValueError(f"Unknown module '{module_name}' passed to ensure_z_safe().")
     
-            module = self.modules[module_name]
-            module_safe = module.z_limits["safe"]     # e.g. 45 for Rack_209
+            if self.tray is None:
+                raise RuntimeError("Tray is not attached to this GilsonEthernet instance.")
+    
+            module = self.tray.get_module(module_name)   # <-- NEW SOURCE OF TRUTH
+            module_safe = module.z_limits.get("safe", self.Z_SAFE)
             global_max = self.Z_MAX_SAFE
     
-            # --- Need to lift? ---
+            # Need to lift up?
             if self.current_z < module_safe:
                 self.move_z(module_safe)
     
-            # --- Need to clamp down (should be rare)? ---
+            # Need to clamp down?
             elif self.current_z > global_max:
                 self.move_z(global_max)
     
-            return  # done
+            return
     
-    
-        # --- 2) No module → GLOBAL safety rules ---
+        # -------------------------------------------------------
+        # 2. Global safety rules (no module context)
+        # -------------------------------------------------------
         global_safe = self.Z_SAFE
         global_max = self.Z_MAX_SAFE
     
@@ -300,6 +304,7 @@ class GilsonEthernet:
     
         elif self.current_z > global_max:
             self.move_z(global_max)
+
 
     
     @log_call
@@ -339,7 +344,7 @@ class GilsonEthernet:
 
 
     @log_call
-    def move_z(self, position, allow_in_vial=True, module_name=None):
+    def move_z(self, position, allow_in_vial=False, module_name=None):
         """
         Move the Z-axis safely, respecting either global or module-specific limits.
     
@@ -501,54 +506,50 @@ class GilsonEthernet:
     @log_call
     def go_into_vial(self, module_name: str, vial_pos: int, send=True):
         """
-        Move the Gilson probe into a specific vial of a module.
-    
-        Parameters
-        ----------
-        module_name : str
-            Name of the module as registered in Tray.add_module().
-        vial_pos : int
-            Vial number within that module.
-        send : bool, optional
-            If False, just return coordinates without moving.
-    
-        Returns
-        -------
-        (x, y, z) : tuple of floats
-            Absolute coordinates on the tray, including Z at working_min.
+        Move the probe into a specific vial of a module.
+        This:
+            1) Raises to GLOBAL safe height
+            2) Moves XY above the vial
+            3) Descends to module working_min safely
         """
     
-        # --- get module object from tray ---
+        # --- resolve rack + coordinates ---
         rack = self.tray.get_module(module_name)
-    
-        # --- get tray/global offsets ---
         off_x, off_y = self.tray.get_offsets(module_name)
-    
-        # --- get vial coordinates relative to rack origin ---
         x_rel, y_rel = rack.get_vial_coordinates(vial_pos)
     
-        # --- compute absolute coordinates ---
         x_abs = off_x + x_rel
         y_abs = off_y + y_rel
+        z_target = rack.z_limits["working_min"]
     
-        # If only computing, stop here
         if not send:
-            return x_abs, y_abs, rack.z_limits["working_min"]
+            return x_abs, y_abs, z_target
     
-        # ----------------------------
-        # Step 1: go over the vial
-        # (this calls move_xy → ensure_z_safe automatically)
-        # ----------------------------
+        # ----------------------------------------------------------
+        # Step 0: ALWAYS raise to GLOBAL safe height first
+        # ----------------------------------------------------------
+        if self.current_z < self.Z_SAFE:
+            self.move_z(self.Z_SAFE)
+    
+        # ----------------------------------------------------------
+        # Step 1: now do the normal XY safe-move
+        # (go_to_vial will apply module-specific Z safety if needed)
+        # ----------------------------------------------------------
         self.go_to_vial(module_name, vial_pos, send=True)
     
-        # ----------------------------
-        # Step 2: descend to working_min
-        # (move_z clamps and checks limits automatically)
-        # ----------------------------
-        z_working = rack.z_limits["working_min"]
-        self.move_z(z_working, module_name=module_name)
+        # ----------------------------------------------------------
+        # Step 2: controlled descent INTO the vial
+        # temporarily override global clamps
+        # ----------------------------------------------------------
+        try:
+            self.allow_in_vial = True
+            self.move_z(z_target, allow_in_vial=True, module_name=module_name)
+        finally:
+            self.allow_in_vial = False
     
-        return x_abs, y_abs, z_working
+        return x_abs, y_abs, z_target
+
+
 
 
 
