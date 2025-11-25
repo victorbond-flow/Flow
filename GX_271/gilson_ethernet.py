@@ -258,122 +258,164 @@ class GilsonEthernet:
     ##### -------------------------------------------------- HELPER COMMANDS ----------------------------------------------------------------------------#####
     ##########################################################################################################################################################
 
+    def ensure_z_safe(self, module_name=None):
+        """
+        Ensures the probe is at a safe Z height before any horizontal move.
+        
+        If module_name is None:
+            - Use GLOBAL limits (Z_SAFE, Z_MAX_SAFE).
+        
+        If module_name is provided:
+            - Identify the module object from self.modules
+            - Use module-specific safe height (module.z_limits["safe"])
+            - BUT never exceed global Z_MAX_SAFE.
+        """
+    
+        # --- 1) If module name provided, resolve module + check it exists ---
+        if module_name is not None:
+            if module_name not in self.modules:
+                raise ValueError(f"Unknown module '{module_name}' passed to ensure_z_safe().")
+    
+            module = self.modules[module_name]
+            module_safe = module.z_limits["safe"]     # e.g. 45 for Rack_209
+            global_max = self.Z_MAX_SAFE
+    
+            # --- Need to lift? ---
+            if self.current_z < module_safe:
+                self.move_z(module_safe)
+    
+            # --- Need to clamp down (should be rare)? ---
+            elif self.current_z > global_max:
+                self.move_z(global_max)
+    
+            return  # done
+    
+    
+        # --- 2) No module → GLOBAL safety rules ---
+        global_safe = self.Z_SAFE
+        global_max = self.Z_MAX_SAFE
+    
+        if self.current_z < global_safe:
+            self.move_z(global_safe)
+    
+        elif self.current_z > global_max:
+            self.move_z(global_max)
+
+    
     @log_call
     def move_x(self, position, module_name=None):
         """
-        Move the X-axis, raising Z if below rack-specific safe height.
+        Move the X-axis safely.
+        If module_name is provided, module-specific Z safe limits are used.
+        Otherwise, global Z safe limits are enforced.
         """
-        z_safe = self.Z_SAFE
-        if module_name is not None:
-            rack = self.tray.get_module(module_name)
-            z_safe = rack.z_limits.get("safe", self.Z_SAFE)
     
-        if self.current_z < z_safe:
-            self.move_z(z_safe, module_name=module_name)
+        # Enforce Z safety before moving horizontally
+        self.ensure_z_safe(module_name)
     
         parameters = {"X Position": position}
         result = self.send_command("Move X", parameters=parameters)
+    
         return f"Moved X to {position}. Result: {result}"
+
 
 
     @log_call
     def move_y(self, position, module_name=None):
         """
-        Move the Y-axis, raising Z if below rack-specific safe height.
+        Move the Y-axis safely.
+        If module_name is provided, module-specific Z safe limits are used.
+        Otherwise, global Z safe limits are enforced.
         """
-        z_safe = self.Z_SAFE
-        if module_name is not None:
-            rack = self.tray.get_module(module_name)
-            z_safe = rack.z_limits.get("safe", self.Z_SAFE)
     
-        if self.current_z < z_safe:
-            self.move_z(z_safe, module_name=module_name)
+        # Enforce Z safety before moving horizontally
+        self.ensure_z_safe(module_name)
     
         parameters = {"Y Position": position}
         result = self.send_command("Move Y", parameters=parameters)
+    
         return f"Moved Y to {position}. Result: {result}"
+
 
 
     @log_call
     def move_z(self, position, allow_in_vial=True, module_name=None):
         """
-        Move the Z-axis to the specified height.
-    
-        Z-axis movements enforce strict limits:
-        - working_min: lowest allowed height inside a vial (rack-specific)
-        - safe: minimum safe height for horizontal motion (rack-specific)
-        - max_safe: maximum safe height globally (never exceed)
+        Move the Z-axis safely, respecting either global or module-specific limits.
     
         Parameters
         ----------
         position : float
-            Desired Z height.
+            The requested Z height.
         allow_in_vial : bool, default=True
-            Whether this move is inside a vial. Clamps to working_min if True.
+            True  → vial operations allowed (use working_min)
+            False → horizontal-safety move (use safe height)
         module_name : str, optional
-            If specified, uses this module's Z limits.
-    
-        Returns
-        -------
-        str
-            Description of move and result.
+            Use this module's Z limits if provided. Otherwise use global limits.
         """
-        # Get Z limits
+    
+        # ----------------------------------------------------------
+        # 1. Choose Z limit set (module-specific or global)
+        # ----------------------------------------------------------
         if module_name is not None:
-            rack = self.tray.get_module(module_name)
-            z_limits = getattr(rack, "z_limits", {})
+            rack = self.tray.get_module(module_name)  # fail-fast if module doesn't exist
+            z_limits = rack.z_limits
         else:
-            z_limits = {}
+            z_limits = {
+                "safe": self.Z_SAFE,
+                "max_safe": self.Z_MAX_SAFE,
+                "working_min": self.Z_WORKING_MIN,
+            }
     
-        # Fill missing keys with global defaults
-        z_limits.setdefault("safe", self.Z_SAFE)
-        z_limits.setdefault("max_safe", self.Z_MAX_SAFE)
-        z_limits.setdefault("working_min", self.Z_WORKING_MIN)
+        safe_z       = z_limits["safe"]
+        max_safe_z   = z_limits["max_safe"]
+        working_min  = z_limits["working_min"]
     
-        # Clamp
+        # ----------------------------------------------------------
+        # 2. Clamp based on whether we're allowed to enter a vial
+        # ----------------------------------------------------------
+        original_position = position  # for diagnostics, if needed
+    
         if allow_in_vial:
-            if position < z_limits["working_min"]:
-                print(
-                    f"⚠️ Requested Z={position} below working minimum ({z_limits['working_min']} mm) for module '{module_name}'. Clamping."
-                )
-                position = z_limits["working_min"]
-            elif position > z_limits["max_safe"]:
-                print(
-                    f"⚠️ Requested Z={position} above max safe ({z_limits['max_safe']} mm). Clamping."
-                )
-                position = z_limits["max_safe"]
+            # Inside a vial → use working_min as min bound
+            if position < working_min:
+                position = working_min
+            elif position > max_safe_z:
+                position = max_safe_z
         else:
-            if position < z_limits["safe"]:
-                print(
-                    f"⚠️ Requested Z={position} below safe height ({z_limits['safe']} mm) for module '{module_name}'. Clamping to safe."
-                )
-                position = z_limits["safe"]
-            elif position > z_limits["max_safe"]:
-                print(
-                    f"⚠️ Requested Z={position} above max safe ({z_limits['max_safe']} mm). Clamping."
-                )
-                position = z_limits["max_safe"]
+            # Horizontal-safe move → use safe height as min bound
+            if position < safe_z:
+                position = safe_z
+            elif position > max_safe_z:
+                position = max_safe_z
     
-        # Send command
+        # ----------------------------------------------------------
+        # 3. Execute the movement
+        # ----------------------------------------------------------
         parameters = {"Z Position": position}
         result = self.send_command("Move Z", parameters=parameters)
         self.current_z = position
+    
         return f"Moved Z to {position}. Result: {result}"
+
 
 
     @log_call
     def move_xy(self, x_position, y_position, module_name=None):
-        z_safe = self.Z_SAFE
-        if module_name is not None:
-            rack = self.tray.get_module(module_name)
-            z_safe = rack.z_limits.get("safe", self.Z_SAFE)
+        """
+        Move both X and Y axes safely in one operation.
+        If module_name is provided, module-specific Z safe limits are used.
+        Otherwise, global Z safe limits are enforced.
+        """
     
-        if self.current_z < z_safe:
-            self.move_z(z_safe, module_name=module_name)
+        # Enforce Z safety before moving horizontally
+        self.ensure_z_safe(module_name)
     
         parameters = {"X Position": x_position, "Y Position": y_position}
         result = self.send_command("Move XY", parameters=parameters)
+    
         return f"Moved to X={x_position}, Y={y_position}. Result: {result}"
+
 
 
     @log_call
@@ -417,51 +459,43 @@ class GilsonEthernet:
     @log_call
     def go_to_vial(self, module_name: str, vial_pos: int, send=True):
         """
-        Move the Gilson probe to a vial in a given module on the tray.
-    
-        Parameters
-        ----------
-        module_name : str
-            Name of the module (e.g. 'rack1', 'standards', 'wash')
-            as registered in Tray.add_module().
-        vial_pos : int
-            The vial number within that module.
-        send : bool, optional
-            If False, return the coordinates without moving.
+        Move the probe to the given vial inside a module.
         
-        Returns
-        -------
-        (x, y) : tuple of floats
-            The absolute coordinates on the tray.
+        Safety model:
+        - Before ANY horizontal move, raise to module-specific safe Z
+          (via ensure_z_safe(module_name)).
+        - Movement is global XY coordinates (Tray handles offsets).
         """
     
-        # --- get module object from tray ---
-        rack = self.tray.get_module(module_name)
-    
-        # --- get tray/global offsets for that module ---
+        # ----------------------------------------------------------
+        # 1. Resolve module + coordinates
+        # ----------------------------------------------------------
+        rack = self.tray.get_module(module_name)        # fail-fast if unknown
         off_x, off_y = self.tray.get_offsets(module_name)
-    
-        # --- get vial coordinates relative to rack origin ---
         x_rel, y_rel = rack.get_vial_coordinates(vial_pos)
     
-        # --- calculate absolute tray coordinates ---
         x = off_x + x_rel
         y = off_y + y_rel
     
-        # --- safety Z behaviour (rack defines Z limits) ---
-        safe_z = rack.z_limits.get("safe", 45.0)
-        if self.current_z < safe_z:
-            self.move_z(safe_z)
+        # ----------------------------------------------------------
+        # 2. Raise Z to rack-safe height before XY
+        # ----------------------------------------------------------
+        self.ensure_z_safe(module_name=module_name)
     
-        # --- return only, if send=False ---
+        # ----------------------------------------------------------
+        # 3. Return only (for debugging)
+        # ----------------------------------------------------------
         if not send:
             return x, y
     
-        # --- perform move ---
-        print(f"Moving to {module_name} vial {vial_pos} at ({x:.2f}, {y:.2f})")
-        self.move_xy(x, y)
+        # ----------------------------------------------------------
+        # 4. Move XY with module-specific Z safety active
+        # ----------------------------------------------------------
+        print(f"Moving to {module_name} vial {vial_pos} at ({x:.2f}, {y:.2f}) mm")
+        self.move_xy(x, y, module_name=module_name)
     
         return x, y
+
 
 
     @log_call
@@ -487,31 +521,35 @@ class GilsonEthernet:
         # --- get module object from tray ---
         rack = self.tray.get_module(module_name)
     
-        # --- get tray/global offsets for that module ---
+        # --- get tray/global offsets ---
         off_x, off_y = self.tray.get_offsets(module_name)
     
         # --- get vial coordinates relative to rack origin ---
         x_rel, y_rel = rack.get_vial_coordinates(vial_pos)
     
-        # --- calculate absolute tray coordinates ---
+        # --- compute absolute coordinates ---
         x_abs = off_x + x_rel
         y_abs = off_y + y_rel
     
-        # --- ensure Z is safely above target rack ---
-        safe_z = rack.z_limits["safe"]
-        if self.current_z < safe_z:
-            self.move_z(safe_z, module_name=module_name)
+        # If only computing, stop here
+        if not send:
+            return x_abs, y_abs, rack.z_limits["working_min"]
     
-        # --- perform horizontal move ---
-        if send:
-            self.move_xy(x_abs, y_abs)
+        # ----------------------------
+        # Step 1: go over the vial
+        # (this calls move_xy → ensure_z_safe automatically)
+        # ----------------------------
+        self.go_to_vial(module_name, vial_pos, send=True)
     
-        # --- move down into vial using rack working_min ---
+        # ----------------------------
+        # Step 2: descend to working_min
+        # (move_z clamps and checks limits automatically)
+        # ----------------------------
         z_working = rack.z_limits["working_min"]
-        if send:
-            self.move_z(z_working)
+        self.move_z(z_working, module_name=module_name)
     
         return x_abs, y_abs, z_working
+
 
 
 

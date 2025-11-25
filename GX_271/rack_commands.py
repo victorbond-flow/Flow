@@ -71,37 +71,7 @@ class Rackcommands:
 
     # --------------------------------------------------------------------------------------------
 
-    @log_call
-    def go_to_vial(self, vial_pos, send=True):
-        """Move the Gilson probe to the vial at vial_pos, respecting rack-specific Z limits.
-        The 'send=False' option returns the calculated coordinates without moving,
-        which is useful for debugging or pre-checking vial positions.
-
-        """
-
-        # Get base XY coordinates from the rack
-        x, y = self.rack.get_vial_coordinates(vial_pos)
-
-        # Apply rack stacking offsets
-        x += (self.rack_position - 1) * self.rack_offset_x
-        y += (self.rack_position - 1) * self.rack_offset_y
-
-        # -----------------------------
-        # RACK-SPECIFIC Z SAFETY CHECK
-        # -----------------------------
-        safe_z = self.z_limits.get("safe", self.gilson.Z_SAFE)
-        if self.gilson.current_z < safe_z:
-            print(f"Raising to rack-safe Z ({safe_z} mm) before XY move...")
-            self.gilson.move_z(safe_z)
-
-        if not send:
-            return x, y
-
-        # Move XY
-        print(f"Moving to vial {vial_pos} at ({x:.2f}, {y:.2f}) mm")
-        self.gilson.move_xy(x, y, rack_num=self.rack_position)
-
-        return x, y
+   
 
     # --------------------------------------------------------------------------------------------
     def _effective_rack_position(self):
