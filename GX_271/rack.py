@@ -1,6 +1,5 @@
 import numpy as np
 from vial import Vial
-from rack_commands import Rackcommands
 from flow_logging import FlowLogger
 
 logger = FlowLogger()
