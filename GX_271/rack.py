@@ -49,11 +49,11 @@ class Rack:
         self,
         n_cols,
         n_rows,
-        offset_x,
-        offset_y,
         vial2vial_x,
         vial2vial_y,
         staggered=False,
+        offset_x=0.0,  # Default set to 0 - offsets handled by tray - defined in NB
+        offset_y=0.0
     ):
 
         self.n_cols = n_cols

@@ -76,3 +76,5 @@
 [06/11/25 16:22:07] | DEBUG | RETURN move_xy -> 'Moved to X=85.12, Y=211.55499999999998. Result: No valid response received.' (Duration: 0.554s)
 [06/11/25 16:22:07] | DEBUG | RETURN go_to_vial -> (np.float64(85.12), np.float64(211.55499999999998)) (Duration: 1.104s)
 [06/11/25 16:22:07] | DEBUG | RETURN go_to_vial -> (np.float64(85.12), np.float64(211.55499999999998)) (Duration: 1.104s)
+[25/11/25 11:34:40] | INFO | EXP:Development | === START EXPERIMENT: Development ===
+[25/11/25 11:35:30] | INFO | EXP:Development | === START EXPERIMENT: Development ===
