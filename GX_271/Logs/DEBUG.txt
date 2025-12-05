@@ -284,3 +284,4 @@
 [25/11/25 15:55:33] | DEBUG | EXP:None | CALL move_xy(np.float64(170.0), np.float64(273.75), module_name='rack2')
 [25/11/25 15:55:34] | DEBUG | EXP:None | RETURN move_xy -> 'Moved to X=170.0, Y=273.75. Result: Move XY: 2, Success' (Duration: 0.521s)
 [25/11/25 15:55:34] | DEBUG | EXP:None | RETURN go_to_vial -> (np.float64(170.0), np.float64(273.75)) (Duration: 0.522s)
+[04/12/25 15:12:38] | INFO | EXP:Development | === START EXPERIMENT: Development ===

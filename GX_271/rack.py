@@ -1,6 +1,6 @@
 import numpy as np
-from vial import Vial
-from flow_logging import FlowLogger
+from GX_271.vial import Vial
+from GX_271.flow_logging import FlowLogger
 
 logger = FlowLogger()
 log_call = logger.log_call
