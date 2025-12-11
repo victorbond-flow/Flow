@@ -1,0 +1,1 @@
+[09/12/25 14:36:58] | ERROR | EXP:None | EXCEPTION in go_into_vial after 0.020s: <GX_271.rack.Rack_209 object at 0x00000231FE6E3F10>
