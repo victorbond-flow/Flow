@@ -153,8 +153,8 @@ class Rack_209:
         self.rack = Rack(
             n_cols=6,
             n_rows=16,
-            vial2vial_x=16.54,
-            vial2vial_y=17.77,
+            vial2vial_x=16.55,
+            vial2vial_y=17.827,
             staggered=True,
         )
 
