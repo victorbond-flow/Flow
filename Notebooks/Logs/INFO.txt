@@ -7,3 +7,6 @@
 [16/12/25 11:41:03] | INFO | EXP:Development | === START EXPERIMENT: Development ===
 [16/12/25 12:05:48] | INFO | EXP:Development | === START EXPERIMENT: Development ===
 [16/12/25 13:58:26] | INFO | EXP:Development | === START EXPERIMENT: Development ===
+[17/12/25 13:12:07] | INFO | EXP:Development | === START EXPERIMENT: Development ===
+[17/12/25 13:23:30] | INFO | EXP:Development | === START EXPERIMENT: Development ===
+[17/12/25 13:29:47] | INFO | EXP:Development | === START EXPERIMENT: Development ===

@@ -208,7 +208,7 @@ class Rack_209(BaseRack):
 
 
 class Rack_3dp(BaseRack):
-   """
+    """
     Rack-specific wrapper around the generic Rack() geometry.
 
     This class:
@@ -217,21 +217,21 @@ class Rack_3dp(BaseRack):
     - Inherits vial-relative coordinate lookup from BaseRack
     - Stores rack-specific Z-limits
     """
-
+    
     def __init__(self):
         # Rack geometry (relative coords only - global offsets dealt with by Tray)
         self.rack = Rack(
             n_cols = 1,
             n_rows = 4,
-            vial2vial_x = ???,
-            vial2vial_y = ???,
+            vial2vial_x = 0,
+            vial2vial_y = 67,
         )
 
         # Rack-specific Z limits
         self.z_limits = {
-            "safe": ???,
-            "max_safe": ???,
-            "working_min": ???,
+            "safe": 45,
+            "max_safe": 120,
+            "working_min": 20,
         }
 
         # Instantiate vial objects

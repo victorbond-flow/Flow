@@ -62,7 +62,7 @@ class GilsonEthernet:
         # Global Z safety
         self.Z_SAFE = 55
         self.Z_MAX_SAFE = 120
-        self.Z_WORKING_MIN = 11
+        self.Z_WORKING_MIN = 1
         self.current_z = self.Z_SAFE
 
     # This function connects to the Gilsons admin port. The Gilson replies with a different port number where it'll handle commands, the script opens that second connection and stores it as self.session_socket
