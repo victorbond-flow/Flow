@@ -1,0 +1,1 @@
+[17/12/25 13:46:43] | ERROR | EXP:None | EXCEPTION in go_to_vial after 0.000s: No vial with position 5
