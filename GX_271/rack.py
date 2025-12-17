@@ -129,7 +129,30 @@ class Rack:
 #  """Return status of a single vial."""
 # return self.vials[vial_num].get_vial_status()
 
+#############################################################################################
+# BaseRack
+# -------------------------------------------------------------------------------------------
+# This is an interface / adapter layer that lives conceptually between Rack and specific rack classes.
+# It defines what a usable rack must provide to the autosampler logic
+#############################################################################################
 
+
+class BaseRack:
+    """
+    Interface layer for autosampler racks.
+
+    Specific rack classes (such as Rack_209) must provide:
+    - self.rack       : Rack geometry instance
+    - self.vials      : dict[int, Vial]
+    - self.z_limits   : dict of Z safety limits
+
+    Provides vial-relative coordinate lookup for autosampler logic
+    """
+
+    def get_vial_coordinates(self, vial_position):
+        return self.rack.get_vial_coordinates(vial_position)
+
+    
 #############################################################################################
 # Rack_209
 # -------------------------------------------------------------------------------------------
@@ -137,14 +160,14 @@ class Rack:
 #############################################################################################
 
 
-class Rack_209:
+class Rack_209(BaseRack):
     """
     Rack-specific wrapper around the generic Rack() geometry.
 
     This class:
     - Defines intrinsic rack geometry (relative coordinates)
     - Creates Vial objects
-    - Provides vial-relative coordinate lookup
+    - Inherits vial-relative coordinate lookup from BaseRack
     - Stores rack-specific Z-limits
     """
 
@@ -176,11 +199,48 @@ class Rack_209:
             for vial_num in self.rack.rack_order.flatten()
         }
 
-    def get_vial_coordinates(self, vial_pos):
-        """
-        Return coordinates relative to the rack origin.
-        The Tray will add global offsets.
-        """
-        return self.rack.get_vial_coordinates(vial_pos)
+
+#############################################################################################
+# Rack_3dp
+# -------------------------------------------------------------------------------------------
+# rack-specific configuration for custom 3D-printed autosampler rack
+#############################################################################################
 
 
+class Rack_3dp(BaseRack):
+   """
+    Rack-specific wrapper around the generic Rack() geometry.
+
+    This class:
+    - Defines intrinsic rack geometry (relative coordinates)
+    - Creates Vial objects
+    - Inherits vial-relative coordinate lookup from BaseRack
+    - Stores rack-specific Z-limits
+    """
+
+    def __init__(self):
+        # Rack geometry (relative coords only - global offsets dealt with by Tray)
+        self.rack = Rack(
+            n_cols = 1,
+            n_rows = 4,
+            vial2vial_x = ???,
+            vial2vial_y = ???,
+        )
+
+        # Rack-specific Z limits
+        self.z_limits = {
+            "safe": ???,
+            "max_safe": ???,
+            "working_min": ???,
+        }
+
+        # Instantiate vial objects
+        self.vials = {
+            vial_num: Vial(
+                vial_volume_max = 10.0,
+                vial_usedvolume_max = 1,
+                vial_height = 123,
+                vial_free_depth = 123,
+            )
+            for vial_num in self.rack.rack_order.flatten()
+        }

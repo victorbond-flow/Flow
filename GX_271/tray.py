@@ -6,7 +6,7 @@ Keeps track of all modules (racks, wash stations, waste, etc.) and their positio
 Automatically reads offsets from the module objects when added.
 """
 
-from GX_271.rack import Rack_209  # import any other modules as they are added
+from GX_271.rack import Rack_209, Rack_3dp  # import any other modules as they are added
 
 
 class Tray:
@@ -78,6 +78,3 @@ class Tray:
     def list_modules(self):
         """Return a list of registered module names."""
         return list(self.name_to_slot.keys())
-
-
-
