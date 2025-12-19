@@ -229,9 +229,9 @@ class Rack_3dp(BaseRack):
 
         # Rack-specific Z limits
         self.z_limits = {
-            "safe": 45,
+            "safe": 93,
             "max_safe": 120,
-            "working_min": 20,
+            "working_min": 1,
         }
 
         # Instantiate vial objects

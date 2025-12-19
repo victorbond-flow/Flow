@@ -52,18 +52,28 @@ class GilsonEthernet:
         self.session_socket = None
         self.sequence_number = 40
         self.tray = tray
+    
+        # --- Connect to hardware ---
         self._connect()
         self.send_admin_command()
-        
-
-        # Keep track of racks - Key = rack number, value = Rackcommands instance
+    
+        # --- Keep track of racks ---
         self.racks = {}
-
-        # Global Z safety
-        self.Z_SAFE = 55
+    
+        # --- Global Z safety constants ---
+        self.Z_SAFE = 100
         self.Z_MAX_SAFE = 120
         self.Z_WORKING_MIN = 1
-        self.current_z = self.Z_SAFE
+    
+        # --- Probe state (unknown until synced) ---
+        self.current_x = None
+        self.current_y = None
+        self.current_z = None
+        self.current_module = None
+    
+        # --- Sync python state to hardware ---
+        self.sync_hardware_state()
+
 
     # This function connects to the Gilsons admin port. The Gilson replies with a different port number where it'll handle commands, the script opens that second connection and stores it as self.session_socket
     def _connect(self):
@@ -259,51 +269,104 @@ class GilsonEthernet:
     ##### -------------------------------------------------- HELPER COMMANDS ----------------------------------------------------------------------------#####
     ##########################################################################################################################################################
 
-    def ensure_z_safe(self, module_name=None):
+    def sync_hardware_state(self):
+        """
+        Sync Python-side probe state with the hardware.
+    
+        Uses:
+        - "Get Z Position" for Z
+        - "Get XY Position" for X and Y
+    
+        Raises RuntimeError if any axis cannot be read.
+    
+        Sets:
+        - self.current_x, self.current_y, self.current_z
+        - self.current_module if probe is physically inside a module
+        """
+    
+        # --- Query Z ---
+        z_resp = self.send_command("Get Z Position")
+        try:
+            self.current_z = float(z_resp.split(":")[1].strip())
+        except Exception as e:
+            raise RuntimeError(f"Unable to read Z position from response: '{z_resp}'") from e
+    
+        # --- Query XY ---
+        xy_resp = self.send_command("Get XY Position")
+        try:
+            xy_part = xy_resp.split(":")[1].strip()  # e.g., '201, 39'
+            x_str, y_str = xy_part.split(",")
+            self.current_x = float(x_str.strip())
+            self.current_y = float(y_str.strip())
+        except Exception as e:
+            raise RuntimeError(f"Unable to read XY position from response: '{xy_resp}'") from e
+    
+        # --- Determine current module based on XY + Z ---
+        module = self.tray.get_module_at_xy(self.current_x, self.current_y)
+        if module is not None and self.current_z < module.z_limits["safe"]:
+            self.current_module = module.name
+        else:
+            self.current_module = None
+
+
+
+        
+        
+    def ensure_z_safe(self, destination_module=None):
         """
         Ensure the probe is at a safe Z height before any horizontal move.
-    
-        If module_name is None:
-            - Use GLOBAL limits only (Z_SAFE, Z_MAX_SAFE).
-    
-        If module_name is provided:
-            - Resolve module from Tray
-            - Use module.z_limits["safe"] but never exceed global Z_MAX_SAFE
+        
+        Lifts only if needed to clear the current module (if any) and/or the
+        destination module. Falls back to global Z_SAFE if neither module applies.
         """
+        # Compute the required clearance
+        target_z = self.required_z_clearance(destination_module)
     
-        # -------------------------------------------------------
-        # 1. Module-specific safety rules
-        # -------------------------------------------------------
-        if module_name is not None:
+        # Only move Z if we're below the target
+        if self.current_z < target_z:
+            self.move_z(target_z)
+        else:
+            # Already above everything, no movement needed
+            print(f"[DEBUG] ensure_z_safe: current_z={self.current_z} is already >= target_z={target_z}")
+
+
+
+
+
+    def required_z_clearance(self, destination_module=None):
+        """
+        Compute the minimum Z height required before any XY motion.
     
-            if self.tray is None:
-                raise RuntimeError("Tray is not attached to this GilsonEthernet instance.")
+        Rules:
+        - Must clear the module we're currently inside (if any)
+        - Must clear the destination module (if any)
+        - If neither exists, use global Z_SAFE as a fallback
+        - Never exceed Z_MAX_SAFE
+        """
+        required_z = 0.0  # start with “no reference”
     
-            module = self.tray.get_module(module_name)   # <-- NEW SOURCE OF TRUTH
-            module_safe = module.z_limits.get("safe", self.Z_SAFE)
-            global_max = self.Z_MAX_SAFE
+        # Current module clearance
+        if self.current_module is not None:
+            current = self.tray.get_module(self.current_module)
+            required_z = max(required_z, current.z_limits["safe"])
     
-            # Need to lift up?
-            if self.current_z < module_safe:
-                self.move_z(module_safe)
+        # Destination module clearance
+        if destination_module is not None:
+            dest = self.tray.get_module(destination_module)
+            required_z = max(required_z, dest.z_limits["safe"])
     
-            # Need to clamp down?
-            elif self.current_z > global_max:
-                self.move_z(global_max)
+        # Fallback to global safe if nothing else
+        if required_z == 0.0:
+            required_z = self.Z_SAFE
     
-            return
+        # Hard ceiling
+        if required_z > self.Z_MAX_SAFE:
+            raise RuntimeError(
+                f"Required Z clearance ({required_z}) exceeds hard limit ({self.Z_MAX_SAFE})"
+            )
     
-        # -------------------------------------------------------
-        # 2. Global safety rules (no module context)
-        # -------------------------------------------------------
-        global_safe = self.Z_SAFE
-        global_max = self.Z_MAX_SAFE
-    
-        if self.current_z < global_safe:
-            self.move_z(global_safe)
-    
-        elif self.current_z > global_max:
-            self.move_z(global_max)
+        return required_z
+
 
 
     
@@ -316,12 +379,16 @@ class GilsonEthernet:
         """
     
         # Enforce Z safety before moving horizontally
-        self.ensure_z_safe(module_name)
+        self.ensure_z_safe(destination_module=module_name)
     
         parameters = {"X Position": position}
         result = self.send_command("Move X", parameters=parameters)
     
+        # --- update python-side state ---
+        self.current_x = float(position)
+    
         return f"Moved X to {position}. Result: {result}"
+
 
 
 
@@ -334,36 +401,33 @@ class GilsonEthernet:
         """
     
         # Enforce Z safety before moving horizontally
-        self.ensure_z_safe(module_name)
+        self.ensure_z_safe(destination_module=module_name)
     
         parameters = {"Y Position": position}
         result = self.send_command("Move Y", parameters=parameters)
     
+        # --- update python-side state ---
+        self.current_y = float(position)
+    
         return f"Moved Y to {position}. Result: {result}"
+
 
 
 
     @log_call
     def move_z(self, position, allow_in_vial=False, module_name=None):
         """
-        Move the Z-axis safely, respecting either global or module-specific limits.
+        Move the Z-axis, enforcing hard physical limits only.
     
-        Parameters
-        ----------
-        position : float
-            The requested Z height.
-        allow_in_vial : bool, default=True
-            True  → vial operations allowed (use working_min)
-            False → horizontal-safety move (use safe height)
-        module_name : str, optional
-            Use this module's Z limits if provided. Otherwise use global limits.
+        Policy decisions (clearance height) must be made by the caller
+        via ensure_z_safe / required_z_clearance.
         """
     
         # ----------------------------------------------------------
         # 1. Choose Z limit set (module-specific or global)
         # ----------------------------------------------------------
         if module_name is not None:
-            rack = self.tray.get_module(module_name)  # fail-fast if module doesn't exist
+            rack = self.tray.get_module(module_name)
             z_limits = rack.z_limits
         else:
             z_limits = {
@@ -372,36 +436,50 @@ class GilsonEthernet:
                 "working_min": self.Z_WORKING_MIN,
             }
     
-        safe_z       = z_limits["safe"]
-        max_safe_z   = z_limits["max_safe"]
-        working_min  = z_limits["working_min"]
+        max_safe_z  = z_limits["max_safe"]
+        working_min = z_limits["working_min"]
     
         # ----------------------------------------------------------
-        # 2. Clamp based on whether we're allowed to enter a vial
+        # 2. Enforce HARD bounds only
         # ----------------------------------------------------------
-        original_position = position  # for diagnostics, if needed
+        if allow_in_vial and position < working_min:
+            position = working_min
     
-        if allow_in_vial:
-            # Inside a vial → use working_min as min bound
-            if position < working_min:
-                position = working_min
-            elif position > max_safe_z:
-                position = max_safe_z
-        else:
-            # Horizontal-safe move → use safe height as min bound
-            if position < safe_z:
-                position = safe_z
-            elif position > max_safe_z:
-                position = max_safe_z
+        if position > max_safe_z:
+            raise RuntimeError(
+                f"Requested Z ({position}) exceeds max safe Z ({max_safe_z})"
+            )
     
         # ----------------------------------------------------------
         # 3. Execute the movement
         # ----------------------------------------------------------
         parameters = {"Z Position": position}
         result = self.send_command("Move Z", parameters=parameters)
-        self.current_z = position
+    
+        self.current_z = float(position)
+    
+        # ----------------------------------------------------------
+        # 4. Infer current_module from XY + Z
+        # ----------------------------------------------------------
+        if self.tray is not None:
+            module_name_at_xy = self.tray.get_module_at_xy(
+                self.current_x, self.current_y
+            )
+    
+            if module_name_at_xy is not None:
+                module = self.tray.get_module(module_name_at_xy)
+                if self.current_z < module.z_limits["safe"]:
+                    self.current_module = module_name_at_xy
+                else:
+                    self.current_module = None
+            else:
+                self.current_module = None
     
         return f"Moved Z to {position}. Result: {result}"
+
+
+
+
 
 
 
@@ -414,10 +492,14 @@ class GilsonEthernet:
         """
     
         # Enforce Z safety before moving horizontally
-        self.ensure_z_safe(module_name)
+        self.ensure_z_safe(destination_module=None)
     
         parameters = {"X Position": x_position, "Y Position": y_position}
         result = self.send_command("Move XY", parameters=parameters)
+
+        # --- Update python-side state ---
+        self.current_x = float(x_position)
+        self.current_y = float(y_position)
     
         return f"Moved to X={x_position}, Y={y_position}. Result: {result}"
 
@@ -485,7 +567,7 @@ class GilsonEthernet:
         # ----------------------------------------------------------
         # 2. Raise Z to rack-safe height before XY
         # ----------------------------------------------------------
-        self.ensure_z_safe(module_name=module_name)
+        self.ensure_z_safe(destination_module=module_name)
     
         # ----------------------------------------------------------
         # 3. Return only (for debugging)
@@ -496,7 +578,6 @@ class GilsonEthernet:
         # ----------------------------------------------------------
         # 4. Move XY with module-specific Z safety active
         # ----------------------------------------------------------
-        print(f"Moving to {module_name} vial {vial_pos} at ({x:.2f}, {y:.2f}) mm")
         self.move_xy(x, y, module_name=module_name)
     
         return x, y
@@ -526,12 +607,6 @@ class GilsonEthernet:
             return x_abs, y_abs, z_target
     
         # ----------------------------------------------------------
-        # Step 0: ALWAYS raise to GLOBAL safe height first
-        # ----------------------------------------------------------
-        if self.current_z < self.Z_SAFE:
-            self.move_z(self.Z_SAFE)
-    
-        # ----------------------------------------------------------
         # Step 1: now do the normal XY safe-move
         # (go_to_vial will apply module-specific Z safety if needed)
         # ----------------------------------------------------------
@@ -546,6 +621,8 @@ class GilsonEthernet:
             self.move_z(z_target, allow_in_vial=True, module_name=module_name)
         finally:
             self.allow_in_vial = False
+
+        self.current_module = module_name
     
         return x_abs, y_abs, z_target
 
