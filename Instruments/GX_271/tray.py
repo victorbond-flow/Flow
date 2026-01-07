@@ -6,7 +6,7 @@ Keeps track of all modules (racks, wash stations, waste, etc.) and their positio
 Automatically reads offsets from the module objects when added.
 """
 
-from GX_271.rack import Rack_209, Rack_3dp  # import any other modules as they are added
+from .rack import Rack_209, Rack_3dp  # import any other modules as they are added
 
 
 class Tray:

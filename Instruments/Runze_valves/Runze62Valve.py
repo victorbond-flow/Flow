@@ -1,7 +1,7 @@
 import serial
 import time
 from typing import Tuple
-
+from Core.logging import flow_logger as logger, log_call
 
 class Runze62Valve:
     """
@@ -36,6 +36,7 @@ class Runze62Valve:
     # Connection & homing
     # ------------------------------------------------------------------
 
+    @log_call
     def connect(self):
         """Open serial port and home valve to position 1."""
         self.ser = serial.Serial(
@@ -53,7 +54,7 @@ class Runze62Valve:
         print(f"Connected to Runze valve on {self.port}")
 
         # Home deterministically
-        #self.go_to_pos(1)
+        self.go_to_pos(1)
 
     # ------------------------------------------------------------------
     # Public valve API 
@@ -69,6 +70,7 @@ class Runze62Valve:
             raise RuntimeError("Valve position unknown (not homed)")
         return self._position
 
+    @log_call
     def go_to_pos(self, pos: int):
         """Move valve to position 1 or 2."""
         if pos not in (1, 2):
@@ -83,6 +85,7 @@ class Runze62Valve:
 
         print(f"Valve moved to position {pos}")
 
+    @log_call
     def toggle(self):
         """Toggle between position 1 and 2."""
         if self._position is None:

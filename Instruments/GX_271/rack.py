@@ -1,5 +1,5 @@
 import numpy as np
-from GX_271.vial import Vial
+from .vial import Vial
 from Core.logging import flow_logger as logger, log_call
 
 # ==========================================================================================
