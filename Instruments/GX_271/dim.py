@@ -1,4 +1,5 @@
 import serial
+from Core.logging import flow_logger as logger, log_call
 
 class DIM:
     """
@@ -51,6 +52,7 @@ class DIM:
             return "?"
         return resp[-1]  # sometimes last char is the position
 
+    @log_call
     def go_to_pos(self, pos: str):
         """
         Moves valve to 'A' or 'B'.
@@ -73,6 +75,7 @@ class DIM:
 
         print(f"Valve moved to {pos}")
 
+    @log_call
     def toggle(self):
         """Switches A→B or B→A."""
         p = self.read_pos()

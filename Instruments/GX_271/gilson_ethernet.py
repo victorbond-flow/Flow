@@ -1,10 +1,7 @@
 import socket
 import time
 import xml.etree.ElementTree as ET
-from GX_271.flow_logging import FlowLogger
-
-logger = FlowLogger()
-log_call = logger.log_call
+from Core.logging import flow_logger as logger, log_call
 
 #############################################################################################
 # gilson_ethernet.py
