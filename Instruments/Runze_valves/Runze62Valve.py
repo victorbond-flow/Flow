@@ -53,7 +53,7 @@ class Runze62Valve:
         print(f"Connected to Runze valve on {self.port}")
 
         # Home deterministically
-        self.go_to_pos(1)
+        #self.go_to_pos(1)
 
     # ------------------------------------------------------------------
     # Public valve API 
@@ -177,3 +177,30 @@ class Runze62Valve:
 
         _, _, _, major, minor, _, _, _ = resp
         return major, minor
+
+    def query_motor_status(self) -> int:
+        """
+        Query motor status.
+    
+        Returns
+        -------
+        status : int
+            0x00 = OK / idle
+            0xFE = busy
+            other = error
+        """
+        frame = self._build_common_frame(self.CMD_QUERY_STATUS, (0x00, 0x00))
+        self._write(frame)
+    
+        resp = self._read_response()
+    
+        b0, b1, status, b3, b4, b5, _, _ = resp
+    
+        if b0 != self.STX or b5 != self.ETX:
+            raise RuntimeError(f"Invalid frame markers: {resp.hex()}")
+    
+        if b1 != self.address:
+            raise RuntimeError(f"Address mismatch: {resp.hex()}")
+    
+        return status
+
