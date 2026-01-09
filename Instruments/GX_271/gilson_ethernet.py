@@ -371,20 +371,30 @@ class GilsonEthernet:
     def move_x(self, position, module_name=None):
         """
         Move the X-axis safely.
-        If module_name is provided, module-specific Z safe limits are used.
-        Otherwise, global Z safe limits are enforced.
+        Automatically computes required Z based on current module and
+        the module at the target X position.
         """
-    
-        # Enforce Z safety before moving horizontally
-        self.ensure_z_safe(destination_module=module_name)
-    
+        
+        # --- Infer the destination module from target X/Y ---
+        destination_module = self.tray.get_module_at_xy(position, self.current_y)
+        
+        # --- Update current_module based on current XY ---
+        if self.tray is not None:
+            current_module_name = self.tray.get_module_at_xy(self.current_x, self.current_y)
+            self.current_module = current_module_name
+        
+        # --- Enforce Z safety before horizontal move ---
+        self.ensure_z_safe(destination_module=destination_module)
+        
+        # --- Execute the move ---
         parameters = {"X Position": position}
         result = self.send_command("Move X", parameters=parameters)
-    
-        # --- update python-side state ---
+        
+        # --- Update Python-side state ---
         self.current_x = float(position)
-    
+        
         return f"Moved X to {position}. Result: {result}"
+
 
 
 
@@ -393,20 +403,30 @@ class GilsonEthernet:
     def move_y(self, position, module_name=None):
         """
         Move the Y-axis safely.
-        If module_name is provided, module-specific Z safe limits are used.
-        Otherwise, global Z safe limits are enforced.
+        Automatically computes required Z based on current module and
+        the module at the target X/Y position.
         """
-    
-        # Enforce Z safety before moving horizontally
-        self.ensure_z_safe(destination_module=module_name)
-    
+        
+        # --- Infer the destination module from target X/Y ---
+        destination_module = self.tray.get_module_at_xy(self.current_x, position)
+        
+        # --- Update current_module based on current XY ---
+        if self.tray is not None:
+            current_module_name = self.tray.get_module_at_xy(self.current_x, self.current_y)
+            self.current_module = current_module_name
+        
+        # --- Enforce Z safety before horizontal move ---
+        self.ensure_z_safe(destination_module=destination_module)
+        
+        # --- Execute the move ---
         parameters = {"Y Position": position}
         result = self.send_command("Move Y", parameters=parameters)
-    
-        # --- update python-side state ---
+        
+        # --- Update Python-side state ---
         self.current_y = float(position)
-    
+        
         return f"Moved Y to {position}. Result: {result}"
+
 
 
 
@@ -484,21 +504,31 @@ class GilsonEthernet:
     def move_xy(self, x_position, y_position, module_name=None):
         """
         Move both X and Y axes safely in one operation.
-        If module_name is provided, module-specific Z safe limits are used.
-        Otherwise, global Z safe limits are enforced.
+        Automatically computes the necessary Z clearance based on
+        the current module and the destination module at the target XY.
         """
-    
-        # Enforce Z safety before moving horizontally
-        self.ensure_z_safe(destination_module=None)
-    
+        
+        # --- Infer the destination module from target XY ---
+        destination_module = self.tray.get_module_at_xy(x_position, y_position)
+        
+        # --- Update current_module based on current XY ---
+        if self.tray is not None:
+            current_module_name = self.tray.get_module_at_xy(self.current_x, self.current_y)
+            self.current_module = current_module_name
+        
+        # --- Enforce Z safety before horizontal move ---
+        self.ensure_z_safe(destination_module=destination_module)
+        
+        # --- Execute the XY move ---
         parameters = {"X Position": x_position, "Y Position": y_position}
         result = self.send_command("Move XY", parameters=parameters)
-
-        # --- Update python-side state ---
+    
+        # --- Update Python-side state ---
         self.current_x = float(x_position)
         self.current_y = float(y_position)
     
         return f"Moved to X={x_position}, Y={y_position}. Result: {result}"
+
 
 
 
