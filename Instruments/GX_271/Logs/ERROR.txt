@@ -1,0 +1,18 @@
+[06/11/25 15:40:21] | ERROR | EXCEPTION in go_to_vial after 0.003s: No rack at position 1
+[06/11/25 15:44:15] | ERROR | EXCEPTION in go_to_vial after 0.000s: 'Rack_209' object has no attribute 'get_vial_coordinates'
+[06/11/25 15:44:15] | ERROR | EXCEPTION in go_to_vial after 0.001s: 'Rack_209' object has no attribute 'get_vial_coordinates'
+[06/11/25 16:00:31] | ERROR | EXCEPTION in go_to_vial after 0.000s: 'Rack_209' object has no attribute 'get_vial_coordinates'
+[06/11/25 16:00:31] | ERROR | EXCEPTION in go_to_vial after 0.000s: 'Rack_209' object has no attribute 'get_vial_coordinates'
+[06/11/25 16:04:28] | ERROR | EXCEPTION in go_to_vial after 0.000s: 'Rack_209' object has no attribute 'get_vial_coordinates'
+[06/11/25 16:04:28] | ERROR | EXCEPTION in go_to_vial after 0.000s: 'Rack_209' object has no attribute 'get_vial_coordinates'
+[06/11/25 16:08:31] | ERROR | EXCEPTION in move_xy after 0.000s: name 'rack_num' is not defined
+[06/11/25 16:08:31] | ERROR | EXCEPTION in go_to_vial after 0.009s: name 'rack_num' is not defined
+[06/11/25 16:08:31] | ERROR | EXCEPTION in go_to_vial after 0.009s: name 'rack_num' is not defined
+[06/11/25 16:08:39] | ERROR | EXCEPTION in move_xy after 0.000s: name 'rack_num' is not defined
+[06/11/25 16:08:39] | ERROR | EXCEPTION in go_to_vial after 0.000s: name 'rack_num' is not defined
+[06/11/25 16:08:39] | ERROR | EXCEPTION in go_to_vial after 0.000s: name 'rack_num' is not defined
+[25/11/25 15:02:39] | ERROR | EXP:None | EXCEPTION in go_to_vial after 0.000s: GilsonEthernet.go_to_vial() missing 1 required positional argument: 'vial_pos'
+[25/11/25 15:03:49] | ERROR | EXP:None | EXCEPTION in go_to_vial after 0.001s: 'GilsonEthernet' object has no attribute 'tray'
+[25/11/25 15:07:17] | ERROR | EXP:None | EXCEPTION in go_to_vial after 0.003s: 'NoneType' object has no attribute 'get_module'
+[25/11/25 15:09:56] | ERROR | EXP:None | EXCEPTION in go_to_vial after 0.006s: 'GilsonEthernet' object has no attribute 'modules'
+[25/11/25 15:15:06] | ERROR | EXP:None | EXCEPTION in go_into_vial after 0.000s: GilsonEthernet.go_into_vial() missing 2 required positional arguments: 'module_name' and 'vial_pos'

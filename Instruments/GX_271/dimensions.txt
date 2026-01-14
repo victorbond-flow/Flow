@@ -1,0 +1,2 @@
+177.5cm length of tubing between syr pump and AS
+The probe has about 100uL dead volume
