@@ -43,3 +43,4 @@
 [14/01/26 11:06:04] | ERROR | EXP:Development | EXCEPTION in move_z after 0.000s: '>' not supported between instances of 'int' and 'NoneType'
 [14/01/26 11:22:05] | ERROR | EXP:Development | EXCEPTION in move_z after 0.000s: Requested Z (123) exceeds max safe Z (120)
 [14/01/26 11:30:59] | ERROR | EXP:Development | EXCEPTION in move_z after 0.000s: Requested Z (126) exceeds max safe Z (125)
+[14/01/26 16:11:36] | ERROR | EXP:Development | EXCEPTION in move_z after 0.000s: Requested Z (127) exceeds max safe Z (125)

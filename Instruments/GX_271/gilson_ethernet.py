@@ -58,8 +58,8 @@ class GilsonEthernet:
         self.racks = {}
     
         # --- Global Z safety constants ---
-        self.Z_SAFE = 125
-        self.Z_MAX_SAFE = 125
+        self.Z_SAFE = 130
+        self.Z_MAX_SAFE = 130
         self.Z_WORKING_MIN = 1
     
         # --- Probe state (unknown until synced) ---

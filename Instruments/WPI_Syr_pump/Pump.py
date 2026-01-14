@@ -320,16 +320,35 @@ class AL1000:
     # -------------------------------------------------------------------------
     # Prepare method
     # -------------------------------------------------------------------------
-    def prepare(self, dia, rate, volume, direction):
-        print("\n--- Preparing pump (Phase 1) ---")
-
+    def prepare(self, rate, volume, direction):
+        """
+        Prepare the AL1000 syringe pump for a run:
+        - Set rate (mL/min)
+        - Set volume (µL or mL, depending on firmware)
+        - Set direction ('INF' or 'WDR')
+        
+        Uses the existing syringe diameter (assumed fixed).
+        Raises RuntimeError if any command fails.
+        """
+    
+        # Select phase 1 (no ack check needed)
         self.select_phase(1)
-        self.set_diameter(dia)
-        self.set_rate(rate)
-        self.set_volume(volume)
-        self.set_direction(direction)
+    
+        # Set rate
+        resp = self.set_rate(rate, verbose=False)
+        if resp not in ("00S", "00P"):
+            raise RuntimeError(f"Rate not acknowledged: {resp}")
+    
+        # Set volume
+        resp = self.set_volume(volume, verbose=False)
+        if resp not in ("00S", "00P"):
+            raise RuntimeError(f"Volume not acknowledged: {resp}")
+    
+        # Set direction
+        resp = self.set_direction(direction, verbose=False)
+        if resp not in ("00S", "00P"):
+            raise RuntimeError(f"Direction not acknowledged: {resp}")
 
-        print("--- Preparation complete ---\n")
 
 
 
