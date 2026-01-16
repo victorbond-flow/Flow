@@ -46,7 +46,6 @@ class RSG:
 
         # Configure pump (units are fixed by AL1000 firmware)
         self.pump.prepare(
-            dia=self.syringe_diameter,
             rate=rate,
             volume=volume,
             direction="WDR",
@@ -79,7 +78,6 @@ class RSG:
 
         # Configure pump
         self.pump.prepare(
-            dia=self.syringe_diameter,
             rate=rate,
             volume=volume,
             direction="INF",
@@ -117,7 +115,6 @@ class RSG:
 
         # Configure pump for dispense
         self.pump.prepare(
-            dia=self.syringe_diameter,
             rate=rate,
             volume=volume,
             direction="INF",
@@ -149,7 +146,6 @@ class RSG:
         
         # Configure the pump
         self.pump.prepare(
-            dia=self.syringe_diameter,
             rate=rate,
             volume=volume,
             direction="WDR",
@@ -178,7 +174,6 @@ class RSG:
     
         # Prepare pump
         self.pump.prepare(
-            dia=self.syringe_diameter,
             rate=rate,
             volume=volume,
             direction="WDR"
@@ -202,46 +197,29 @@ class RSG:
     # ------------------------------------------------------------------
 
     def wash_sequence(
-        self,
-        solvent_module: str,
-        solvent_vial: int,
-        target_module: str,
-        target_vial: int,
-        wash_volume: float = 200.0,
-        air_gap: float = 50.0,
-        n_washes: int = 1,
-        rate: float = 0.05,
-    ):
+    self,
+    solvent_volume: float = 100.0,
+    air_gap: float = 5.0,
+):
         """
-        Generic wash sequence.
-
-        Each wash:
-        1) Pick up wash solvent
-        2) (Optional) air gap
-        3) Dispense into target vial
+        Withdraw a small air gap, then solvent from rack2 vial 1,
+        and dispense everything into the waste vial (rack2, vial 2).
+    
+        Parameters:
+        - solvent_volume: µL of liquid to withdraw from rack2 vial 1
+        - air_gap: µL of air to add before the liquid
         """
+    
+        # 1) Take air gap at slow rate
+        if air_gap > 0:
+            self.take_air_gap(volume=air_gap, rate=0.05)
+    
+        # 2) Withdraw solvent at faster rate
+        self.pickup_from_vial(module_name="rack2", vial_pos=1, volume=solvent_volume, rate=0.5)
+    
+        # 3) Dispense everything into waste at same fast rate
+        self.dispense_in_waste(volume=solvent_volume + air_gap, rate=0.5)
 
-        for i in range(n_washes):
-            # Withdraw wash solvent
-            self.pickup_from_vial(
-                module_name=solvent_module,
-                vial_pos=solvent_vial,
-                volume=wash_volume,
-                rate=rate,
-            )
 
-            # Optional air gap
-            if air_gap and air_gap > 0:
-                self.take_air_gap(
-                    volume=air_gap,
-                )
-
-            # Dispense into target
-            self.dispense_in_vial(
-                module_name=target_module,
-                vial_pos=target_vial,
-                volume=wash_volume,
-                rate=rate,
-            )
 
 
