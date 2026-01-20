@@ -159,15 +159,14 @@ class RSG:
 
         self.pump.stop()
 
-    def prepickup(self, rate: float = 0.05):
+    def prepickup(self, volume: float = 10.0, rate: float = 0.05):
         """
         Pre-pickup step:
         - Always goes to rack2, vial 1
-        - Always withdraws 10 µL
+        - Withdraws `volume` µL (default 10 µL)
         """
         module_name = "rack2"
         vial_pos = 1
-        volume = 10  # µL
     
         # Move safely + into vial (Gilson handles Z safety internally)
         self.gilson.go_into_vial(module_name, vial_pos)
@@ -190,6 +189,7 @@ class RSG:
     
         # Leave vial safely
         self.gilson.ensure_z_safe()
+
 
 
     # ------------------------------------------------------------------
