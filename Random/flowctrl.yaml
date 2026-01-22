@@ -142,5 +142,6 @@ dependencies:
   - python==3.11.13=h981015d_0
 
   - pip:
-      - black    
+      - black
+      - pyDOE2
 prefix: C:\Users\CHAD-HPLC\anaconda3\envs\flowctrl
