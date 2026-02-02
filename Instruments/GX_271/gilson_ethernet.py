@@ -432,14 +432,17 @@ class GilsonEthernet:
 
 
     @log_call
-    def move_z(self, position, allow_in_vial=False, module_name=None):
+    def move_z(self, position, speed=125, allow_in_vial=False, module_name=None):
         """
-        Move the Z-axis, enforcing hard physical limits only.
+        Move the Z-axis to a given position at a specified speed, enforcing hard physical limits only.
     
-        Policy decisions (clearance height) must be made by the caller
-        via ensure_z_safe / required_z_clearance.
+        Parameters:
+        - position: target Z position in mm
+        - speed: Z-axis movement speed in mm/sec (default 125)
+        - allow_in_vial: if True, allows movement below working_min
+        - module_name: optional, restrict Z limits to a specific module
         """
-    
+        
         # ----------------------------------------------------------
         # 1. Choose Z limit set (module-specific or global)
         # ----------------------------------------------------------
@@ -468,15 +471,21 @@ class GilsonEthernet:
             )
     
         # ----------------------------------------------------------
-        # 3. Execute the movement
+        # 3. Clamp speed to allowed range
         # ----------------------------------------------------------
-        parameters = {"Z Position": position}
-        result = self.send_command("Move Z", parameters=parameters)
+        if speed < 0 or speed > 125:
+            raise ValueError(f"Z speed must be between 0 and 125 mm/sec (got {speed})")
+    
+        # ----------------------------------------------------------
+        # 4. Execute the movement
+        # ----------------------------------------------------------
+        parameters = {"Z Position": position, "Z Speed": speed}
+        result = self.send_command("Move Z with Speed", parameters=parameters)
     
         self.current_z = float(position)
     
         # ----------------------------------------------------------
-        # 4. Infer current_module from XY + Z
+        # 5. Infer current_module from XY + Z
         # ----------------------------------------------------------
         if self.tray is not None:
             module_name_at_xy = self.tray.get_module_at_xy(
@@ -492,7 +501,8 @@ class GilsonEthernet:
             else:
                 self.current_module = None
     
-        return f"Moved Z to {position}. Result: {result}"
+        return f"Moved Z to {position} at {speed} mm/sec. Result: {result}"
+
 
 
 

@@ -16,6 +16,9 @@ class DIM:
         self.offset_x = 0.0
         self.offset_y = 0.0
 
+        # --- Z limits ---
+        
+
     def connect(self):
         """Open the serial port."""
         self.ser = serial.Serial(
