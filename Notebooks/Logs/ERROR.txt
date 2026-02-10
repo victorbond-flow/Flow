@@ -44,3 +44,9 @@
 [14/01/26 11:22:05] | ERROR | EXP:Development | EXCEPTION in move_z after 0.000s: Requested Z (123) exceeds max safe Z (120)
 [14/01/26 11:30:59] | ERROR | EXP:Development | EXCEPTION in move_z after 0.000s: Requested Z (126) exceeds max safe Z (125)
 [14/01/26 16:11:36] | ERROR | EXP:Development | EXCEPTION in move_z after 0.000s: Requested Z (127) exceeds max safe Z (125)
+[09/02/26 11:56:30] | ERROR | EXP:Development | EXCEPTION in connect after 0.000s: "port" must be None or a string, not <class 'serial.serialwin32.Serial'>
+[09/02/26 11:58:04] | ERROR | EXP:Development | EXCEPTION in connect after 0.000s: could not open port 'COM2': PermissionError(13, 'Access is denied.', None, 5)
+[09/02/26 11:58:15] | ERROR | EXP:Development | EXCEPTION in connect after 0.000s: could not open port 'COM2': PermissionError(13, 'Access is denied.', None, 5)
+[09/02/26 11:59:04] | ERROR | EXP:Development | EXCEPTION in go_to_pos after 1.006s: Incomplete response: 
+[09/02/26 11:59:04] | ERROR | EXP:Development | EXCEPTION in connect after 1.096s: Incomplete response: 
+[09/02/26 11:59:37] | ERROR | EXP:Development | EXCEPTION in connect after 0.000s: could not open port 'COM2': PermissionError(13, 'Access is denied.', None, 5)

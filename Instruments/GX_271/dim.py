@@ -17,6 +17,11 @@ class DIM:
         self.offset_y = 0.0
 
         # --- Z limits ---
+        self.z_limits = {
+            "safe": 130.0,
+            "max_safe": 130.0,
+            "working_min": 120    # To be determined!
+        }
         
 
     def connect(self):

@@ -132,6 +132,39 @@ class RSG:
         self.gilson.ensure_z_safe()
 
 
+    def dispense_in_dim(
+        self,
+        volume: float,
+        rate: float = 0.5,
+    ):
+        """
+        Dispense liquid into the DIM.
+        Valve state and Z safety are handled by Gilson.
+        """
+    
+        # Move into DIM (asserts correct valve state internally)
+        self.gilson.go_into_dim()
+    
+        # Configure pump
+        self.pump.prepare(
+            rate=rate,
+            volume=volume,
+            direction="INF",
+        )
+    
+        self.pump.start()
+    
+        wait_time = (volume / (rate * 1000)) * 60
+        time.sleep(wait_time + 1)
+    
+        self.pump.stop()
+    
+        # Retract safely
+        self.gilson.leave_dim()
+
+
+
+
     def take_air_gap(
         self,
         volume: float,

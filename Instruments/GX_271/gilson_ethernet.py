@@ -663,9 +663,116 @@ class GilsonEthernet:
     
         return x_abs, y_abs, z_target
 
+    
+    def go_to_dim(self, send=True):
+        """
+        Move the probe above the DIM module.
+    
+        Safety model:
+        - Before ANY horizontal move, raise to DIM-specific safe Z
+          (via ensure_z_safe(destination_module="dim")).
+        """
+    
+        module_name = "dim"
+    
+        # ----------------------------------------------------------
+        # 1. Resolve module + coordinates
+        # ----------------------------------------------------------
+        off_x, off_y = self.tray.get_offsets(module_name)
+    
+        x = off_x
+        y = off_y
+    
+        # ----------------------------------------------------------
+        # 2. Raise Z to DIM-safe height before XY
+        # ----------------------------------------------------------
+        self.ensure_z_safe(destination_module=module_name)
+    
+        # ----------------------------------------------------------
+        # 3. Return only (for debugging)
+        # ----------------------------------------------------------
+        if not send:
+            return x, y
+    
+        # ----------------------------------------------------------
+        # 4. Move XY with module-specific Z safety active
+        # ----------------------------------------------------------
+        self.move_xy(x, y, module_name=module_name)
+    
+        return x, y
+
+    @log_call
+    def go_into_dim(self, valve_pos="A", speed=40, send=True):
+        """
+        Move the probe into the DIM injection position.
+    
+        This:
+            1) Asserts valve position
+            2) Raises to GLOBAL safe height
+            3) Moves XY above the DIM
+            4) Descends to DIM working_min safely
+        """
+    
+        module_name = "dim"
+        dim = self.tray.get_module(module_name)
+    
+        off_x, off_y = self.tray.get_offsets(module_name)
+        x_abs = off_x
+        y_abs = off_y
+        z_target = dim.z_limits["working_min"]
+    
+        if not send:
+            return x_abs, y_abs, z_target
+    
+        # ----------------------------------------------------------
+        # Step 0: assert valve position BEFORE motion
+        # ----------------------------------------------------------
+        dim.go_to_pos(valve_pos)  # valve_pos defined above, here im assuming pos "A" is the load position
+    
+        # ----------------------------------------------------------
+        # Step 1: XY safe-move above DIM
+        # ----------------------------------------------------------
+        self.go_to_dim(send=True)
+    
+        # ----------------------------------------------------------
+        # Step 2: controlled descent INTO the DIM
+        # ----------------------------------------------------------
+        try:
+            self.allow_in_vial = True
+            self.move_z(
+                z_target,
+                speed=70,
+                allow_in_vial=True,
+                module_name=module_name
+            )
+        finally:
+            self.allow_in_vial = False
+    
+        self.current_module = module_name
+    
+        return x_abs, y_abs, z_target
 
 
-
+    @log_call
+    def leave_dim(self):
+        """
+        Retract the probe safely out of the DIM.
+        Vertical-only move back to DIM-safe Z.
+        """
+    
+        module_name = "dim"
+        dim = self.tray.get_module(module_name)
+    
+        z_safe = dim.z_limits["safe"]
+    
+        self.move_z(
+            z_safe,
+            module_name=module_name
+        )
+    
+        self.current_module = None
+    
+        return z_safe
 
 
     def close(self):
