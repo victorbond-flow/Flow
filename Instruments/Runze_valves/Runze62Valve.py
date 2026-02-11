@@ -94,6 +94,26 @@ class Runze62Valve:
         new_pos = 2 if self._position == 1 else 1
         self.go_to_pos(new_pos)
 
+    ### Note - the below 2 methods assume that the DIM is in the inject position ###
+    
+    @log_call
+    def gas_to_dim(self):
+        """
+        Route gas to DIM
+        Carrier solvent bypasses DIM - goes directly to reactor
+        DIM outlet goes to waste/BPR
+        """
+        self.go_to_pos(1)
+
+    @log_call
+    def carrier_to_dim(self):
+        """
+        Route carrier solvent through DIM toward the reactor
+        Gas is diverted to waste/BPR
+        """
+        self.go_to_pos(2)
+        
+
     # ------------------------------------------------------------------
     # Internal protocol handling
     # ------------------------------------------------------------------

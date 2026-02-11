@@ -94,3 +94,12 @@ class DIM:
         else:
             print(f"Unknown position '{p}' — cannot toggle.")
 
+    def load(self):
+        """ Connects injection assay to sample loop """
+        self.go_to_pos("B")
+
+    def inject(self):
+        """ Connects injection assay to waste (gas/solvent from Runze toward sample loop now) """
+        self.go_to_pos("A")
+        
+

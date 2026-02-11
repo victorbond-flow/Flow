@@ -2,7 +2,7 @@ import datetime
 import serial
 import re
 import time
-from flow_logging import FlowLogger
+from Core.flow_logging import FlowLogger
 
 logger = FlowLogger()
 log_call = logger.log_call
@@ -30,29 +30,30 @@ class KnauerPump :
         #give response
         return byteData
 
-    def get_sernum(self):
-        byteData = self.command("SERNUM?")
+    def get_version(self):
+        byteData = self.command("V?")
         return byteData
     
     @log_call
     def set_flow_rate(self, flow_rate):
-        byteData = self.command(f"FLOW:{flow_rate}")
+        byteData = self.command(f"F{int(flow_rate)}")
         return byteData
-        print('Flow rate set to {flow_rate} ul/min')
+        print(f'Flow rate set to {flow_rate} ul/min')
+
 
     def get_flow_rate(self):
-        byteData = self.command("FLOW?")
+        byteData = self.command("F?")
         return byteData
         print('Flow rate set to {byteData} ml/min.')
 
     @log_call
     def start_flow(self):
-        byteData = self.command('ON')
+        byteData = self.command('M1')
         return byteData
         print('Pump to begin flow.')
 
     @log_call
     def stop_flow(self):
-        byteData = self.command('OFF')
+        byteData = self.command('M0')
         return byteData
         print('Pump to stop flow.')
