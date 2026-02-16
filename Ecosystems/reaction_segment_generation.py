@@ -254,5 +254,67 @@ class RSG:
         self.dispense_in_waste(volume=solvent_volume + air_gap, rate=0.5)
 
 
+    def build_reaction(self, reaction_plan, air_gap_between: float = 0.0):
+        """
+        Construct a reaction slug in the syringe from a structured plan.
+    
+        Parameters
+        ----------
+        reaction_plan : list of dict
+            Each dict must contain:
+                - "module": str
+                - "vial": int
+                - "volume": float (µL)
+    
+        air_gap_between : float, optional
+            Air gap (µL) inserted between components.
+    
+        Returns
+        -------
+        dict
+            Metadata describing the constructed slug.
+        """
+    
+        if not isinstance(reaction_plan, list):
+            raise TypeError("reaction_plan must be a list of dicts.")
+    
+        total_volume = 0.0
+    
+        for i, component in enumerate(reaction_plan):
+    
+            try:
+                module = component["module"]
+                vial = component["vial"]
+                volume = component["volume"]
+            except KeyError:
+                raise ValueError(
+                    "Each reaction component must contain "
+                    "'module', 'vial', and 'volume'."
+                )
+    
+            if volume <= 0:
+                raise ValueError("Component volumes must be positive.")
+    
+            # Withdraw component
+            self.pickup_from_vial(
+                module_name=module,
+                vial_pos=vial,
+                volume=volume,
+            )
+    
+            total_volume += volume
+    
+            # Optional air gap between components
+            if air_gap_between > 0 and i < len(reaction_plan) - 1:
+                self.take_air_gap(air_gap_between)
+                total_volume += air_gap_between
+    
+        return {
+            "total_volume_ul": total_volume,
+            "num_components": len(reaction_plan),
+        }
+
+
+
 
 
