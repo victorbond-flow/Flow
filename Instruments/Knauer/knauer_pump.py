@@ -8,17 +8,25 @@ logger = FlowLogger()
 log_call = logger.log_call
 
 class KnauerPump :
-    def __init__(self, serial):
-        self.ser = serial
+    def __init__(self, port="COM3", baudrate=9600, timeout=1):
+        self.port = port
+        self.baudrate = baudrate
+        self.timeout = timeout
+        self.ser = None
 
     @log_call
-    def connect(self): 
-        """"" Connection of the valve to the computer via serial port """
-        if self.ser.isOpen():
-            self.ser.timeout = 1
-            print("Device is connected")
+    def connect(self):
+        """Open serial port and check connection."""
+        self.ser = serial.Serial(
+            port=self.port,
+            baudrate=self.baudrate,
+            timeout=self.timeout
+        )
+
+        if self.ser.is_open:
+            print(f"Connected to Knauer pump on {self.port}")
         else:
-            print ('The Port is closed: ' + self.ser.portstr)
+            raise RuntimeError(f"Could not open port {self.port}")
 
     @log_call
     def command(self, code):

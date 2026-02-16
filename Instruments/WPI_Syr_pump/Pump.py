@@ -15,21 +15,29 @@ class AL1000:
     - Provide a unified parsing path so all I/O behaves consistently.
     """
 
-    def __init__(self, ser, device_address="@00", sleep_time=0.5, use_splat=True):
-        self.ser = ser
+    def __init__(self, port="COM2", baudrate=9600, device_address="@00", sleep_time=0.5):
+        self.port = port
+        self.baudrate = baudrate
         self.device_address = device_address
         self.sleep_time = sleep_time
-        self.use_splat = use_splat
+        self.ser = None
 
     # -------------------------------------------------------------------------
     # Core methods
     # -------------------------------------------------------------------------
+    @log_call
     def connect(self):
-        if self.ser.isOpen():
-            self.ser.timeout = 1
-            print("Device is connected")
+        """Open serial port and verify connection."""
+        self.ser = serial.Serial(
+            port=self.port,
+            baudrate=self.baudrate,
+            timeout=1
+        )
+
+        if self.ser.is_open:
+            print(f"AL1000 pump connected on {self.port}")
         else:
-            print("Port is closed:", self.ser.portstr)
+            raise RuntimeError(f"Could not open port {self.port}")
 
     def command(self, code):
         """
