@@ -50,3 +50,9 @@
 [09/02/26 11:59:04] | ERROR | EXP:Development | EXCEPTION in go_to_pos after 1.006s: Incomplete response: 
 [09/02/26 11:59:04] | ERROR | EXP:Development | EXCEPTION in connect after 1.096s: Incomplete response: 
 [09/02/26 11:59:37] | ERROR | EXP:Development | EXCEPTION in connect after 0.000s: could not open port 'COM2': PermissionError(13, 'Access is denied.', None, 5)
+[13/02/26 14:01:17] | ERROR | EXP:Development | EXCEPTION in go_to_pos after 0.001s: Serial port not open
+[13/02/26 14:01:17] | ERROR | EXP:Development | EXCEPTION in go_into_dim after 0.001s: Serial port not open
+[13/02/26 14:11:54] | ERROR | EXP:Development | EXCEPTION in go_to_pos after 0.000s: Serial port not open
+[13/02/26 14:11:54] | ERROR | EXP:Development | EXCEPTION in go_into_dim after 0.001s: Serial port not open
+[13/02/26 14:14:57] | ERROR | EXP:Development | EXCEPTION in go_to_pos after 0.000s: Serial port not open
+[13/02/26 14:14:57] | ERROR | EXP:Development | EXCEPTION in go_into_dim after 0.016s: Serial port not open

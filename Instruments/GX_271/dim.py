@@ -6,7 +6,7 @@ class DIM:
     Minimal controller for a 2-position Vici Cheminert valve (A/B) via RS-232.
     """
 
-    def __init__(self, port="COM9", baudrate=9600, timeout=1):
+    def __init__(self, port="COM5", baudrate=9600, timeout=1):
         self.port = port
         self.baudrate = baudrate
         self.timeout = timeout
@@ -20,7 +20,7 @@ class DIM:
         self.z_limits = {
             "safe": 130.0,
             "max_safe": 130.0,
-            "working_min": 120    # To be determined!
+            "working_min": 82    
         }
         
 
@@ -48,7 +48,9 @@ class DIM:
             raise Exception("Serial port not open")
 
         self.ser.write((cmd + "\r").encode("ascii"))
-        return self.ser.readline().decode(errors="ignore").strip()
+        resp = self.ser.readline().decode(errors="ignore")
+        print(f"RAW RESPONSE: {repr(resp)}")
+        return resp.strip()
 
     def read_pos(self) -> str:
         """

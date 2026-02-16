@@ -551,6 +551,11 @@ class GilsonEthernet:
             )
             self.move_z(self.Z_SAFE)
 
+        # Move to y=0 to avoid DIM before homing move
+        if self.current_y != 0:
+            print("Moving Y to 0 before homing")
+            self.move_y(0)
+
         # Send home command
         self.send_command("Home")
 
@@ -702,9 +707,9 @@ class GilsonEthernet:
         return x, y
 
     @log_call
-    def go_into_dim(self, valve_pos="A", speed=40, send=True):
+    def go_into_dim(self, valve_pos="B", speed=40, send=True):
         """
-        Move the probe into the DIM injection position.
+        Move the probe into the DIM. DIM moved to load
     
         This:
             1) Asserts valve position
