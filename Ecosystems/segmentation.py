@@ -90,7 +90,7 @@ class Segmentation:
         self.dim.load()
 
         # Delegate mixture formation to RSG
-        self.rsg.prepare_reaction(recipe)
+        self.rsg.build_reaction(recipe)
 
         self.state = SegmentationState.LOOP_LOADED
 
