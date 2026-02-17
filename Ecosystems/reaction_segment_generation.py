@@ -1,10 +1,4 @@
-# Standard imports
 import time
-
-# Local imports
-from Instruments.GX_271.gilson_ethernet import GilsonEthernet
-from Instruments.WPI_Syr_pump.Pump import AL1000
-
 
 class RSG:
     """
