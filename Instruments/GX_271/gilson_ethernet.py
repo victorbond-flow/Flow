@@ -732,7 +732,8 @@ class GilsonEthernet:
         # ----------------------------------------------------------
         # Step 0: assert valve position BEFORE motion
         # ----------------------------------------------------------
-        dim.go_to_pos(valve_pos)  # valve_pos defined above, here im assuming pos "A" is the load position
+        dim.load()
+        dim.assert_load()
     
         # ----------------------------------------------------------
         # Step 1: XY safe-move above DIM
