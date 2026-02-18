@@ -94,25 +94,37 @@ class Segmentation:
 
         self.state = SegmentationState.LOOP_LOADED
 
+    def mark_loop_loaded(self):
+        """Call this after the slug is ready in the loop"""
+        self.state = SegmentationState.LOOP_LOADED
+        print("[Segmentation] Slug loaded in loop, state = LOOP_LOADED")
+
     # ------------------------------------------------------------------
     # Launch Structured Flow
     # ------------------------------------------------------------------
 
     def launch_segment(self, flowrate_ul_min):
-        """
-        Begin structured segmented flow.
-        """
         self._require_state(SegmentationState.LOOP_LOADED)
 
         # Orient valves for launch
         self.dim.inject()
-        self.runze.go_to_pos(2)  # carrier → DIM → reactor
+        self.runze.go_to_pos(2)
 
         # Start carrier
         self.carrier.set_flow_rate(flowrate_ul_min)
         self.carrier.start_flow()
 
+        # Update state
         self.state = SegmentationState.FLOWING
+        print(f"[Segmentation] Segment flowing, carrier running at {flowrate_ul_min} µL/min")
+
+    def finish_flow(self):
+        """Call when carrier stops; sets IDLE"""
+        if self.state != SegmentationState.FLOWING:
+            print("[Segmentation] Warning: finish_flow called but not FLOWING")
+        self.carrier.stop_flow()
+        self.state = SegmentationState.IDLE
+        print("[Segmentation] Carrier stopped, state = IDLE")
 
     # ------------------------------------------------------------------
     # Stop Carrier Flow
@@ -138,3 +150,7 @@ class Segmentation:
                 f"Invalid state transition: required {required_state}, "
                 f"but current state is {self.state}"
             )
+
+    def _require_idle(self):
+        if self.state != SegmentationState.IDLE:
+            raise RuntimeError(f"Segmentation is busy or in error state: {self.state}")

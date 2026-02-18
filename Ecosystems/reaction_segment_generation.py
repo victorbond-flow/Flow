@@ -6,6 +6,8 @@ class RSGState(Enum):
     RUNNING = auto()
     ERROR = auto()
 
+# TODO - move away from time.sleeps and toward real monitoring for events like pump finished etc
+
 class RSG:
     """
     Reaction Segment Generation (RSG)
