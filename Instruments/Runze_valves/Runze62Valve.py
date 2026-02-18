@@ -2,6 +2,12 @@ import serial
 import time
 from typing import Tuple
 from Core.logging import flow_logger as logger, log_call
+from enum import Enum, auto
+
+class RunzeState(Enum):
+    GAS_TO_DIM = auto()
+    CARRIER_TO_DIM = auto()
+    UNKNOWN = auto()
 
 class Runze62Valve:
     """
@@ -30,7 +36,8 @@ class Runze62Valve:
         self.address = address
 
         self.ser = None
-        self._position = None  # software-tracked position (1 or 2)
+        self._position = None  # Raw hardware position cache
+        self.state = RunzeState.UNKNOWN  # Physical routing meaning
 
     # ------------------------------------------------------------------
     # Connection & homing
@@ -75,15 +82,29 @@ class Runze62Valve:
         """Move valve to position 1 or 2."""
         if pos not in (1, 2):
             raise ValueError("Position must be 1 or 2")
-
+    
+        # Determine semantic state first
+        if pos == 1:
+            new_state = RunzeState.GAS_TO_DIM
+        elif pos == 2:
+            new_state = RunzeState.CARRIER_TO_DIM
+        else:
+            new_state = RunzeState.UNKNOWN  # defensive
+    
+        # If already there, just reassert state
         if self._position == pos:
-            print(f"Valve already at position {pos}")
+            self.state = new_state
             return
-
+    
+        # Perform hardware move
         self._send_switch_command(pos)
+    
+        # Update internal truth
         self._position = pos
-
+        self.state = new_state
+    
         print(f"Valve moved to position {pos}")
+
 
     @log_call
     def toggle(self):

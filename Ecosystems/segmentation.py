@@ -2,17 +2,7 @@ import time
 from enum import Enum, auto
 
 
-class SegmentationState(Enum):
-    """
-    Enumerates the allowed high-level states of the segmentation system.
 
-    These states define the valid progression of a segmented flow run
-    and are used to guard against invalid hardware operations.
-    """
-    IDLE = auto()
-    GAS_PRIMED = auto()
-    LOOP_LOADED = auto()
-    FLOWING = auto()
 
 
 class Segmentation:
