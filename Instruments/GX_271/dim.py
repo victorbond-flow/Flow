@@ -1,4 +1,4 @@
-import serial
+dimimport serial
 from enum import Enum, auto
 from Core.logging import flow_logger as logger, log_call
 

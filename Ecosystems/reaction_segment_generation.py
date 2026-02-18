@@ -1,4 +1,10 @@
 import time
+from enum import Enum, auto
+
+class RSGState(Enum):
+    IDLE = auto()
+    RUNNING = auto()
+    ERROR = auto()
 
 class RSG:
     """
@@ -19,11 +25,15 @@ class RSG:
         self.gilson = gilson
         self.pump = pump
         self.syringe_diameter = syringe_diameter
+        self.state = RSGState.IDLE
 
     # ------------------------------------------------------------------
     # Primitive actions
     # ------------------------------------------------------------------
-
+    def _require_idle(self):
+        if self.state != RSGState.IDLE:
+            raise RuntimeError(f"RSG is busy or in error state: {self.state}")
+    
     def pickup_from_vial(
         self,
         module_name: str,
@@ -224,91 +234,91 @@ class RSG:
     # ------------------------------------------------------------------
 
     def wash_sequence(
-    self,
-    solvent_volume: float = 100.0,
-    air_gap: float = 5.0,
-):
-        """
-        Withdraw a small air gap, then solvent from rack2 vial 1,
-        and dispense everything into the waste vial (rack2, vial 2).
+        self,
+        solvent_volume: float = 100.0,
+        air_gap: float = 5.0,
+    ):
     
-        Parameters:
-        - solvent_volume: µL of liquid to withdraw from rack2 vial 1
-        - air_gap: µL of air to add before the liquid
-        """
+        self._require_idle()
+        self.state = RSGState.RUNNING
     
-        # 1) Take air gap at slow rate
-        if air_gap > 0:
-            self.take_air_gap(volume=air_gap, rate=0.05)
+        try:
     
-        # 2) Withdraw solvent at faster rate
-        self.pickup_from_vial(module_name="rack2", vial_pos=1, volume=solvent_volume, rate=0.5)
+            if air_gap > 0:
+                self.take_air_gap(volume=air_gap, rate=0.05)
     
-        # 3) Dispense everything into waste at same fast rate
-        self.dispense_in_waste(volume=solvent_volume + air_gap, rate=0.5)
+            self.pickup_from_vial(
+                module_name="rack2",
+                vial_pos=1,
+                volume=solvent_volume,
+                rate=0.5
+            )
+    
+            self.dispense_in_waste(
+                volume=solvent_volume + air_gap,
+                rate=0.5
+            )
+    
+            self.state = RSGState.IDLE
+    
+        except Exception:
+            self.state = RSGState.ERROR
+            raise
+
 
 
     def build_reaction(self, reaction_plan, air_gap_between: float = 0.0):
-        """
-        Construct a reaction slug in the syringe from a structured plan.
+
+        self._require_idle()
+        self.state = RSGState.RUNNING
     
-        Parameters
-        ----------
-        reaction_plan : list of dict
-            Each dict must contain:
-                - "module": str
-                - "vial": int
-                - "volume": float (µL)
+        try:
     
-        air_gap_between : float, optional
-            Air gap (µL) inserted between components.
+            if not isinstance(reaction_plan, list):
+                raise TypeError("reaction_plan must be a list of dicts.")
     
-        Returns
-        -------
-        dict
-            Metadata describing the constructed slug.
-        """
+            total_volume = 0.0
     
-        if not isinstance(reaction_plan, list):
-            raise TypeError("reaction_plan must be a list of dicts.")
+            for i, component in enumerate(reaction_plan):
     
-        total_volume = 0.0
+                try:
+                    module = component["module"]
+                    vial = component["vial"]
+                    volume = component["volume"]
+                except KeyError:
+                    raise ValueError(
+                        "Each reaction component must contain "
+                        "'module', 'vial', and 'volume'."
+                    )
     
-        for i, component in enumerate(reaction_plan):
+                if volume <= 0:
+                    raise ValueError("Component volumes must be positive.")
     
-            try:
-                module = component["module"]
-                vial = component["vial"]
-                volume = component["volume"]
-            except KeyError:
-                raise ValueError(
-                    "Each reaction component must contain "
-                    "'module', 'vial', and 'volume'."
+                self.pickup_from_vial(
+                    module_name=module,
+                    vial_pos=vial,
+                    volume=volume,
                 )
     
-            if volume <= 0:
-                raise ValueError("Component volumes must be positive.")
+                total_volume += volume
     
-            # Withdraw component
-            self.pickup_from_vial(
-                module_name=module,
-                vial_pos=vial,
-                volume=volume,
-            )
+                if air_gap_between > 0 and i < len(reaction_plan) - 1:
+                    self.take_air_gap(air_gap_between)
+                    total_volume += air_gap_between
     
-            total_volume += volume
+            self.state = RSGState.IDLE
     
-            # Optional air gap between components
-            if air_gap_between > 0 and i < len(reaction_plan) - 1:
-                self.take_air_gap(air_gap_between)
-                total_volume += air_gap_between
+            return {
+                "total_volume_ul": total_volume,
+                "num_components": len(reaction_plan),
+            }
     
-        return {
-            "total_volume_ul": total_volume,
-            "num_components": len(reaction_plan),
-        }
+        except Exception:
+            self.state = RSGState.ERROR
+            raise
 
 
-
-
-
+    def abort(self):
+        self.pump.stop()
+        self.gilson.ensure_z_safe()
+        self.state = RSGState.ERROR
