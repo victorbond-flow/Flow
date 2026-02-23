@@ -100,3 +100,12 @@
 [13/02/26 15:12:10] | INFO | EXP:Development | === START EXPERIMENT: Development ===
 [13/02/26 15:14:45] | INFO | EXP:Development | === START EXPERIMENT: Development ===
 [13/02/26 15:21:06] | INFO | EXP:Development | === START EXPERIMENT: Development ===
+[23/02/26 12:45:29] | INFO | EXP:Segmentation_testing | === START EXPERIMENT: Segmentation_testing ===
+[23/02/26 14:07:26] | INFO | EXP:Segmentation_testing | === START EXPERIMENT: Segmentation_testing ===
+[23/02/26 14:11:44] | INFO | EXP:Segmentation_testing | === START EXPERIMENT: Segmentation_testing ===
+[23/02/26 14:15:46] | INFO | EXP:Segmentation_testing | === START EXPERIMENT: Segmentation_testing ===
+[23/02/26 14:17:07] | INFO | EXP:Segmentation_testing | === START EXPERIMENT: Segmentation_testing ===
+[23/02/26 14:20:05] | INFO | EXP:Segmentation_testing | === START EXPERIMENT: Segmentation_testing ===
+[23/02/26 14:23:48] | INFO | EXP:Segmentation_testing | === START EXPERIMENT: Segmentation_testing ===
+[23/02/26 14:59:34] | INFO | EXP:Segmentation_testing | === START EXPERIMENT: Segmentation_testing ===
+[23/02/26 16:26:40] | INFO | EXP:Segmentation_testing | === START EXPERIMENT: Segmentation_testing ===

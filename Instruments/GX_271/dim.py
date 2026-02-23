@@ -58,7 +58,6 @@ class DIM:
 
         self.ser.write((cmd + "\r").encode("ascii"))
         resp = self.ser.readline().decode(errors="ignore")
-        print(f"RAW RESPONSE: {repr(resp)}")
         return resp.strip()
 
     def read_pos(self) -> str:
@@ -80,11 +79,19 @@ class DIM:
         """
         pos = pos.upper()
         current = self.read_pos()
-
+    
+        # --- Always sync internal state with hardware ---
+        if current == "A":
+            self.state = DIMState.INJECT
+        elif current == "B":
+            self.state = DIMState.LOAD
+        else:
+            self.state = DIMState.UNKNOWN
+    
         if current == pos:
-            print(f"Valve already at {pos}")
+            print(f"[DIM] Valve already at {pos} -> state = {self.state}")
             return
-
+    
         if pos == "A":
             self._send("CW")
             self.state = DIMState.INJECT
@@ -93,8 +100,8 @@ class DIM:
             self.state = DIMState.LOAD
         else:
             raise ValueError("Position must be 'A' or 'B'")
-
-        print(f"Valve moved to {pos} -> state = {self.state}")
+    
+        print(f"[DIM] Valve moved to {pos} -> state = {self.state}")
 
     @log_call
     def toggle(self):

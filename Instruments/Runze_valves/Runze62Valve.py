@@ -86,14 +86,13 @@ class Runze62Valve:
         # Determine semantic state first
         if pos == 1:
             new_state = RunzeState.GAS_TO_DIM
-        elif pos == 2:
-            new_state = RunzeState.CARRIER_TO_DIM
         else:
-            new_state = RunzeState.UNKNOWN  # defensive
+            new_state = RunzeState.CARRIER_TO_DIM
     
         # If already there, just reassert state
         if self._position == pos:
             self.state = new_state
+            print(f"[Runze] Valve already at pos {self._position} -> state = {self.state.name}")
             return
     
         # Perform hardware move
@@ -103,7 +102,7 @@ class Runze62Valve:
         self._position = pos
         self.state = new_state
     
-        print(f"Valve moved to position {pos}")
+        print(f"[Runze] valve moved to pos {self._position} -> state = {self.state.name}")
 
 
     @log_call
@@ -148,9 +147,13 @@ class Runze62Valve:
         """Send a common command and validate response."""
         frame = self._build_common_frame(cmd, params)
         self._write(frame)
-
+    
         response = self._read_response()
         self._validate_response(response)
+    
+        # --- Friendly print instead of raw response ---
+        if hasattr(self, "_position") and hasattr(self, "state"):
+            print(f"[Runze] Valve at pos {self._position} -> state = {self.state.name}")
 
     # ------------------------------------------------------------------
     # Frame handling

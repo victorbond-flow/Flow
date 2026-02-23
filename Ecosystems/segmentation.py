@@ -2,6 +2,9 @@ import time
 from enum import Enum, auto
 from dataclasses import dataclass
 
+from Instruments.GX_271.dim import DIM, DIMState
+from Instruments.Runze_valves.Runze62Valve import Runze62Valve, RunzeState
+
 class SegmentationPhase(Enum):
     IDLE = auto()
     GAS_PRIMED = auto()
@@ -16,6 +19,17 @@ class SegmentationState:
     dim: DIMState
     runze: RunzeState
     phase: SegmentationPhase
+
+    def __str__(self):
+        return (
+            f"Segmentation phase = {self.phase.name} | "
+            f"DIM = {self.dim.name} | "
+            f"Runze = {self.runze.name}"
+        )
+
+    def __repr__(self):
+        return self.__str__()
+    
 
 class Segmentation:
 
@@ -226,25 +240,25 @@ class Segmentation:
         if self.state.phase != SegmentationPhase.ABORTED:
             raise RuntimeError("Reset only allowed from ABORTED state.")
     
-            print("[Segmentation] Reset initiated")
+        print("[Segmentation] Reset initiated")
         
-            # Ensure safe routing
-            self.runze.carrier_to_dim()
-            self.state.runze = RunzeState.CARRIER_TO_DIM
+        # Ensure safe routing
+        self.runze.carrier_to_dim()
+        self.state.runze = RunzeState.CARRIER_TO_DIM
         
-            self.dim.inject()
-            self.state.dim = DIMState.INJECT
+        self.dim.inject()
+        self.state.dim = DIMState.INJECT
         
-            # Flush
-            self.carrier.set_flow_rate(flowrate_ul_min)
-            self.carrier.start_flow()
+        # Flush
+        self.carrier.set_flow_rate(flowrate_ul_min)
+        self.carrier.start_flow()
         
-            print(f"[Segmentation] Flushing for {flush_time_sec} seconds")
-            time.sleep(flush_time_sec)
+        print(f"[Segmentation] Flushing for {flush_time_sec} seconds")
+        time.sleep(flush_time_sec)
         
-            self.carrier.stop_flow()
+        self.carrier.stop_flow()
         
-            self._set_phase(SegmentationPhase.IDLE)
+        self._set_phase(SegmentationPhase.IDLE)
         
-            print("[Segmentation] Reset complete. System back to IDLE.")
+        print("[Segmentation] Reset complete. System back to IDLE.")
         

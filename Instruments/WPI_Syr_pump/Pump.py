@@ -1,5 +1,9 @@
 import serial
 import time
+from Core.flow_logging import FlowLogger
+
+logger = FlowLogger()
+log_call = logger.log_call
 
 class AL1000:
     """

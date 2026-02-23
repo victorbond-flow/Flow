@@ -45,10 +45,10 @@ class KnauerPump :
     @log_call
     def set_flow_rate(self, flow_rate):
         byteData = self.command(f"F{int(flow_rate)}")
+        if byteData == "OK":
+            print(f"[k_pump] Flow rate set to {flow_rate} uL/min")
         return byteData
-        print(f'Flow rate set to {flow_rate} ul/min')
-
-
+        
     def get_flow_rate(self):
         byteData = self.command("F?")
         return byteData
@@ -57,11 +57,13 @@ class KnauerPump :
     @log_call
     def start_flow(self):
         byteData = self.command('M1')
+        if byteData == "OK":
+            print("[Pump] Flow started")
         return byteData
-        print('Pump to begin flow.')
 
     @log_call
     def stop_flow(self):
         byteData = self.command('M0')
+        if byteData == "OK":
+            print("[Pump] Flow stopped")
         return byteData
-        print('Pump to stop flow.')
