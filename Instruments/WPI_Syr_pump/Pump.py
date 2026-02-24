@@ -19,13 +19,13 @@ class AL1000:
     - Provide a unified parsing path so all I/O behaves consistently.
     """
 
-    def __init__(self, port="COM2", baudrate=9600, device_address="@00", sleep_time=0.5):
+    def __init__(self, port="COM2", baudrate=9600, device_address="@00", sleep_time=0.5, use_splat=True):
         self.port = port
         self.baudrate = baudrate
         self.device_address = device_address
         self.sleep_time = sleep_time
         self.ser = None
-
+        self.use_splat = use_splat
     # -------------------------------------------------------------------------
     # Core methods
     # -------------------------------------------------------------------------

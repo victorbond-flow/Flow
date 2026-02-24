@@ -119,23 +119,7 @@ class Segmentation:
     # Reaction Slug Preparation
     # ------------------------------------------------------------------
 
-    def load_reaction_slug(self, recipe):
-        """
-        Load reaction mixture into sample loop via RSG.
-        Gas spacers must already exist.
-        """
-        self._require_phase(SegmentationPhase.GAS_PRIMED)
 
-        self._set_phase(SegmentationPhase.LOOP_LOADING)
-
-        # Isolate the gas spacers
-        self.dim.load()
-        self.state.dim = DIMState.LOAD
-
-        # Delegate mixture formation to RSG
-        self.rsg.build_reaction(recipe)
-
-        self._set_phase(SegmentationPhase.LOOP_LOADED)
 
     # ------------------------------------------------------------------
     # Launch Structured Flow
