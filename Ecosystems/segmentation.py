@@ -119,6 +119,30 @@ class Segmentation:
     # Reaction Slug Preparation
     # ------------------------------------------------------------------
 
+    def prepare_slug(self, reaction_plan):
+        
+        # 1️⃣ Ensure we're in the right phase
+        self._require_phase(SegmentationPhase.GAS_PRIMED)
+        self._set_phase(SegmentationPhase.LOOP_LOADING)
+    
+        # 2️⃣ Isolate the gas spacers by putting DIM in LOAD
+        self.dim.load()
+        self.state.dim = DIMState.LOAD
+    
+        # 3️⃣ Delegate mixture formation to RSG
+        result = self.rsg.build_reaction(
+            reaction_plan,
+            air_gap_between=5.0  # inserts 5 µL air gap between components
+        )
+    
+        # 4️⃣ Dispense the mixture into DIM
+        self.rsg.dispense_in_dim(result["total_volume_ul"])
+    
+        # 5️⃣ Mark the phase as loaded
+        self._set_phase(SegmentationPhase.LOOP_LOADED)
+    
+        # 6️⃣ Optionally return summary
+        return result
 
 
     # ------------------------------------------------------------------

@@ -180,8 +180,8 @@ class Rack_209(BaseRack):
 
         # Rack-specific Z limits
         self.z_limits = {
-            "safe": 130.0,
-            "max_safe": 130.0,
+            "safe": 127.0,
+            "max_safe": 127.0,
             "working_min": 87.0,
         }
 
@@ -226,8 +226,8 @@ class Rack_3dp(BaseRack):
 
         # Rack-specific Z limits
         self.z_limits = {
-            "safe": 130,
-            "max_safe": 130,
+            "safe": 127,
+            "max_safe": 127,
             "working_min": 20,
         }
 

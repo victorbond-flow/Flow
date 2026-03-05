@@ -24,9 +24,9 @@ class DIM:
 
         # --- Z limits ---
         self.z_limits = {
-            "safe": 130.0,
-            "max_safe": 130.0,
-            "working_min": 82    
+            "safe": 127.0,
+            "max_safe": 127.0,
+            "working_min": 79    
         }
 
         # --- State tracking ---
