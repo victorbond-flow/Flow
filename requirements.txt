@@ -1,0 +1,7 @@
+bayes-opt
+pyyaml
+loguru
+pyserial
+numpy
+scipy
+matplotlib
