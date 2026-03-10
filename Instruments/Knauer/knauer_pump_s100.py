@@ -7,7 +7,7 @@ from Core.flow_logging import FlowLogger
 logger = FlowLogger()
 log_call = logger.log_call
 
-class KnauerPump :
+class KnauerPumpS100:
     def __init__(self, port="COM3", baudrate=9600, timeout=1):
         self.port = port
         self.baudrate = baudrate
