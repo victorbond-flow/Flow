@@ -1,0 +1,19 @@
+# Bayesian Optimization Configuration
+
+# Bounds and settings for Bayesian optimization
+withdrawal_rate:
+  min: 0.0
+  max: 1.0
+infusion_rate:
+  min: 0.0
+  max: 1.0
+prepickup_vol:
+  min: 0.0
+  max: 100.0
+airgap:
+  min: 0.0
+  max: 10.0
+n_iterations: 50
+init_points: 10
+n_replicates: 5
+min_improvement: 0.01
