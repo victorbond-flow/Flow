@@ -56,3 +56,8 @@
 [13/02/26 14:11:54] | ERROR | EXP:Development | EXCEPTION in go_into_dim after 0.001s: Serial port not open
 [13/02/26 14:14:57] | ERROR | EXP:Development | EXCEPTION in go_to_pos after 0.000s: Serial port not open
 [13/02/26 14:14:57] | ERROR | EXP:Development | EXCEPTION in go_into_dim after 0.016s: Serial port not open
+[02/03/26 15:00:02] | ERROR | EXP:Segmentation_testing | EXCEPTION in go_to_vial after 0.001s: Required Z clearance (130.0) exceeds hard limit (122)
+[02/03/26 15:15:06] | ERROR | EXP:Segmentation_testing | EXCEPTION in go_into_dim after 0.000s: Required Z clearance (130.0) exceeds hard limit (122)
+[10/03/26 13:14:19] | ERROR | EXP:None | EXCEPTION in stop_flow after 0.000s: WriteFile failed (PermissionError(13, 'The device does not recognize the command.', None, 22))
+[10/03/26 13:14:34] | ERROR | EXP:None | EXCEPTION in set_flow_rate after 0.000s: WriteFile failed (PermissionError(13, 'The device does not recognize the command.', None, 22))
+[10/03/26 13:16:44] | ERROR | EXP:None | EXCEPTION in set_flow_rate after 0.000s: WriteFile failed (PermissionError(13, 'The device does not recognize the command.', None, 22))

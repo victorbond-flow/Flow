@@ -7,7 +7,7 @@ from Core.flow_logging import FlowLogger
 logger = FlowLogger()
 log_call = logger.log_call
 
-class KnauerPumpS100:
+class KnauerPumpAzura:
     def __init__(self, port="COM3", baudrate=9600, timeout=1):
         self.port = port
         self.baudrate = baudrate
@@ -22,48 +22,42 @@ class KnauerPumpS100:
             baudrate=self.baudrate,
             timeout=self.timeout
         )
-
+    
         if self.ser.is_open:
-            print(f"Connected to Knauer pump on {self.port}")
+            print(f"Connected to Azura pump on {self.port}")
         else:
             raise RuntimeError(f"Could not open port {self.port}")
 
-    @log_call
     def command(self, code):
-        """ Sends command to device in bytes and retrieves the response """
-        #sending the command to device
+        """Sends command to device in bytes and retrieves the response."""
         self.ser.write(f'{code}\r'.encode())
-        #accepting the response
         byteData = self.ser.readline().decode().strip()
-        #give response
         return byteData
 
-    def get_version(self):
-        byteData = self.command("V?")
+    def get_sernum(self):
+        byteData = self.command("SERNUM?")
         return byteData
-    
+
     @log_call
     def set_flow_rate(self, flow_rate):
-        byteData = self.command(f"F{int(flow_rate)}")
-        if byteData == "OK":
-            print(f"[k_pump] Flow rate set to {flow_rate} uL/min")
+        """Set the flow rate in uL/min."""
+        byteData = self.command(f"FLOW:{flow_rate}")
+        print(f"[k_pump] Flow rate set to {flow_rate} uL/min")
         return byteData
-        
+
     def get_flow_rate(self):
-        byteData = self.command("F?")
+        byteData = self.command("FLOW?")
         return byteData
-        print('Flow rate set to {byteData} ml/min.')
 
     @log_call
     def start_flow(self):
-        byteData = self.command('M1')
-        if byteData == "OK":
-            print("[Pump] Flow started")
+        byteData = self.command("ON")
+        print("[Pump] Flow started")
         return byteData
 
     @log_call
     def stop_flow(self):
-        byteData = self.command('M0')
-        if byteData == "OK":
-            print("[Pump] Flow stopped")
+        byteData = self.command("OFF")
+        print("[Pump] Flow stopped")
         return byteData
+    

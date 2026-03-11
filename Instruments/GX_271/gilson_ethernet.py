@@ -58,8 +58,8 @@ class GilsonEthernet:
         self.racks = {}
     
         # --- Global Z safety constants ---
-        self.Z_SAFE = 130
-        self.Z_MAX_SAFE = 130
+        self.Z_SAFE = 127
+        self.Z_MAX_SAFE = 127
         self.Z_WORKING_MIN = 1
     
         # --- Probe state (unknown until synced) ---
@@ -732,8 +732,8 @@ class GilsonEthernet:
         # ----------------------------------------------------------
         # Step 0: assert valve position BEFORE motion
         # ----------------------------------------------------------
-        dim.load()
-        dim.assert_load()
+        #dim.load()
+       # dim.assert_load()
     
         # ----------------------------------------------------------
         # Step 1: XY safe-move above DIM
@@ -747,7 +747,7 @@ class GilsonEthernet:
             self.allow_in_vial = True
             self.move_z(
                 z_target,
-                speed=70,
+                speed=50,
                 allow_in_vial=True,
                 module_name=module_name
             )

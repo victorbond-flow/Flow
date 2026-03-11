@@ -140,6 +140,7 @@ dependencies:
   - debugpy==1.8.16=py311h885b0b7_0
   - fontconfig==2.15.0=h765892d_1
   - python==3.11.13=h981015d_0
+  - ipympl
 
   - pip:
       - black

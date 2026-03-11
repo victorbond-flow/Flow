@@ -166,7 +166,7 @@ class RSG:
         self.pump.stop()
     
         # Retract safely
-        self.gilson.leave_dim()
+        #self.gilson.leave_dim()
 
 
 
@@ -269,7 +269,7 @@ class RSG:
 
 
 
-    def build_reaction(self, reaction_plan, air_gap_between: float = 0.0):
+    def build_reaction(self, reaction_plan, air_gap_between: float = 5.0):
 
         self._require_idle()
         self.state = RSGState.RUNNING
