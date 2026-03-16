@@ -148,3 +148,72 @@ class SlugMonitor:
             f.close()
         
         return times, signals
+
+    def auto_capture(self, pre_trigger_s=3, capture_s=30, gas_threshold=300, cooldown_s=60, save_folder="Notebooks/Logs/LLD_CSVs"):
+        """
+        Automatically capture LLD signals around detected gas slugs.
+        
+        Parameters:
+            pre_trigger_s (float): seconds of data to keep before trigger
+            capture_s (float): seconds to capture after trigger
+            gas_threshold (int): signal below this indicates gas
+            cooldown_s (float): minimum seconds between captures
+            save_folder (str): folder to save CSVs
+        """
+        import os
+        from datetime import datetime
+    
+        print(f"Starting auto_capture. Buffer size = {int(pre_trigger_s*50)} readings (~{pre_trigger_s}s)")
+    
+        buffer_len = int(pre_trigger_s * 50)  # rough 50 Hz sample rate
+        buffer_times, buffer_signals = [], []
+        last_capture_time = -cooldown_s  # allow first capture immediately
+        slug_count = 0
+    
+        while True:
+            t, v = self.read_line()
+            buffer_times.append(t)
+            buffer_signals.append(v)
+    
+            # maintain rolling buffer
+            if len(buffer_times) > buffer_len:
+                buffer_times.pop(0)
+                buffer_signals.pop(0)
+    
+            # check for gas trigger
+            if v < gas_threshold and (time.time() - last_capture_time) >= cooldown_s:
+                slug_count += 1
+                slug_name = f"slug_{slug_count}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+                print(f"GAS DETECTED at signal {v} - capturing slug {slug_name}")
+    
+                # gather pre-trigger data
+                capture_times = buffer_times.copy()
+                capture_signals = buffer_signals.copy()
+                start_t0 = capture_times[0]
+    
+                # capture post-trigger
+                t_end = time.time() + capture_s
+                while time.time() < t_end:
+                    t_new, v_new = self.read_line()
+                    capture_times.append(t_new)
+                    capture_signals.append(v_new)
+    
+                # adjust timestamps to start at 0
+                t0 = capture_times[0]
+                capture_times_rel = [ti - t0 for ti in capture_times]
+    
+                # ensure folder exists
+                os.makedirs(save_folder, exist_ok=True)
+                csv_path = os.path.join(save_folder, f"{slug_name}.csv")
+    
+                # save CSV
+                with open(csv_path, "w", newline="") as f:
+                    writer = csv.writer(f)
+                    writer.writerow(["timestamp_ms", "signal"])
+                    for ti, si in zip(capture_times_rel, capture_signals):
+                        writer.writerow([ti, si])
+    
+                print(f"Slug {slug_name} saved to {csv_path}")
+    
+                last_capture_time = time.time()  # start cooldown
+        
