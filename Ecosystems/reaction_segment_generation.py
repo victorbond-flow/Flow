@@ -23,10 +23,9 @@ class RSG:
     - No mirroring of Gilson internals
     """
 
-    def __init__(self, gilson, pump, syringe_diameter=4.606):
+    def __init__(self, gilson, pump):
         self.gilson = gilson
         self.pump = pump
-        self.syringe_diameter = syringe_diameter
         self.state = RSGState.IDLE
 
     # ------------------------------------------------------------------
@@ -36,200 +35,76 @@ class RSG:
         if self.state != RSGState.IDLE:
             raise RuntimeError(f"RSG is busy or in error state: {self.state}")
     
-    def pickup_from_vial(
-        self,
-        module_name: str,
-        vial_pos: int,
-        volume: float,
-        rate: float = 0.05,
-    ):
+    def pickup_from_vial(self, module_name: str, vial_pos: int, volume: float, rate: float = 0.05):
         """
         Withdraw liquid from a vial.
         """
-
-        # Move into vial (Gilson handles all Z safety)
+    
         self.gilson.go_into_vial(module_name, vial_pos)
-
-        # Configure pump (units are fixed by AL1000 firmware)
-        self.pump.prepare(
-            rate=rate,
-            volume=volume,
-            direction="WDR",
-        )
-
-        # Start withdrawal
-        self.pump.start()
-
-        # Temporary timing-based wait
-        wait_time = (volume / (rate * 1000)) * 60  # seconds
+    
+        self.pump.withdraw_volume(volume, rate)
+    
+        wait_time = (volume / (rate * 1000)) * 60
         time.sleep(wait_time + 1)
 
-        self.pump.stop()
-
-        # No explicit Z move here — next XY move will be safe by design
-
-    def dispense_in_vial(
-        self,
-        module_name: str,
-        vial_pos: int,
-        volume: float,
-        rate: float = 0.5,
-    ):
+    def dispense_in_vial(self, module_name: str, vial_pos: int, volume: float, rate: float = 0.5):
         """
         Infuse liquid into a vial.
         """
-
-        # Move into vial
+    
         self.gilson.go_into_vial(module_name, vial_pos)
-
-        # Configure pump
-        self.pump.prepare(
-            rate=rate,
-            volume=volume,
-            direction="INF",
-        )
-
-        # Start infusion
-        self.pump.start()
-
-        # Temporary timing-based wait
+    
+        self.pump.infuse_volume(volume, rate)
+    
         wait_time = (volume / (rate * 1000)) * 60
         time.sleep(wait_time + 1)
 
-        self.pump.stop()
-
-    def dispense_in_waste(
-        self,
-        volume: float,
-        rate: float = 0.5,
-    ):
-        """
-        Dispense liquid into the waste Duran.
-        Waste location is fixed:
-            module_name = "rack2"
-            vial_pos    = 2
-        """
-
+    def dispense_in_waste(self, volume: float, rate: float = 0.5):
         module_name = "rack2"
         vial_pos = 2
-
-        # Move above waste vial safely
+    
         self.gilson.go_to_vial(module_name, vial_pos)
-
-        # Move into waste vial
         self.gilson.go_into_vial(module_name, vial_pos)
-
-        # Configure pump for dispense
-        self.pump.prepare(
-            rate=rate,
-            volume=volume,
-            direction="INF",
-        )
-
-        # Start dispense
-        self.pump.start()
-
+    
+        self.pump.infuse_volume(volume, rate)
+    
         wait_time = (volume / (rate * 1000)) * 60
         time.sleep(wait_time + 1)
-
-        self.pump.stop()
-
-        # Retract to safe Z
+    
         self.gilson.ensure_z_safe()
 
 
-    def dispense_in_dim(
-        self,
-        volume: float,
-        rate: float = 0.5,
-    ):
-        """
-        Dispense liquid into the DIM.
-        Valve state and Z safety are handled by Gilson.
-        """
-    
-        # Move into DIM (asserts correct valve state internally)
+    def dispense_in_dim(self, volume: float, rate: float = 0.5):
         self.gilson.go_into_dim()
     
-        # Configure pump
-        self.pump.prepare(
-            rate=rate,
-            volume=volume,
-            direction="INF",
-        )
-    
-        self.pump.start()
+        self.pump.infuse_volume(volume, rate)
     
         wait_time = (volume / (rate * 1000)) * 60
         time.sleep(wait_time + 1)
+
     
-        self.pump.stop()
-    
-        # Retract safely
-        #self.gilson.leave_dim()
-
-
-
-
-    def take_air_gap(
-        self,
-        volume: float,
-        rate: float = 0.05,
-    ):
-        """
-        Withdraw an air gap after ensuring the probe isnt in any liquid
-        """
-
-        # Ensure the probe is above all modules / liquid
+    def take_air_gap(self, volume: float, rate: float = 0.05):
         self.gilson.ensure_z_safe()
-        
-        # Configure the pump
-        self.pump.prepare(
-            rate=rate,
-            volume=volume,
-            direction="WDR",
-        )
-
-        # Start withdrawal, and wait for a length of time calculated based on the volume and rate
-        self.pump.start()
-
+    
+        self.pump.withdraw_volume(volume, rate)
+    
         wait_time = (volume / (rate * 1000)) * 60
-        time.sleep(wait_time + 1) # +1 second just to be ssafe
+        time.sleep(wait_time + 1)
 
-        self.pump.stop()
 
     def prepickup(self, volume: float = 10.0, rate: float = 0.05):
-        """
-        Pre-pickup step:
-        - Always goes to rack2, vial 1
-        - Withdraws `volume` µL (default 10 µL)
-        """
+
         module_name = "rack2"
         vial_pos = 1
     
-        # Move safely + into vial (Gilson handles Z safety internally)
         self.gilson.go_into_vial(module_name, vial_pos)
     
-        # Prepare pump
-        self.pump.prepare(
-            rate=rate,
-            volume=volume,
-            direction="WDR"
-        )
+        self.pump.withdraw_volume(volume, rate)
     
-        # Start pump
-        self.pump.start()
-    
-        # Temporary blocking wait
         wait_time = (volume / (rate * 1000)) * 60
         time.sleep(wait_time + 1)
     
-        self.pump.stop()
-    
-        # Leave vial safely
         self.gilson.ensure_z_safe()
-
-
 
     # ------------------------------------------------------------------
     # Higher-level sequences

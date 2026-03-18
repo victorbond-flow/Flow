@@ -41,25 +41,31 @@ class HBElite:
 
     @log_call
     def command(self, code):
-        """
-        Send a raw command to the pump and return the reply.
-        """
+
         full_cmd = f"{code}\r"
-
         self.ser.write(full_cmd.encode("ascii"))
-        time.sleep(self.sleep_time)
-
-        raw = self.ser.readline()
-
-        if not raw:
-            print(f"Sent: {code} | Reply: <none>")
-            return None
-
-        decoded = raw.decode("ascii", errors="replace").strip()
-
-        print(f"Sent: {code} | Reply: {decoded}")
-
-        return decoded
+    
+        time.sleep(0.1)
+    
+        response = []
+    
+        timeout = time.time() + 1
+    
+        while time.time() < timeout:
+    
+            if self.ser.in_waiting > 0:
+    
+                line = self.ser.readline().decode().strip()
+                response.append(line)
+    
+            else:
+                break
+    
+        print(f"Sent: {code} | Reply:")
+        for line in response:
+            print(line)
+    
+        return response
 
     # ------------------------------------------------------------------
     # Status reader (important for Elite pumps)
@@ -102,14 +108,22 @@ class HBElite:
     # Set commands
     # ------------------------------------------------------------------
 
-    def set_irate(self, rate):
-        return self.command(f"irate {rate}")
+    def set_irate(self, rate_ml_min):
+        """
+        Set infusion rate for HB Elite.
+        rate_ml_min: float, in mL/min
+        """
+        return self.command(f"irate {rate_ml_min} ml/min")
 
-    def set_wrate(self, rate):
-        return self.command(f"wrate {rate}")
+    def set_wrate(self, rate_ml_min):
+        """
+        Set withdrawal rate for HB Elite.
+        rate_ml_min: float, in mL/min
+        """
+        return self.command(f"wrate {rate_ml_min} ml/min")
 
     def set_target_volume(self, vol):
-        return self.command(f"tvolume {vol}")
+        return self.command(f"tvolume {vol} ul")
 
     # ------------------------------------------------------------------
     # Control
@@ -127,3 +141,21 @@ class HBElite:
     def clear_volume(self):
         self.command("cvolume")
         self.command("ctvolume")
+
+    # ------------------------------------------------------------------
+    # Higher level methods
+    # ------------------------------------------------------------------
+    def infuse_volume(self, volume_ul, rate_ml_min):
+        """
+        Infuse a given volume (µL) at a given rate (mL/min)
+        """
+        self.clear_volume()                  # reset the pump memory
+        self.set_irate(rate_ml_min)          # set infusion rate
+        self.set_target_volume(volume_ul)    # use the correct variable
+        self.infuse()                        # start infusion
+
+    def withdraw_volume(self, volume_ul, rate_ml_min):
+        self.clear_volume()
+        self.set_wrate(rate_ml_min)
+        self.set_target_volume(volume_ul)
+        self.withdraw()
