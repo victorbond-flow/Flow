@@ -36,85 +36,72 @@ class RSG:
             raise RuntimeError(f"RSG is busy or in error state: {self.state}")
     
     def pickup_from_vial(self, module_name: str, vial_pos: int, volume: float, rate: float = 0.05):
-        """
-        Withdraw liquid from a vial.
-        """
+        print(f"[Pickup] {volume}uL from {module_name} vial {vial_pos} @ {rate}mL/min")
     
         self.gilson.go_into_vial(module_name, vial_pos)
-    
         self.pump.withdraw_volume(volume, rate)
-    
         wait_time = (volume / (rate * 1000)) * 60
         time.sleep(wait_time + 1)
 
     def dispense_in_vial(self, module_name: str, vial_pos: int, volume: float, rate: float = 0.5):
-        """
-        Infuse liquid into a vial.
-        """
-    
+        print(f"[Dispense] {volume}uL in {module_name} vial {vial_pos} @ {rate}mL/min")
+        
         self.gilson.go_into_vial(module_name, vial_pos)
-    
         self.pump.infuse_volume(volume, rate)
-    
         wait_time = (volume / (rate * 1000)) * 60
         time.sleep(wait_time + 1)
 
     def dispense_in_waste(self, volume: float, rate: float = 0.5):
+        print(f"[Waste] {volume}uL to waste @ {rate}mL/min")
+        
         module_name = "rack2"
         vial_pos = 2
     
         self.gilson.go_to_vial(module_name, vial_pos)
         self.gilson.go_into_vial(module_name, vial_pos)
-    
         self.pump.infuse_volume(volume, rate)
-    
         wait_time = (volume / (rate * 1000)) * 60
         time.sleep(wait_time + 1)
-    
         self.gilson.ensure_z_safe()
 
 
     def dispense_in_dim(self, volume: float, rate: float = 0.5):
+        print(f"[DIM] {volume}uL dispensed in DIM @ {rate}mL/min")
+        
         self.gilson.go_into_dim()
-    
         self.pump.infuse_volume(volume, rate)
-    
         wait_time = (volume / (rate * 1000)) * 60
         time.sleep(wait_time + 1)
 
     
     def take_air_gap(self, volume: float, rate: float = 0.05):
+        print(f"[Air Gap] {volume}uL @ {rate}mL/min")
+        
         self.gilson.ensure_z_safe()
-    
         self.pump.withdraw_volume(volume, rate)
-    
         wait_time = (volume / (rate * 1000)) * 60
         time.sleep(wait_time + 1)
 
 
     def prepickup(self, volume: float = 10.0, rate: float = 0.05):
-
+        print(f"[Pre-pickup} {volume}uL from rack2 vial 1 @ {rate} mL/min")
+        
         module_name = "rack2"
         vial_pos = 1
     
         self.gilson.go_into_vial(module_name, vial_pos)
-    
         self.pump.withdraw_volume(volume, rate)
-    
         wait_time = (volume / (rate * 1000)) * 60
         time.sleep(wait_time + 1)
-    
         self.gilson.ensure_z_safe()
 
     # ------------------------------------------------------------------
     # Higher-level sequences
     # ------------------------------------------------------------------
 
-    def wash_sequence(
-        self,
-        solvent_volume: float = 100.0,
-        air_gap: float = 5.0,
-    ):
+    def wash_sequence(self, solvent_volume=100.0, air_gap=5.0):
+
+        print("[Wash] Starting wash sequence")
     
         self._require_idle()
         self.state = RSGState.RUNNING
@@ -122,8 +109,10 @@ class RSG:
         try:
     
             if air_gap > 0:
+                print(f"[Wash] Air gap: {air_gap} µL")
                 self.take_air_gap(volume=air_gap, rate=0.05)
     
+            print(f"[Wash] Pickup solvent: {solvent_volume} µL")
             self.pickup_from_vial(
                 module_name="rack2",
                 vial_pos=1,
@@ -131,18 +120,19 @@ class RSG:
                 rate=0.5
             )
     
+            print(f"[Wash] Dispense to waste: {solvent_volume + air_gap} µL")
             self.dispense_in_waste(
                 volume=solvent_volume + air_gap,
                 rate=0.5
             )
+    
+            print("[Wash] Complete")
     
             self.state = RSGState.IDLE
     
         except Exception:
             self.state = RSGState.ERROR
             raise
-
-
 
     def build_reaction(self, reaction_plan, air_gap_between: float = 5.0):
 

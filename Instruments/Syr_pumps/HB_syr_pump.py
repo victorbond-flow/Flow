@@ -40,7 +40,7 @@ class HBElite:
     # ------------------------------------------------------------------
 
     @log_call
-    def command(self, code):
+    def command(self, code, verbose=False):
 
         full_cmd = f"{code}\r"
         self.ser.write(full_cmd.encode("ascii"))
@@ -52,19 +52,18 @@ class HBElite:
         timeout = time.time() + 1
     
         while time.time() < timeout:
-    
             if self.ser.in_waiting > 0:
-    
                 line = self.ser.readline().decode().strip()
                 response.append(line)
-    
             else:
                 break
-    
-        print(f"Sent: {code} | Reply:")
-        for line in response:
-            print(line)
-    
+
+        # Only print if explicitly requested (verbose = True)
+        if verbose:
+            print(f"Sent: {code} | Reply:")
+            for line in response:
+                print(line)
+        
         return response
 
     # ------------------------------------------------------------------
