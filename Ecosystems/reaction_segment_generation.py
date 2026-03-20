@@ -84,7 +84,7 @@ class RSG:
 
 
     def prepickup(self, volume: float = 10.0, rate: float = 0.05):
-        print(f"[Pre-pickup} {volume}uL from rack2 vial 1 @ {rate} mL/min")
+        print(f"[Pre-pickup] {volume}uL from rack2 vial 1 @ {rate} mL/min")
         
         module_name = "rack2"
         vial_pos = 1
