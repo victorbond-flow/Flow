@@ -13,6 +13,7 @@ const int requiredSolventReads = 5; // Number of solvent readings to confirm slu
 
 // === Timing constants ===
 const unsigned long cooldown = 40000;
+const unsigned long preRelayDelay = 5000;      // New: wait after slug detection before relay1
 const unsigned long relay1Duration = 100;
 const unsigned long relay1ToRelay2Delay = 2000;
 const unsigned long relay2Duration = 100;
@@ -28,7 +29,7 @@ bool slugComing = false;
 int solventCounter = 0;
 
 // === State machine ===
-enum RelayState { IDLE, RELAY1_ON, RELAY1_WAIT, RELAY2_ON, RELAY2_WAIT, RELAY3_ON, RELAY3_WAIT, COMPLETE };
+enum RelayState { IDLE, PRE_DELAY, RELAY1_ON, RELAY1_WAIT, RELAY2_ON, RELAY2_WAIT, RELAY3_ON, RELAY3_WAIT, COMPLETE };
 RelayState relayState = IDLE;
 
 void setup() {
@@ -84,6 +85,13 @@ void loop() {
 
     case IDLE:
       if (risingEdgeDetected) {
+        relayState = PRE_DELAY;
+        stateStartTime = currentTime;
+      }
+      break;
+
+    case PRE_DELAY:
+      if (currentTime - stateStartTime >= preRelayDelay) {
         relayState = RELAY1_ON;
         stateStartTime = currentTime;
       }
