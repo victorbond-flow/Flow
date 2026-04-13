@@ -65,3 +65,7 @@
 [23/03/26 15:00:45] | ERROR | EXP:Segmentation_testing | EXCEPTION in move_z after 0.001s: Requested Z (175) exceeds max safe Z (127)
 [23/03/26 15:20:43] | ERROR | EXP:Segmentation_testing | EXCEPTION in move_z after 0.001s: Requested Z (135) exceeds max safe Z (127)
 [23/03/26 15:48:59] | ERROR | EXP:Segmentation_testing | EXCEPTION in move_z after 0.001s: Requested Z (128) exceeds max safe Z (127)
+[01/04/26 12:43:54] | ERROR | EXP:None | EXCEPTION in connect after 0.001s: could not open port 'COM10': PermissionError(13, 'Access is denied.', None, 5)
+[01/04/26 12:44:07] | ERROR | EXP:None | EXCEPTION in connect after 0.000s: could not open port 'COM10': PermissionError(13, 'Access is denied.', None, 5)
+[01/04/26 16:03:43] | ERROR | EXP:None | EXCEPTION in command after 0.001s: WriteFile failed (PermissionError(13, 'The device does not recognize the command.', None, 22))
+[01/04/26 16:03:55] | ERROR | EXP:None | EXCEPTION in command after 0.001s: WriteFile failed (PermissionError(13, 'The device does not recognize the command.', None, 22))

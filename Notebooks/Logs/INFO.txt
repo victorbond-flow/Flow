@@ -176,3 +176,8 @@
 [23/03/26 15:40:04] | INFO | EXP:Segmentation_testing | === START EXPERIMENT: Segmentation_testing ===
 [24/03/26 10:11:11] | INFO | EXP:Segmentation_testing | === START EXPERIMENT: Segmentation_testing ===
 [29/03/26 11:21:43] | INFO | EXP:Segmentation_testing | === START EXPERIMENT: Segmentation_testing ===
+[30/03/26 16:17:30] | INFO | EXP:Segmentation_testing | === START EXPERIMENT: Segmentation_testing ===
+[31/03/26 12:42:41] | INFO | EXP:Segmentation_testing | === START EXPERIMENT: Segmentation_testing ===
+[01/04/26 12:45:24] | INFO | EXP:Segmentation_testing | === START EXPERIMENT: Segmentation_testing ===
+[01/04/26 16:04:13] | INFO | EXP:Segmentation_testing | === START EXPERIMENT: Segmentation_testing ===
+[13/04/26 16:47:53] | INFO | EXP:Segmentation_testing | === START EXPERIMENT: Segmentation_testing ===

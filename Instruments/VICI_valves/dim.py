@@ -45,7 +45,7 @@ class DIM:
         )
 
         if self.ser.is_open:
-            print(f"Connected to Vici valve on {self.port}")
+            print(f"Connected to DIM on {self.port}")
         else:
             raise Exception("Could not open serial port")
 
