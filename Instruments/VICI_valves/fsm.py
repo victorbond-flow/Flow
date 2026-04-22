@@ -68,9 +68,9 @@ class FSM:
 
         # Determine semantic state (UPDATED MAPPING)
         if pos == "A":
-            new_state = FSMState.CARRIER_TO_DIM
-        elif pos == "B":
             new_state = FSMState.GAS_TO_DIM
+        elif pos == "B":
+            new_state = FSMState.CARRIER_TO_DIM
         else:
             raise ValueError("Position must be 'A' or 'B'")
 
@@ -107,13 +107,13 @@ class FSM:
 
     @log_call
     def gas_to_dim(self):
-        """Route gas to DIM (now position B)."""
-        self.go_to_pos("B")
+        """Route gas to DIM (now position A)."""
+        self.go_to_pos("A")
 
     @log_call
     def carrier_to_dim(self):
-        """Route carrier to DIM (now position A)."""
-        self.go_to_pos("A")
+        """Route carrier to DIM (now position B)."""
+        self.go_to_pos("B")
 
     # ------------------------------------------------------------------
     # Internal helpers
@@ -123,9 +123,9 @@ class FSM:
         pos = self.read_pos()
 
         if pos == "A":
-            self.state = FSMState.CARRIER_TO_DIM
-        elif pos == "B":
             self.state = FSMState.GAS_TO_DIM
+        elif pos == "B":
+            self.state = FSMState.CARRIER_TO_DIM
         else:
             self.state = FSMState.UNKNOWN
 

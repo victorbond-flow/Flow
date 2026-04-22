@@ -69,3 +69,6 @@
 [01/04/26 12:44:07] | ERROR | EXP:None | EXCEPTION in connect after 0.000s: could not open port 'COM10': PermissionError(13, 'Access is denied.', None, 5)
 [01/04/26 16:03:43] | ERROR | EXP:None | EXCEPTION in command after 0.001s: WriteFile failed (PermissionError(13, 'The device does not recognize the command.', None, 22))
 [01/04/26 16:03:55] | ERROR | EXP:None | EXCEPTION in command after 0.001s: WriteFile failed (PermissionError(13, 'The device does not recognize the command.', None, 22))
+[17/04/26 16:11:10] | ERROR | EXP:None | EXCEPTION in connect after 0.003s: could not open port 'COM10': PermissionError(13, 'Access is denied.', None, 5)
+[17/04/26 16:11:21] | ERROR | EXP:None | EXCEPTION in connect after 0.001s: could not open port 'COM10': PermissionError(13, 'Access is denied.', None, 5)
+[17/04/26 16:11:28] | ERROR | EXP:None | EXCEPTION in connect after 0.000s: could not open port 'COM10': PermissionError(13, 'Access is denied.', None, 5)
