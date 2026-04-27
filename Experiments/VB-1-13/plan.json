@@ -1,0 +1,29 @@
+{
+  "experiment_id": "VB-1-13",
+  "description": "Benzyl alcohol slug reproducibility and leaching baseline using inline HPLC sampling",
+
+  "global_conditions": {
+    "stock_solution": "0.0811 M benzyl alcohol in MeCN",
+    "slug_volume_uL": 100,
+    "air_gap_uL": 20,
+    "flow_system": "RSG + DIM segmented flow platform"
+  },
+
+  "slugs": [
+    {
+      "slug_id": "VB-1-13-slug1",
+      "volume_uL": 100,
+      "air_gap_uL": 20
+    },
+    {
+      "slug_id": "VB-1-13-slug2",
+      "volume_uL": 100,
+      "air_gap_uL": 20
+    },
+    {
+      "slug_id": "VB-1-13-slug3",
+      "volume_uL": 100,
+      "air_gap_uL": 20
+    }
+  ]
+}

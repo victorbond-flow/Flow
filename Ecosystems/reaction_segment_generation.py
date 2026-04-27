@@ -33,7 +33,27 @@ class RSG:
     # ------------------------------------------------------------------
     def _require_idle(self):
         if self.state != RSGState.IDLE:
-            raise RuntimeError(f"RSG is busy or in error state: {self.state}")
+            raise RuntimeError(f"RSG is busy or in error state: {self.state}" 
+
+    def initialise(self, air_gap: float = 20.0, rate_wdr: float = 0.25):
+        """
+        Set up known start condition before any slug sequence.
+        Call this once at the beginning of a run, after lines are primed with working fluid.
+        Withdraws the initial 20uL air gap to establish the standard start state.
+        """
+        print("[Initialise] Setting up start condition")
+        
+        self._require_idle()
+        self.state = RSGState.RUNNING
+        
+        try:
+            self.take_air_gap(volume=air_gap, rate=rate_wdr)
+            self.state = RSGState.IDLE
+            print("[Initialise] Ready — 20uL air gap in place")
+        
+        except Exception:
+            self.state = RSGState.ERROR
+            raise
     
     def pickup_from_vial(self, module_name: str, vial_pos: int, volume: float, rate: float = 0.05):
         print(f"[Pickup] {volume}uL from {module_name} vial {vial_pos} @ {rate}mL/min")
@@ -96,43 +116,69 @@ class RSG:
         self.gilson.ensure_z_safe()
 
     # ------------------------------------------------------------------
-    # Higher-level sequences
+    # Washes
     # ------------------------------------------------------------------
 
-    def wash_sequence(self, solvent_volume=100.0, air_gap=5.0):
+    def needle_wash(self, rate_wdr: float = 0.25, rate_inf: float = 0.5):
+        """Wash the needle after a slug charge."""
+        print("[Needle Wash] Starting")
+    
+        self.gilson.ensure_z_safe()
+        self.pump.withdraw_volume(15, rate_wdr)
+        time.sleep((15 / (rate_wdr * 1000)) * 60 + 1)
+    
+        self.gilson.go_into_vial("rack2", 1)
+        self.pump.withdraw_volume(80, rate_wdr)
+        time.sleep((80 / (rate_wdr * 1000)) * 60 + 1)
+    
+        self.gilson.go_into_vial("rack2", 2)
+        self.pump.infuse_volume(95, rate_inf)
+        time.sleep((95 / (rate_inf * 1000)) * 60 + 1)
+    
+        self.gilson.ensure_z_safe()
+        print("[Needle Wash] Complete")
 
-        print("[Wash] Starting wash sequence")
+
+    def dim_wash(self, rate_wdr: float = 0.25, rate_inf: float = 0.5):
+        """Flush the DIM dead volume after a slug charge."""
+        print("[DIM Wash] Starting")
+    
+        self.gilson.ensure_z_safe()
+        self.pump.withdraw_volume(15, rate_wdr)
+        time.sleep((15 / (rate_wdr * 1000)) * 60 + 1)
+    
+        self.gilson.go_into_vial("rack2", 1)
+        self.pump.withdraw_volume(50, rate_wdr)
+        time.sleep((50 / (rate_wdr * 1000)) * 60 + 1)
+    
+        self.gilson.go_into_dim()
+        self.pump.infuse_volume(65, rate_inf)
+        time.sleep((65 / (rate_inf * 1000)) * 60 + 1)
+    
+        self.gilson.ensure_z_safe()
+        print("[DIM Wash] Complete")
+    
+    
+    def between_slug_wash(self, rate_wdr: float = 0.25, rate_inf: float = 0.5):
+        """Full between-slug wash. Needle wash followed by DIM wash."""
+        print("[Between Slug Wash] Starting")
     
         self._require_idle()
         self.state = RSGState.RUNNING
     
         try:
-    
-            if air_gap > 0:
-                print(f"[Wash] Air gap: {air_gap} µL")
-                self.take_air_gap(volume=air_gap, rate=0.05)
-    
-            print(f"[Wash] Pickup solvent: {solvent_volume} µL")
-            self.pickup_from_vial(
-                module_name="rack2",
-                vial_pos=1,
-                volume=solvent_volume,
-                rate=0.5
-            )
-    
-            print(f"[Wash] Dispense to waste: {solvent_volume + air_gap} µL")
-            self.dispense_in_waste(
-                volume=solvent_volume + air_gap,
-                rate=0.5
-            )
-    
-            print("[Wash] Complete")
-    
+            self.needle_wash(rate_wdr=rate_wdr, rate_inf=rate_inf)
+            self.dim_wash(rate_wdr=rate_wdr, rate_inf=rate_inf)
             self.state = RSGState.IDLE
+            print("[Between Slug Wash] Complete")
     
         except Exception:
             self.state = RSGState.ERROR
             raise
+
+    # ------------------------------------------------------------------
+    # Higher-level sequences
+    # ------------------------------------------------------------------
 
     def build_reaction(self, reaction_plan, air_gap_between: float = 5.0):
 
