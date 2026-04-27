@@ -1,0 +1,56 @@
+{
+  "experiment_id": "test_001",
+  "description": "Dummy experiment for notebook testing of ExperimentManager and RSG.create_slug().",
+  "global_conditions": {
+    "air_gap_between_uL": 5,
+    "dispense_rate_mL_min": 0.5,
+    "notes": "Uses explicit reaction_plan entries so each slug can pull from one or more source vials."
+  },
+  "slugs": [
+    {
+      "slug_id": "test_001_slug_01",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100
+        }
+      ]
+    },
+    {
+      "slug_id": "test_001_slug_02",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 40
+        },
+        {
+          "module": "rack1",
+          "vial": 2,
+          "volume_uL": 60
+        }
+      ]
+    },
+    {
+      "slug_id": "test_001_slug_03",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 3,
+          "volume_uL": 25
+        },
+        {
+          "module": "rack1",
+          "vial": 4,
+          "volume_uL": 25
+        },
+        {
+          "module": "rack1",
+          "vial": 5,
+          "volume_uL": 50
+        }
+      ]
+    }
+  ]
+}
