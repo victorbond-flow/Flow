@@ -1,0 +1,13 @@
+{
+  "experiment_id": "test_002",
+  "created_at": "2026-04-27T22:10:08",
+  "events": [
+    {
+      "timestamp": "2026-04-27T22:10:42",
+      "event_type": "begin_run",
+      "payload": {
+        "experiment_id": "test_002"
+      }
+    }
+  ]
+}

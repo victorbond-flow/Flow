@@ -80,3 +80,9 @@ class FakeSyrPump:
 
     def stop(self):
         print("[Pump] stop")
+
+    def infuse_volume(self, volume_ul, rate_ml_min):
+        print(f"[Pump] infuse_volume -> volume={volume_ul}, rate={rate_ml_min}")
+
+    def withdraw_volume(self, volume_ul, rate_ml_min):
+        print(f"[Pump] withdraw_volume -> volume={volume_ul}, rate={rate_ml_min}")

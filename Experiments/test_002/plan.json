@@ -1,0 +1,35 @@
+{
+  "experiment_id": "test_002",
+  "description": "Builder-generated notebook test",
+  "global_conditions": {
+    "air_gap_between_uL": 5,
+    "dispense_rate_mL_min": 0.5
+  },
+  "slugs": [
+    {
+      "slug_id": "test_002_slug_01",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0
+        }
+      ]
+    },
+    {
+      "slug_id": "test_002_slug_02",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 40.0
+        },
+        {
+          "module": "rack1",
+          "vial": 2,
+          "volume_uL": 60.0
+        }
+      ]
+    }
+  ]
+}
