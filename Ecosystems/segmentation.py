@@ -2,16 +2,19 @@ import time
 from enum import Enum, auto
 from dataclasses import dataclass
 
-from Instruments.VICI_valves.dim import DIM, DIMState
-from Instruments.VICI_valves.fsm import FSM, FSMState
+from Instruments.VICI_valves.dim import DIMState
+from Instruments.VICI_valves.fsm import FSMState
+
+
 class SegmentationPhase(Enum):
-    IDLE = auto()
+    READY = auto()
     GAS_PRIMED = auto()
     LOOP_LOADING = auto()
     LOOP_LOADED = auto()
-    FLOWING = auto()
+    RUNNING = auto()
     ABORTED = auto()
     ERROR = auto()
+
 
 @dataclass
 class SegmentationState:
@@ -28,58 +31,59 @@ class SegmentationState:
 
     def __repr__(self):
         return self.__str__()
-    
+
 
 class Segmentation:
 
-    def __init__(self, dim, fsm, carrier_pump, rsg):
-        """
-        Coordinates segmented flow operation across valves, carrier pump,
-        and reaction preparation logic.
-
-        Enforces a strict state progression to ensure that priming,
-        loading, and flow launch occur in a physically valid order.
-
-        Assumes:
-        - All hardware is already instantiated and connected
-        - RSG is already configured
-        """
+    def __init__(self, dim, fsm, carrier_pump, rsg, sim_mode=False):
         self.dim = dim
         self.fsm = fsm
         self.carrier = carrier_pump
         self.rsg = rsg
+        self.sim_mode = sim_mode
 
-        # Force hardware into safe baseline state
-        try:
-            self.carrier.stop_flow()
-        except Exception:
-            pass # Pump may be stopped already
-
-        # Set valve positions at startup
-        try:
-            self.fsm.carrier_to_dim()
-            self.dim.inject()
-        except Exception as e:
-            raise RuntimeError("Failed to initialise segmentation hardware") from e
-
-        # Now update internal state
+        if not self.sim_mode:
+            
+            # Safe baseline on startup
+            try:
+                self.carrier.stop_flow()
+            except Exception:
+                pass
+    
+        # initialise state BEFORE hardware calls (important for simulation safety)
         self.state = SegmentationState(
             dim=DIMState.INJECT,
             fsm=FSMState.CARRIER_TO_DIM,
-            phase=SegmentationPhase.IDLE
+            phase=SegmentationPhase.READY
         )
+        
+        # hardware init (optional in simulation)
+        try:
+            if self.fsm is not None:
+                self.fsm.carrier_to_dim()
+            if self.dim is not None:
+                self.dim.inject()
+        except Exception:
+            print("[Segmentation] Hardware init skipped (likely simulation mode)")
 
     # ------------------------------------------------------------------
-    # Solvent Prime (MeCN flush)
+    # Solvent flush / conditioning
     # ------------------------------------------------------------------
 
     def prime_with_solvent(self, flowrate_ul_min, duration_s):
         """
-        Flush system with solvent (e.g., MeCN).
+        Flush system with solvent.
+        Allowed from READY or RUNNING.
         """
-        self._require_phase(SegmentationPhase.IDLE)
 
-        # Set the correct valve configuration
+        if self.state.phase not in (
+            SegmentationPhase.READY,
+            SegmentationPhase.RUNNING,
+        ):
+            raise RuntimeError(
+                f"Cannot solvent prime from {self.state.phase.name}"
+            )
+
         self.fsm.carrier_to_dim()
         self.state.fsm = FSMState.CARRIER_TO_DIM
 
@@ -93,20 +97,29 @@ class Segmentation:
 
         self.carrier.stop_flow()
 
+        self._set_phase(SegmentationPhase.READY)
+
     # ------------------------------------------------------------------
-    # Gas Priming (Create Spacer Geometry)
+    # Gas spacer generation
     # ------------------------------------------------------------------
 
     def prime_gas_path(self, duration_s):
         """
-        Fill inter-valve tubing + sample loop with gas.
+        Establish gas spacer geometry for next slug.
+        Allowed from READY or RUNNING.
         """
-        self._require_phase(SegmentationPhase.IDLE)
 
-        # Set valve config for gas routing
+        if self.state.phase not in (
+            SegmentationPhase.READY,
+            SegmentationPhase.RUNNING,
+        ):
+            raise RuntimeError(
+                f"Cannot prime gas path from {self.state.phase.name}"
+            )
+
         self.fsm.gas_to_dim()
         self.state.fsm = FSMState.GAS_TO_DIM
-        
+
         self.dim.inject()
         self.state.dim = DIMState.INJECT
 
@@ -115,157 +128,216 @@ class Segmentation:
         self._set_phase(SegmentationPhase.GAS_PRIMED)
 
     # ------------------------------------------------------------------
-    # Reaction Slug Preparation
+    # Load reaction segment into loop
     # ------------------------------------------------------------------
 
-    def prepare_slug(self, reaction_plan):
-        
-        # 1️⃣ Ensure we're in the right phase
+    def prepare_slug(self, slug_plan, air_gap_between=5.0):
+        """
+        Build liquid reaction slug and load into DIM loop.
+        """
+
         self._require_phase(SegmentationPhase.GAS_PRIMED)
         self._set_phase(SegmentationPhase.LOOP_LOADING)
-    
-        # 2️⃣ Isolate the gas spacers by putting DIM in LOAD
+
         self.dim.load()
         self.state.dim = DIMState.LOAD
-    
-        # 3️⃣ Delegate mixture formation to RSG
-        result = self.rsg.build_reaction(
-            reaction_plan,
-            air_gap_between=5.0  # inserts 5 µL air gap between components
+
+        result = self.rsg.build_rxn_segment(
+            slug_plan=slug_plan,
+            air_gap_between=air_gap_between,
         )
-    
-        # 4️⃣ Dispense the mixture into DIM
-        self.rsg.dispense_in_dim(result["total_volume_ul"])
-    
-        # 5️⃣ Mark the phase as loaded
+
         self._set_phase(SegmentationPhase.LOOP_LOADED)
-    
-        # 6️⃣ Optionally return summary
+
         return result
 
-
     # ------------------------------------------------------------------
-    # Launch Structured Flow
+    # Launch slug downstream
     # ------------------------------------------------------------------
 
     def launch_segment(self, flowrate_ul_min):
         self._require_phase(SegmentationPhase.LOOP_LOADED)
 
-        # Orient valves for launch
         self.dim.inject()
         self.state.dim = DIMState.INJECT
-        
+
         self.fsm.carrier_to_dim()
         self.state.fsm = FSMState.CARRIER_TO_DIM
 
-        # Start carrier
         self.carrier.set_flow_rate(flowrate_ul_min)
         self.carrier.start_flow()
 
-        # Update state
-        self._set_phase(SegmentationPhase.FLOWING)
-        print(f"[Segmentation] Segment flowing, carrier running at {flowrate_ul_min} µL/min")
+        self._set_phase(SegmentationPhase.RUNNING)
+
+        print(
+            f"[Segmentation] Segment launched at "
+            f"{flowrate_ul_min} µL/min"
+        )
 
     # ------------------------------------------------------------------
-    # Stop Carrier Flow
+    # High level slug commands
+    # ------------------------------------------------------------------
+
+    def reset_for_next_slug(self):
+        """
+        Explicit transition:
+        RUNNING → GAS_PRIMED
+    
+        Prepares system for next slug cycle.
+        """
+        if self.state.phase != SegmentationPhase.RUNNING:
+            raise RuntimeError(
+                f"Can only reset from RUNNING, currently {self.state.phase.name}"
+            )
+    
+        # Re-establish gas spacer geometry
+        self.fsm.gas_to_dim()
+        self.state.fsm = FSMState.GAS_TO_DIM
+    
+        self.dim.inject()
+        self.state.dim = DIMState.INJECT
+    
+        self._set_phase(SegmentationPhase.GAS_PRIMED)
+
+    def create_slug(
+    self,
+    slug_plan,
+    gas_prime_s,
+    flowrate_ul_min,
+    air_gap_between=5.0,
+):
+        """
+        Executes a single slug cycle.
+    
+        Assumes system is already in GAS_PRIMED state.
+        """
+    
+        # ------------------------------------------------------------
+        # SAFETY GUARD (CRITICAL FOR PHYSICAL CORRECTNESS)
+        # ------------------------------------------------------------
+        if self.state.phase != SegmentationPhase.GAS_PRIMED:
+            raise RuntimeError(
+                f"create_slug expects GAS_PRIMED, got {self.state.phase.name}"
+            )
+    
+        slug_id = slug_plan.get("slug_id", "untracked-slug")
+    
+        result = self.prepare_slug(
+            slug_plan=slug_plan,
+            air_gap_between=air_gap_between,
+        )
+    
+        self.launch_segment(flowrate_ul_min=flowrate_ul_min)
+    
+        return {
+            "slug_id": slug_id,
+            "dispensed_volume_ul": result.get("total_volume_ul", 0.0),
+            "num_components": result.get("num_components", 0),
+            "launched": True,
+        }
+
+    # ------------------------------------------------------------------
+    # Stop campaign flow manually
     # ------------------------------------------------------------------
 
     def stop_flow(self):
         """
-        Stop carrier pump.
+        Stop carrier flow and return to READY state.
         """
-        self._require_phase(SegmentationPhase.FLOWING)
+
+        if self.state.phase not in (
+            SegmentationPhase.RUNNING,
+            SegmentationPhase.READY,
+        ):
+            raise RuntimeError(
+                f"Cannot stop flow from {self.state.phase.name}"
+            )
+
         self.carrier.stop_flow()
-        self._set_phase(SegmentationPhase.IDLE)
+
+        self.fsm.carrier_to_dim()
+        self.state.fsm = FSMState.CARRIER_TO_DIM
+
+        self.dim.inject()
+        self.state.dim = DIMState.INJECT
+
+        self._set_phase(SegmentationPhase.READY)
 
     # ------------------------------------------------------------------
-    # Internal Guards + methods
+    # Abort
+    # ------------------------------------------------------------------
+
+    def abort(self):
+        if self.state.phase == SegmentationPhase.ABORTED:
+            print("[Segmentation] Already aborted.")
+            return
+
+        print(
+            f"[Segmentation] ABORT triggered from "
+            f"{self.state.phase.name}"
+        )
+
+        try:
+            self.carrier.stop_flow()
+        except Exception:
+            pass
+
+        try:
+            self.fsm.carrier_to_dim()
+            self.state.fsm = FSMState.CARRIER_TO_DIM
+        except Exception:
+            pass
+
+        try:
+            self.dim.inject()
+            self.state.dim = DIMState.INJECT
+        except Exception:
+            pass
+
+        self._set_phase(SegmentationPhase.ABORTED)
+
+    # ------------------------------------------------------------------
+    # Reset after abort
+    # ------------------------------------------------------------------
+
+    def reset(self, flowrate_ul_min, flush_time_sec):
+        if self.state.phase != SegmentationPhase.ABORTED:
+            raise RuntimeError(
+                "Reset only allowed from ABORTED state."
+            )
+
+        self.fsm.carrier_to_dim()
+        self.state.fsm = FSMState.CARRIER_TO_DIM
+
+        self.dim.inject()
+        self.state.dim = DIMState.INJECT
+
+        self.carrier.set_flow_rate(flowrate_ul_min)
+        self.carrier.start_flow()
+
+        time.sleep(flush_time_sec)
+
+        self.carrier.stop_flow()
+
+        self._set_phase(SegmentationPhase.READY)
+
+        print("[Segmentation] Reset complete.")
+
+    # ------------------------------------------------------------------
+    # Helpers
     # ------------------------------------------------------------------
 
     def _require_phase(self, required_phase):
         if self.state.phase != required_phase:
             raise RuntimeError(
-                f"Invalid phase transition: required {required_phase.name}, "
-                f"but current phase is {self.state.phase.name}"
+                f"Required {required_phase.name}, "
+                f"current = {self.state.phase.name}"
             )
 
-    def _set_phase(self, new_phase: SegmentationPhase):
-        print(f"[Segmentation] Phase: {self.state.phase.name} -> {new_phase.name}")
+    def _set_phase(self, new_phase):
+        print(
+            f"[Segmentation] Phase: "
+            f"{self.state.phase.name} -> {new_phase.name}"
+        )
         self.state.phase = new_phase
-
-    # ------------------------------------------------------------------
-    # Abort + reset methods
-    # ------------------------------------------------------------------
-
-    def abort(self):
-        """
-        Immediately stop all activity and place hardware in a safe state.
-        After abort, the system must be explicitly reset before use.
-        """
-
-        if self.state.phase == SegmentationPhase.IDLE:
-            print("[Segmentation] Abort called, but system is already IDLE.")
-            return
-
-        if self.state.phase == SegmentationPhase.ABORTED:
-            print("[Segmentation] Abort called, but system is already ABORTED.")
-            return
-
-        print(f"[Segmentation] ABORT triggered from phase {self.state.phase.name}")
-
-        
-        # --- Stop flow defensively ---
-        try:
-            self.carrier.stop_flow()
-        except Exception as e:
-            print(f"[Segmentation] Warning: Failed to stop carrier pump: {e}")
-    
-        # --- Return valves to safe baseline ---
-        try:
-            self.fsm.carrier_to_dim()
-            self.state.fsm = FSMState.CARRIER_TO_DIM
-        except Exception as e:
-            print(f"[Segmentation] Warning: Failed to reset Runze valve: {e}")
-    
-        try:
-            self.dim.inject()
-            self.state.dim = DIMState.INJECT
-        except Exception as e:
-            print(f"[Segmentation] Warning: Failed to reset DIM valve: {e}")
-    
-        self._set_phase(SegmentationPhase.ABORTED)
-    
-        print("[Segmentation] System is now in ABORTED state.")
-
-
-    def reset(self, flowrate_ul_min, flush_time_sec):
-        """
-        Reset system after abort
-        Flushes fluidic paths and restores a clean IDLE state
-        """
-
-        if self.state.phase != SegmentationPhase.ABORTED:
-            raise RuntimeError("Reset only allowed from ABORTED state.")
-    
-        print("[Segmentation] Reset initiated")
-        
-        # Ensure safe routing
-        self.fsm.carrier_to_dim()
-        self.state.fsm = FSMState.CARRIER_TO_DIM
-        
-        self.dim.inject()
-        self.state.dim = DIMState.INJECT
-        
-        # Flush
-        self.carrier.set_flow_rate(flowrate_ul_min)
-        self.carrier.start_flow()
-        
-        print(f"[Segmentation] Flushing for {flush_time_sec} seconds")
-        time.sleep(flush_time_sec)
-        
-        self.carrier.stop_flow()
-        
-        self._set_phase(SegmentationPhase.IDLE)
-        
-        print("[Segmentation] Reset complete. System back to IDLE.")
         

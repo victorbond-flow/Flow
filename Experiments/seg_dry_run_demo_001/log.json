@@ -1,0 +1,77 @@
+{
+  "experiment_id": "seg_dry_run_demo_001",
+  "created_at": "2026-04-28T16:06:00",
+  "events": [
+    {
+      "timestamp": "2026-04-28T16:06:01",
+      "event_type": "experiment_loaded",
+      "payload": {
+        "experiment_id": "seg_dry_run_demo_001"
+      }
+    },
+    {
+      "timestamp": "2026-04-28T16:06:11",
+      "event_type": "experiment_armed",
+      "payload": {
+        "experiment_id": "seg_dry_run_demo_001"
+      }
+    },
+    {
+      "timestamp": "2026-04-28T16:06:55",
+      "event_type": "slug_created",
+      "payload": {
+        "slug_id": "dry_slug_01",
+        "dispensed_volume_ul": 100.0,
+        "num_components": 1,
+        "launched": true
+      }
+    },
+    {
+      "timestamp": "2026-04-28T16:06:55",
+      "event_type": "slug_created",
+      "payload": {
+        "slug_id": "dry_slug_02",
+        "dispensed_volume_ul": 100.0,
+        "num_components": 1,
+        "launched": true
+      }
+    },
+    {
+      "timestamp": "2026-04-28T16:06:55",
+      "event_type": "slug_created",
+      "payload": {
+        "slug_id": "dry_slug_03",
+        "dispensed_volume_ul": 100.0,
+        "num_components": 1,
+        "launched": true
+      }
+    },
+    {
+      "timestamp": "2026-04-28T16:06:55",
+      "event_type": "slug_created",
+      "payload": {
+        "slug_id": "dry_slug_04",
+        "dispensed_volume_ul": 100.0,
+        "num_components": 1,
+        "launched": true
+      }
+    },
+    {
+      "timestamp": "2026-04-28T16:06:55",
+      "event_type": "slug_created",
+      "payload": {
+        "slug_id": "dry_slug_05",
+        "dispensed_volume_ul": 100.0,
+        "num_components": 1,
+        "launched": true
+      }
+    },
+    {
+      "timestamp": "2026-04-28T16:06:55",
+      "event_type": "experiment_completed",
+      "payload": {
+        "experiment_id": "seg_dry_run_demo_001"
+      }
+    }
+  ]
+}

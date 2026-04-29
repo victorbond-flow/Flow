@@ -1,0 +1,61 @@
+{
+  "experiment_id": "seg_dry_run_demo_001",
+  "description": "Dry run notebook validation experiment",
+  "created_at": "2026-04-28T16:06:00",
+  "global_conditions": {
+    "flowrate_ul_min": 500.0,
+    "gas_prime_s": 2.0
+  },
+  "slugs": [
+    {
+      "slug_id": "dry_slug_01",
+      "reaction_plan": [
+        {
+          "module": "A",
+          "vial": 1,
+          "volume_uL": 100.0
+        }
+      ]
+    },
+    {
+      "slug_id": "dry_slug_02",
+      "reaction_plan": [
+        {
+          "module": "A",
+          "vial": 1,
+          "volume_uL": 100.0
+        }
+      ]
+    },
+    {
+      "slug_id": "dry_slug_03",
+      "reaction_plan": [
+        {
+          "module": "A",
+          "vial": 1,
+          "volume_uL": 100.0
+        }
+      ]
+    },
+    {
+      "slug_id": "dry_slug_04",
+      "reaction_plan": [
+        {
+          "module": "A",
+          "vial": 1,
+          "volume_uL": 100.0
+        }
+      ]
+    },
+    {
+      "slug_id": "dry_slug_05",
+      "reaction_plan": [
+        {
+          "module": "A",
+          "vial": 1,
+          "volume_uL": 100.0
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,163 @@
+{
+  "experiment_id": "vb_1_13_dummy",
+  "description": "Dummy notebook version of VB-1-13 for manager testing",
+  "global_conditions": {
+    "slug_volume_uL": 100,
+    "air_gap_between_uL": 5,
+    "dispense_rate_mL_min": 0.5,
+    "wash_policy": "needle",
+    "notes": "Benzyl alcohol leaching characterisation dummy plan"
+  },
+  "slugs": [
+    {
+      "slug_id": "vb_1_13_dummy_slug_01",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0
+        }
+      ]
+    },
+    {
+      "slug_id": "vb_1_13_dummy_slug_02",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0
+        }
+      ]
+    },
+    {
+      "slug_id": "vb_1_13_dummy_slug_03",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0
+        }
+      ]
+    },
+    {
+      "slug_id": "vb_1_13_dummy_slug_04",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0
+        }
+      ]
+    },
+    {
+      "slug_id": "vb_1_13_dummy_slug_05",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0
+        }
+      ]
+    },
+    {
+      "slug_id": "vb_1_13_dummy_slug_06",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0
+        }
+      ]
+    },
+    {
+      "slug_id": "vb_1_13_dummy_slug_07",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0
+        }
+      ]
+    },
+    {
+      "slug_id": "vb_1_13_dummy_slug_08",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0
+        }
+      ]
+    },
+    {
+      "slug_id": "vb_1_13_dummy_slug_09",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0
+        }
+      ]
+    },
+    {
+      "slug_id": "vb_1_13_dummy_slug_10",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0
+        }
+      ]
+    },
+    {
+      "slug_id": "vb_1_13_dummy_slug_11",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0
+        }
+      ]
+    },
+    {
+      "slug_id": "vb_1_13_dummy_slug_12",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0
+        }
+      ]
+    },
+    {
+      "slug_id": "vb_1_13_dummy_slug_13",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0
+        }
+      ]
+    },
+    {
+      "slug_id": "vb_1_13_dummy_slug_14",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0
+        }
+      ]
+    },
+    {
+      "slug_id": "vb_1_13_dummy_slug_15",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0
+        }
+      ]
+    }
+  ]
+}

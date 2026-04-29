@@ -307,50 +307,57 @@ class RSG:
             air_gap_between=air_gap_between,
         )
 
-    def create_slug(
-        self,
-        slug_plan,
-        air_gap_between: float = 5.0,
-        dispense_rate: float = 0.5,
-        inject: bool = True,
-    ):
-        """
-        Create one planned slug by:
-        1. ensuring DIM is in LOAD
-        2. assembling the reaction in the syringe line
-        3. dispensing the full slug into the DIM
-        4. optionally switching DIM to INJECT
-        """
-        self._require_dim()
+    def build_rxn_segment(
+    self,
+    slug_plan,
+    air_gap_between: float = 5.0,
+    dispense_rate: float = 0.5,
+):
+    """
+    Build a liquid reaction segment and charge it into the DIM loop.
 
-        reaction_plan = self._reaction_plan_from_slug(slug_plan)
-        slug_id = slug_plan.get("slug_id", "untracked-slug")
+    Assumes:
+    - Segmentation layer has already positioned DIM in LOAD
+    - Gas spacer geometry has already been established externally
 
-        print(f"[Create Slug] {slug_id}")
+    Responsibilities:
+    1. normalise slug plan
+    2. aspirate components into syringe line
+    3. optionally place internal air gaps between components
+    4. dispense full liquid segment into DIM loop
 
-        self.dim.load()
-        self.dim.assert_load()
+    Does NOT:
+    - generate gas spacers
+    - switch DIM to INJECT
+    - launch carrier flow
+    """
 
-        result = self.assemble_reaction(
-            reaction_plan=reaction_plan,
-            air_gap_between=air_gap_between,
-        )
+    self._require_dim()
 
-        self.dispense_in_dim(
-            volume=result["total_volume_ul"],
-            rate=dispense_rate,
-        )
+    reaction_plan = self._reaction_plan_from_slug(slug_plan)
+    slug_id = slug_plan.get("slug_id", "untracked-segment")
 
-        if inject:
-            self.dim.inject()
+    print(f"[Build Reaction Segment] {slug_id}")
 
-        return {
-            "slug_id": slug_id,
-            "dispensed_volume_ul": result["total_volume_ul"],
-            "num_components": result["num_components"],
-            "air_gap_between_ul": air_gap_between,
-            "injected": inject,
-        }
+    # DIM should already be in LOAD from Segmentation
+    self.dim.assert_load()
+
+    result = self.assemble_reaction(
+        reaction_plan=reaction_plan,
+        air_gap_between=air_gap_between,
+    )
+
+    self.dispense_in_dim(
+        volume=result["total_volume_ul"],
+        rate=dispense_rate,
+    )
+
+    return {
+        "slug_id": slug_id,
+        "dispensed_volume_ul": result["total_volume_ul"],
+        "num_components": result["num_components"],
+        "air_gap_between_ul": air_gap_between,
+    }
 
     def abort(self):
         self.pump.stop()

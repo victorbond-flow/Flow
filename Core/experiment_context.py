@@ -11,7 +11,7 @@ class ExperimentContext:
     plan: dict
     slug_index: int
     log_path: Path
-    state: str   # prepared / running
+    state: str   # prepared / armed / running / completed
 
 
 class ExperimentManager:
@@ -19,34 +19,44 @@ class ExperimentManager:
         self.mode = "untracked"
         self.context: Optional[ExperimentContext] = None
 
-        # repo root = parent of Core/
         self.repo_root = Path(__file__).resolve().parent.parent
         self.experiments_root = self.repo_root / "Experiments"
+
+    # ------------------------------------------------------------------
+    # Load
+    # ------------------------------------------------------------------
 
     def load_experiment(self, experiment_id: str):
         if self.context is not None:
             raise Exception(
                 f"Experiment already loaded: {self.context.experiment_id}"
             )
-
+    
         exp_dir = self.experiments_root / experiment_id
-
+    
         if not exp_dir.exists():
             raise FileNotFoundError(f"Experiment folder not found: {exp_dir}")
-
+    
         plan_path = exp_dir / "plan.json"
         log_path = exp_dir / "log.json"
-
+    
         if not plan_path.exists():
             raise FileNotFoundError(f"Missing plan.json for {experiment_id}")
-
+    
         with open(plan_path, "r") as f:
             plan = json.load(f)
-
+    
         if not log_path.exists():
             with open(log_path, "w") as f:
-                json.dump({"experiment_id": experiment_id, "events": []}, f, indent=2)
-
+                json.dump(
+                    {
+                        "experiment_id": experiment_id,
+                        "events": []
+                    },
+                    f,
+                    indent=2
+                )
+    
         self.context = ExperimentContext(
             experiment_id=experiment_id,
             plan=plan,
@@ -54,13 +64,202 @@ class ExperimentManager:
             log_path=log_path,
             state="prepared"
         )
-
+    
         self.mode = "experiment"
-
+    
         print(f"[EXPERIMENT] {experiment_id} loaded")
-        print(f"[EXPERIMENT] Plan ready")
-        print(f"[EXPERIMENT] Log ready")
-        print(f"[EXPERIMENT] Awaiting begin_run()")
+        print("[EXPERIMENT] Plan ready")
+        print("[EXPERIMENT] Log ready")
+        print("[EXPERIMENT] State = prepared")
+        print("[EXPERIMENT] Awaiting arm_experiment()")
+    
+        self._append_event(
+            "experiment_loaded",
+            {"experiment_id": experiment_id},
+        )
+
+    # ------------------------------------------------------------------
+    # Arm
+    # ------------------------------------------------------------------
+
+    def arm_experiment(self):
+        if self.context is None:
+            raise Exception("No experiment loaded")
+    
+        if self.context.state != "prepared":
+            raise Exception(
+                f"Cannot arm experiment while state = {self.context.state}"
+            )
+    
+        self.context.state = "armed"
+    
+        print(f"[EXPERIMENT] {self.context.experiment_id} armed")
+        print("[EXPERIMENT] Awaiting execute_experiment()")
+    
+        self._append_event(
+            "experiment_armed",
+            {"experiment_id": self.context.experiment_id},
+        )
+
+    # ------------------------------------------------------------------
+    # Preview the plan
+    # ------------------------------------------------------------------
+
+    def preview(self):
+        """
+        Prints a human-readable overview of the loaded experiment plan.
+        Safe inspection tool — does not mutate state.
+        """
+    
+        if self.context is None:
+            print("[EXPERIMENT] No active experiment")
+            return []
+    
+        slugs = self.context.plan.get("slugs", [])
+        preview_rows = []
+    
+        print("\n[EXPERIMENT PREVIEW]")
+        print("-" * 60)
+    
+        for index, slug in enumerate(slugs, start=1):
+    
+            reaction_plan = slug.get("reaction_plan", [])
+    
+            # robust volume extraction (handles uL / volume mismatch)
+            total_volume = sum(
+                comp.get("volume_uL", comp.get("volume", 0.0))
+                for comp in reaction_plan
+            )
+    
+            components = ", ".join(
+                f"{comp.get('module')}:{comp.get('vial')} "
+                f"({comp.get('volume_uL', comp.get('volume'))} uL)"
+                for comp in reaction_plan
+            )
+    
+            row = {
+                "slug_number": index,
+                "slug_id": slug.get("slug_id", f"slug_{index}"),
+                "num_components": len(reaction_plan),
+                "total_volume_uL": total_volume,
+                "components": components,
+            }
+    
+            preview_rows.append(row)
+    
+            print(
+                f"{row['slug_number']}. {row['slug_id']} | "
+                f"{row['num_components']} components | "
+                f"{row['total_volume_uL']} uL\n"
+                f"   {row['components']}"
+            )
+    
+        print("-" * 60)
+        print(f"[EXPERIMENT] {len(slugs)} slugs total\n")
+    
+        return preview_rows
+
+    # ------------------------------------------------------------------
+    # Execute
+    # ------------------------------------------------------------------
+
+    def execute_experiment(
+    self,
+    seg,
+    gas_prime_s=None,
+    flowrate_ul_min=None,
+    air_gap_between=None,
+):
+        if self.context is None:
+            raise Exception("No experiment loaded")
+    
+        if self.context.state != "armed":
+            raise Exception(
+                f"Experiment must be armed. Current state: {self.context.state}"
+            )
+    
+        self.context.state = "running"
+    
+        defaults = self.context.plan.get("global_conditions", {})
+    
+        if gas_prime_s is None:
+            gas_prime_s = defaults["gas_prime_s"]
+    
+        if flowrate_ul_min is None:
+            flowrate_ul_min = defaults["flowrate_ul_min"]
+    
+        if air_gap_between is None:
+            air_gap_between = defaults.get("air_gap_between_uL", 5.0)
+    
+        results = []
+        slugs = self.context.plan["slugs"]
+    
+        print(f"[EXPERIMENT] Executing {self.context.experiment_id}")
+    
+        for i in range(self.context.slug_index, len(slugs)):
+    
+            slug = slugs[i]
+    
+            # First slug vs subsequent slugs
+            if i == 0:
+                seg.prime_gas_path(duration_s=gas_prime_s)
+            else:
+                seg.reset_for_next_slug()
+    
+            result = seg.create_slug(
+                slug_plan=slug,
+                gas_prime_s=gas_prime_s,
+                flowrate_ul_min=flowrate_ul_min,
+                air_gap_between=air_gap_between,
+            )
+    
+            results.append(result)
+    
+            self.context.slug_index += 1
+    
+            self._append_event(
+                "slug_created",
+                {
+                    "slug_id": result["slug_id"],
+                    "dispensed_volume_ul": result["dispensed_volume_ul"],
+                    "num_components": result["num_components"],
+                    "launched": result["launched"],
+                },
+            )
+    
+            print(
+                f"[EXPERIMENT] Completed {result['slug_id']} "
+                f"({result['dispensed_volume_ul']} uL)"
+            )
+    
+        self.context.state = "completed"
+    
+        self._append_event(
+            "experiment_completed",
+            {"experiment_id": self.context.experiment_id},
+        )
+    
+        print(f"[EXPERIMENT] {self.context.experiment_id} completed")
+    
+        return results
+
+    # ------------------------------------------------------------------
+    # Slug handling
+    # ------------------------------------------------------------------
+
+    def get_next_slug(self):
+        slugs = self.context.plan["slugs"]
+
+        if self.context.slug_index >= len(slugs):
+            raise Exception("No slugs remaining")
+
+        slug = slugs[self.context.slug_index]
+        self.context.slug_index += 1
+        return slug
+
+    # ------------------------------------------------------------------
+    # Logging
+    # ------------------------------------------------------------------
 
     def _append_event(self, event_type: str, payload: dict):
         if self.context is None:
@@ -80,145 +279,9 @@ class ExperimentManager:
         with open(self.context.log_path, "w") as f:
             json.dump(log_data, f, indent=2)
 
-    def begin_run(self):
-        if self.context is None:
-            raise Exception("No experiment loaded")
-
-        if self.context.state != "prepared":
-            raise Exception(
-                f"Cannot begin run while state = {self.context.state}"
-            )
-
-        self.context.state = "running"
-        print(f"[EXPERIMENT] {self.context.experiment_id} now running")
-        self._append_event(
-            "begin_run",
-            {"experiment_id": self.context.experiment_id},
-        )
-
-    def end_experiment(self):
-        if self.context is None:
-            print("[EXPERIMENT] No active experiment")
-            return
-
-        print(f"[EXPERIMENT] Ending {self.context.experiment_id}")
-
-        self.context = None
-        self.mode = "untracked"
-
-    def is_experiment_active(self):
-        return self.context is not None
-
-    def get_next_slug(self):
-        if self.context is None:
-            return None
-
-        slugs = self.context.plan["slugs"]
-
-        if self.context.slug_index >= len(slugs):
-            raise Exception("No slugs remaining in plan")
-
-        slug = slugs[self.context.slug_index]
-        self.context.slug_index += 1
-        return slug
-
-    def remaining_slugs(self):
-        if self.context is None:
-            return []
-
-        slugs = self.context.plan["slugs"]
-        return slugs[self.context.slug_index :]
-
-    def preview(self):
-        if self.context is None:
-            print("[EXPERIMENT] No active experiment")
-            return []
-
-        preview_rows = []
-
-        for index, slug in enumerate(self.context.plan["slugs"], start=1):
-            reaction_plan = slug.get("reaction_plan", [])
-            total_volume = sum(
-                component.get("volume_uL", component.get("volume", 0.0))
-                for component in reaction_plan
-            )
-
-            component_text = ", ".join(
-                f"{component['module']}:{component['vial']} ({component.get('volume_uL', component.get('volume'))} uL)"
-                for component in reaction_plan
-            )
-
-            row = {
-                "slug_number": index,
-                "slug_id": slug.get("slug_id", f"slug_{index}"),
-                "num_components": len(reaction_plan),
-                "total_volume_uL": total_volume,
-                "components": component_text,
-            }
-            preview_rows.append(row)
-
-        for row in preview_rows:
-            print(
-                f"{row['slug_number']}. {row['slug_id']} | "
-                f"{row['num_components']} components | "
-                f"{row['total_volume_uL']} uL | "
-                f"{row['components']}"
-            )
-
-        return preview_rows
-
-    def run_remaining_slugs(
-        self,
-        rsg,
-        air_gap_between=None,
-        dispense_rate=None,
-        inject=True,
-    ):
-        if self.context is None:
-            raise Exception("No experiment loaded")
-
-        if self.context.state != "running":
-            raise Exception(
-                f"Experiment must be running before execution. Current state: {self.context.state}"
-            )
-
-        defaults = self.context.plan.get("global_conditions", {})
-        air_gap_between = defaults.get("air_gap_between_uL", 5.0) if air_gap_between is None else air_gap_between
-        dispense_rate = defaults.get("dispense_rate_mL_min", 0.5) if dispense_rate is None else dispense_rate
-
-        results = []
-
-        while self.context.slug_index < len(self.context.plan["slugs"]):
-            slug = self.get_next_slug()
-            result = rsg.create_slug(
-                slug,
-                air_gap_between=air_gap_between,
-                dispense_rate=dispense_rate,
-                inject=inject,
-            )
-            results.append(result)
-
-            self._append_event(
-                "slug_created",
-                {
-                    "slug_id": result["slug_id"],
-                    "dispensed_volume_ul": result["dispensed_volume_ul"],
-                    "num_components": result["num_components"],
-                    "injected": result["injected"],
-                },
-            )
-
-            print(
-                f"[EXPERIMENT] Completed {result['slug_id']} "
-                f"({result['dispensed_volume_ul']} uL)"
-            )
-
-        self._append_event(
-            "all_slugs_completed",
-            {"experiment_id": self.context.experiment_id},
-        )
-
-        return results
+    # ------------------------------------------------------------------
+    # Status
+    # ------------------------------------------------------------------
 
     def status(self):
         if self.context is None:
