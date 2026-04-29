@@ -4,6 +4,8 @@ from pathlib import Path
 from datetime import datetime
 import json
 
+from Core.experiment_validator import ExperimentValidator
+
 
 @dataclass
 class ExperimentContext:
@@ -11,7 +13,7 @@ class ExperimentContext:
     plan: dict
     slug_index: int
     log_path: Path
-    state: str   # prepared / armed / running / completed
+    state: str   # prepared / armed / running / completed / failed / aborted
 
 
 class ExperimentManager:
@@ -90,7 +92,9 @@ class ExperimentManager:
             raise Exception(
                 f"Cannot arm experiment while state = {self.context.state}"
             )
-    
+
+        self._validate_loaded_plan()
+
         self.context.state = "armed"
     
         print(f"[EXPERIMENT] {self.context.experiment_id} armed")
@@ -164,12 +168,12 @@ class ExperimentManager:
     # ------------------------------------------------------------------
 
     def execute_experiment(
-    self,
-    seg,
-    gas_prime_s=None,
-    flowrate_ul_min=None,
-    air_gap_between=None,
-):
+        self,
+        seg,
+        gas_prime_s=None,
+        flowrate_ul_min=None,
+        air_gap_between=None,
+    ):
         if self.context is None:
             raise Exception("No experiment loaded")
     
@@ -177,71 +181,128 @@ class ExperimentManager:
             raise Exception(
                 f"Experiment must be armed. Current state: {self.context.state}"
             )
+
+        self._validate_loaded_plan()
     
         self.context.state = "running"
-    
-        defaults = self.context.plan.get("global_conditions", {})
-    
-        if gas_prime_s is None:
-            gas_prime_s = defaults["gas_prime_s"]
-    
-        if flowrate_ul_min is None:
-            flowrate_ul_min = defaults["flowrate_ul_min"]
-    
-        if air_gap_between is None:
-            air_gap_between = defaults.get("air_gap_between_uL", 5.0)
-    
+
         results = []
-        slugs = self.context.plan["slugs"]
-    
-        print(f"[EXPERIMENT] Executing {self.context.experiment_id}")
-    
-        for i in range(self.context.slug_index, len(slugs)):
-    
-            slug = slugs[i]
-    
-            # First slug vs subsequent slugs
-            if i == 0:
-                seg.prime_gas_path(duration_s=gas_prime_s)
-            else:
-                seg.reset_for_next_slug()
-    
-            result = seg.create_slug(
-                slug_plan=slug,
-                gas_prime_s=gas_prime_s,
-                flowrate_ul_min=flowrate_ul_min,
-                air_gap_between=air_gap_between,
-            )
-    
-            results.append(result)
-    
-            self.context.slug_index += 1
-    
+
+        try:
+            defaults = self.context.plan.get("global_conditions", {})
+
+            if gas_prime_s is None:
+                gas_prime_s = defaults["gas_prime_s"]
+
+            if flowrate_ul_min is None:
+                flowrate_ul_min = defaults["flowrate_ul_min"]
+
+            if air_gap_between is None:
+                air_gap_between = defaults.get("air_gap_between_uL", 5.0)
+
+            slugs = self.context.plan["slugs"]
+
+            print(f"[EXPERIMENT] Executing {self.context.experiment_id}")
+
+            for i in range(self.context.slug_index, len(slugs)):
+
+                slug = slugs[i]
+                slug_id = slug.get("slug_id", f"slug_{i + 1}")
+
+                self._append_event(
+                    "slug_started",
+                    {
+                        "slug_index": i,
+                        "slug_number": i + 1,
+                        "slug_id": slug_id,
+                    },
+                )
+
+                try:
+                    # First slug vs subsequent slugs
+                    if i == 0:
+                        seg.prime_gas_path(duration_s=gas_prime_s)
+                    else:
+                        seg.reset_for_next_slug()
+
+                    result = seg.create_slug(
+                        slug_plan=slug,
+                        gas_prime_s=gas_prime_s,
+                        flowrate_ul_min=flowrate_ul_min,
+                        air_gap_between=air_gap_between,
+                    )
+                except Exception as exc:
+                    self._append_event(
+                        "slug_failed",
+                        {
+                            "slug_index": i,
+                            "slug_number": i + 1,
+                            "slug_id": slug_id,
+                            "error_type": type(exc).__name__,
+                            "error": str(exc),
+                        },
+                    )
+                    raise
+
+                results.append(result)
+
+                self.context.slug_index += 1
+
+                self._append_event(
+                    "slug_created",
+                    {
+                        "slug_index": i,
+                        "slug_number": i + 1,
+                        "slug_id": result["slug_id"],
+                        "dispensed_volume_ul": result["dispensed_volume_ul"],
+                        "num_components": result["num_components"],
+                        "launched": result["launched"],
+                    },
+                )
+
+                print(
+                    f"[EXPERIMENT] Completed {result['slug_id']} "
+                    f"({result['dispensed_volume_ul']} uL)"
+                )
+
+            self.context.state = "completed"
+
             self._append_event(
-                "slug_created",
+                "experiment_completed",
+                {"experiment_id": self.context.experiment_id},
+            )
+
+            print(f"[EXPERIMENT] {self.context.experiment_id} completed")
+
+            return results
+
+        except KeyboardInterrupt:
+            self.context.state = "aborted"
+            self._append_event(
+                "user_aborted",
                 {
-                    "slug_id": result["slug_id"],
-                    "dispensed_volume_ul": result["dispensed_volume_ul"],
-                    "num_components": result["num_components"],
-                    "launched": result["launched"],
+                    "experiment_id": self.context.experiment_id,
+                    "slug_index": self.context.slug_index,
                 },
             )
-    
-            print(
-                f"[EXPERIMENT] Completed {result['slug_id']} "
-                f"({result['dispensed_volume_ul']} uL)"
+            self._abort_seg(seg)
+            print(f"[EXPERIMENT] {self.context.experiment_id} aborted by user")
+            raise
+
+        except Exception as exc:
+            self.context.state = "failed"
+            self._append_event(
+                "experiment_failed",
+                {
+                    "experiment_id": self.context.experiment_id,
+                    "slug_index": self.context.slug_index,
+                    "error_type": type(exc).__name__,
+                    "error": str(exc),
+                },
             )
-    
-        self.context.state = "completed"
-    
-        self._append_event(
-            "experiment_completed",
-            {"experiment_id": self.context.experiment_id},
-        )
-    
-        print(f"[EXPERIMENT] {self.context.experiment_id} completed")
-    
-        return results
+            self._abort_seg(seg)
+            print(f"[EXPERIMENT] {self.context.experiment_id} failed: {exc}")
+            raise
 
     # ------------------------------------------------------------------
     # Slug handling
@@ -278,6 +339,35 @@ class ExperimentManager:
 
         with open(self.context.log_path, "w") as f:
             json.dump(log_data, f, indent=2)
+
+    def _validate_loaded_plan(self):
+        if self.context is None:
+            raise Exception("No experiment loaded")
+
+        result = ExperimentValidator().validate_plan(self.context.plan)
+        if result["passed"]:
+            return
+
+        message = "Invalid experiment plan:\n" + "\n".join(
+            f"- {error}" for error in result["errors"]
+        )
+        raise ValueError(message)
+
+    def _abort_seg(self, seg):
+        abort = getattr(seg, "abort", None)
+        if abort is None:
+            return
+
+        try:
+            abort()
+        except Exception as exc:
+            self._append_event(
+                "abort_failed",
+                {
+                    "error_type": type(exc).__name__,
+                    "error": str(exc),
+                },
+            )
 
     # ------------------------------------------------------------------
     # Status

@@ -308,56 +308,56 @@ class RSG:
         )
 
     def build_rxn_segment(
-    self,
-    slug_plan,
-    air_gap_between: float = 5.0,
-    dispense_rate: float = 0.5,
-):
-    """
-    Build a liquid reaction segment and charge it into the DIM loop.
+        self,
+        slug_plan,
+        air_gap_between: float = 5.0,
+        dispense_rate: float = 0.5,
+    ):
+        """
+        Build a liquid reaction segment and charge it into the DIM loop.
 
-    Assumes:
-    - Segmentation layer has already positioned DIM in LOAD
-    - Gas spacer geometry has already been established externally
+        Assumes:
+        - Segmentation layer has already positioned DIM in LOAD
+        - Gas spacer geometry has already been established externally
 
-    Responsibilities:
-    1. normalise slug plan
-    2. aspirate components into syringe line
-    3. optionally place internal air gaps between components
-    4. dispense full liquid segment into DIM loop
+        Responsibilities:
+        1. normalise slug plan
+        2. aspirate components into syringe line
+        3. optionally place internal air gaps between components
+        4. dispense full liquid segment into DIM loop
 
-    Does NOT:
-    - generate gas spacers
-    - switch DIM to INJECT
-    - launch carrier flow
-    """
+        Does NOT:
+        - generate gas spacers
+        - switch DIM to INJECT
+        - launch carrier flow
+        """
 
-    self._require_dim()
+        self._require_dim()
 
-    reaction_plan = self._reaction_plan_from_slug(slug_plan)
-    slug_id = slug_plan.get("slug_id", "untracked-segment")
+        reaction_plan = self._reaction_plan_from_slug(slug_plan)
+        slug_id = slug_plan.get("slug_id", "untracked-segment")
 
-    print(f"[Build Reaction Segment] {slug_id}")
+        print(f"[Build Reaction Segment] {slug_id}")
 
-    # DIM should already be in LOAD from Segmentation
-    self.dim.assert_load()
+        # DIM should already be in LOAD from Segmentation
+        self.dim.assert_load()
 
-    result = self.assemble_reaction(
-        reaction_plan=reaction_plan,
-        air_gap_between=air_gap_between,
-    )
+        result = self.assemble_reaction(
+            reaction_plan=reaction_plan,
+            air_gap_between=air_gap_between,
+        )
 
-    self.dispense_in_dim(
-        volume=result["total_volume_ul"],
-        rate=dispense_rate,
-    )
+        self.dispense_in_dim(
+            volume=result["total_volume_ul"],
+            rate=dispense_rate,
+        )
 
-    return {
-        "slug_id": slug_id,
-        "dispensed_volume_ul": result["total_volume_ul"],
-        "num_components": result["num_components"],
-        "air_gap_between_ul": air_gap_between,
-    }
+        return {
+            "slug_id": slug_id,
+            "dispensed_volume_ul": result["total_volume_ul"],
+            "num_components": result["num_components"],
+            "air_gap_between_ul": air_gap_between,
+        }
 
     def abort(self):
         self.pump.stop()

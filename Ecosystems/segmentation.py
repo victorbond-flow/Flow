@@ -43,20 +43,20 @@ class Segmentation:
         self.sim_mode = sim_mode
 
         if not self.sim_mode:
-            
+
             # Safe baseline on startup
             try:
                 self.carrier.stop_flow()
             except Exception:
                 pass
-    
+
         # initialise state BEFORE hardware calls (important for simulation safety)
         self.state = SegmentationState(
             dim=DIMState.INJECT,
             fsm=FSMState.CARRIER_TO_DIM,
             phase=SegmentationPhase.READY
         )
-        
+
         # hardware init (optional in simulation)
         try:
             if self.fsm is not None:
@@ -182,21 +182,21 @@ class Segmentation:
         """
         Explicit transition:
         RUNNING → GAS_PRIMED
-    
+
         Prepares system for next slug cycle.
         """
         if self.state.phase != SegmentationPhase.RUNNING:
             raise RuntimeError(
                 f"Can only reset from RUNNING, currently {self.state.phase.name}"
             )
-    
+
         # Re-establish gas spacer geometry
         self.fsm.gas_to_dim()
         self.state.fsm = FSMState.GAS_TO_DIM
-    
+
         self.dim.inject()
         self.state.dim = DIMState.INJECT
-    
+
         self._set_phase(SegmentationPhase.GAS_PRIMED)
 
     def create_slug(
@@ -208,10 +208,10 @@ class Segmentation:
 ):
         """
         Executes a single slug cycle.
-    
+
         Assumes system is already in GAS_PRIMED state.
         """
-    
+
         # ------------------------------------------------------------
         # SAFETY GUARD (CRITICAL FOR PHYSICAL CORRECTNESS)
         # ------------------------------------------------------------
@@ -219,19 +219,22 @@ class Segmentation:
             raise RuntimeError(
                 f"create_slug expects GAS_PRIMED, got {self.state.phase.name}"
             )
-    
+
         slug_id = slug_plan.get("slug_id", "untracked-slug")
-    
+
         result = self.prepare_slug(
             slug_plan=slug_plan,
             air_gap_between=air_gap_between,
         )
-    
+
         self.launch_segment(flowrate_ul_min=flowrate_ul_min)
-    
+
         return {
             "slug_id": slug_id,
-            "dispensed_volume_ul": result.get("total_volume_ul", 0.0),
+            "dispensed_volume_ul": result.get(
+                "dispensed_volume_ul",
+                result.get("total_volume_ul", 0.0),
+            ),
             "num_components": result.get("num_components", 0),
             "launched": True,
         }
@@ -340,4 +343,4 @@ class Segmentation:
             f"{self.state.phase.name} -> {new_phase.name}"
         )
         self.state.phase = new_phase
-        
+
