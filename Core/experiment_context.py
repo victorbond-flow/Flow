@@ -17,9 +17,15 @@ class ExperimentContext:
 
 
 class ExperimentManager:
+    SYSTEM_UNKNOWN = "UNKNOWN"
+    SYSTEM_READY = "READY"
+    SYSTEM_RUNNING = "RUNNING"
+    SYSTEM_FAULT = "FAULT"
+
     def __init__(self):
         self.mode = "untracked"
         self.context: Optional[ExperimentContext] = None
+        self.system_state = self.SYSTEM_UNKNOWN
 
         self.repo_root = Path(__file__).resolve().parent.parent
         self.experiments_root = self.repo_root / "Experiments"
@@ -164,6 +170,61 @@ class ExperimentManager:
         return preview_rows
 
     # ------------------------------------------------------------------
+    # System readiness
+    # ------------------------------------------------------------------
+
+    def initialize_for_slug_runs(
+        self,
+        seg,
+        air_gap: float = 20.0,
+        rate_wdr: float = 0.25,
+    ):
+        """
+        Explicitly prepare solvent-filled hardware for slug campaign execution.
+
+        This creates the starting air gap geometry through RSG.initialise().
+        Call this after loading/arming an experiment and before execute_experiment().
+        """
+
+        rsg = getattr(seg, "rsg", None)
+        if rsg is None or not hasattr(rsg, "initialise"):
+            raise RuntimeError(
+                "initialize_for_slug_runs requires seg.rsg.initialise()."
+            )
+
+        self.system_state = self.SYSTEM_RUNNING
+        self._append_event(
+            "system_initialization_started",
+            {
+                "air_gap_uL": air_gap,
+                "rate_wdr_mL_min": rate_wdr,
+            },
+        )
+
+        try:
+            rsg.initialise(air_gap=air_gap, rate_wdr=rate_wdr)
+        except Exception as exc:
+            self.system_state = self.SYSTEM_FAULT
+            self._append_event(
+                "system_initialization_failed",
+                {
+                    "error_type": type(exc).__name__,
+                    "error": str(exc),
+                },
+            )
+            raise
+
+        self.system_state = self.SYSTEM_READY
+        self._append_event(
+            "system_ready",
+            {
+                "air_gap_uL": air_gap,
+                "rate_wdr_mL_min": rate_wdr,
+            },
+        )
+        print("[SYSTEM] Ready for slug runs")
+
+    # ------------------------------------------------------------------
     # Execute
     # ------------------------------------------------------------------
 
@@ -182,9 +243,17 @@ class ExperimentManager:
                 f"Experiment must be armed. Current state: {self.context.state}"
             )
 
+        if self.system_state != self.SYSTEM_READY:
+            raise RuntimeError(
+                "System must be READY before execution. "
+                "Call initialize_for_slug_runs(seg) first. "
+                f"Current system state: {self.system_state}"
+            )
+
         self._validate_loaded_plan()
-    
+
         self.context.state = "running"
+        self.system_state = self.SYSTEM_RUNNING
 
         results = []
 
@@ -266,6 +335,7 @@ class ExperimentManager:
                 )
 
             self.context.state = "completed"
+            self.system_state = self.SYSTEM_UNKNOWN
 
             self._append_event(
                 "experiment_completed",
@@ -278,6 +348,7 @@ class ExperimentManager:
 
         except KeyboardInterrupt:
             self.context.state = "aborted"
+            self.system_state = self.SYSTEM_FAULT
             self._append_event(
                 "user_aborted",
                 {
@@ -291,6 +362,7 @@ class ExperimentManager:
 
         except Exception as exc:
             self.context.state = "failed"
+            self.system_state = self.SYSTEM_FAULT
             self._append_event(
                 "experiment_failed",
                 {
@@ -381,4 +453,5 @@ class ExperimentManager:
         print(f"Mode: experiment")
         print(f"Experiment: {self.context.experiment_id}")
         print(f"State: {self.context.state}")
+        print(f"System state: {self.system_state}")
         print(f"Slug index: {self.context.slug_index}")
