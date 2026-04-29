@@ -3,6 +3,7 @@ from typing import Optional
 from pathlib import Path
 from datetime import datetime
 import json
+import time
 
 from Core.experiment_validator import ExperimentValidator
 
@@ -18,7 +19,9 @@ class ExperimentContext:
 
 class ExperimentManager:
     SYSTEM_UNKNOWN = "UNKNOWN"
-    SYSTEM_READY = "READY"
+    REACTOR_READY = "REACTOR_READY"
+    RSG_READY = "RSG_READY"
+    PLATFORM_READY = "PLATFORM_READY"
     SYSTEM_RUNNING = "RUNNING"
     SYSTEM_FAULT = "FAULT"
 
@@ -26,6 +29,11 @@ class ExperimentManager:
         self.mode = "untracked"
         self.context: Optional[ExperimentContext] = None
         self.system_state = self.SYSTEM_UNKNOWN
+
+        # --- Platform readiness tracking ---
+        self.reactor_state = self.SYSTEM_UNKNOWN
+        self.rsg_state = self.SYSTEM_UNKNOWN
+        self.platform_state = self.SYSTEM_UNKNOWN
 
         self.repo_root = Path(__file__).resolve().parent.parent
         self.experiments_root = self.repo_root / "Experiments"
@@ -72,8 +80,12 @@ class ExperimentManager:
             log_path=log_path,
             state="prepared"
         )
-    
+        
         self.mode = "experiment"
+        
+        # NEW: ensure we always start from a clean platform state
+        self._reset_platform_states()
+        self.system_state = self.SYSTEM_UNKNOWN
     
         print(f"[EXPERIMENT] {experiment_id} loaded")
         print("[EXPERIMENT] Plan ready")
@@ -173,56 +185,82 @@ class ExperimentManager:
     # System readiness
     # ------------------------------------------------------------------
 
-    def initialize_for_slug_runs(
-        self,
-        seg,
-        air_gap: float = 20.0,
-        rate_wdr: float = 0.25,
-    ):
+    def precondition_reactor(
+    self,
+    seg,
+    carrier_flowrate_ul_min=1000,
+    stabilisation_time_s=20,
+):
         """
-        Explicitly prepare solvent-filled hardware for slug campaign execution.
-
-        This creates the starting air gap geometry through RSG.initialise().
-        Call this after loading/arming an experiment and before execute_experiment().
+        Sets DIM/FSM + starts carrier flow + stabilises system.
         """
-
-        rsg = getattr(seg, "rsg", None)
-        if rsg is None or not hasattr(rsg, "initialise"):
-            raise RuntimeError(
-                "initialize_for_slug_runs requires seg.rsg.initialise()."
-            )
-
-        self.system_state = self.SYSTEM_RUNNING
+    
+        fsm = seg.fsm
+        dim = seg.dim
+        carrier = seg.carrier
+    
+        print("[REACTOR] Setting valve positions")
+    
+        fsm.carrier_to_dim()
+        dim.inject()
+    
+        carrier.set_flow_rate(carrier_flowrate_ul_min)
+        carrier.start_flow()
+    
+        print("[REACTOR] Stabilising...")
+    
+        time.sleep(stabilisation_time_s)
+    
+        self.reactor_state = self.REACTOR_READY
+        self._update_platform_state()
+    
         self._append_event(
-            "system_initialization_started",
+            "reactor_ready",
             {
-                "air_gap_uL": air_gap,
-                "rate_wdr_mL_min": rate_wdr,
+                "flowrate_ul_min": carrier_flowrate_ul_min,
+                "stabilisation_time_s": stabilisation_time_s,
             },
         )
-
+    
+        print("[SYSTEM] Reactor READY")
+    
+    def prepare_rsg(
+    self,
+    seg,
+    air_gap: float = 20.0,
+    rate_wdr: float = 0.25,
+):
+        """
+        Prepares syringe pump fluid stack + autosampler system for slug creation.
+        """
+    
+        rsg = getattr(seg, "rsg", None)
+        if rsg is None or not hasattr(rsg, "initialise"):
+            raise RuntimeError("RSG not available")
+    
+        print("[RSG] Initialising")
+    
         try:
             rsg.initialise(air_gap=air_gap, rate_wdr=rate_wdr)
         except Exception as exc:
+            self.rsg_state = self.SYSTEM_UNKNOWN
+            self.platform_state = self.SYSTEM_UNKNOWN
             self.system_state = self.SYSTEM_FAULT
-            self._append_event(
-                "system_initialization_failed",
-                {
-                    "error_type": type(exc).__name__,
-                    "error": str(exc),
-                },
-            )
+            self._update_platform_state()
             raise
-
-        self.system_state = self.SYSTEM_READY
+    
+        self.rsg_state = self.RSG_READY
+        self._update_platform_state()
+    
         self._append_event(
-            "system_ready",
+            "rsg_ready",
             {
                 "air_gap_uL": air_gap,
                 "rate_wdr_mL_min": rate_wdr,
             },
         )
-        print("[SYSTEM] Ready for slug runs")
+    
+        print("[SYSTEM] RSG READY")
 
     # ------------------------------------------------------------------
     # Execute
@@ -243,11 +281,10 @@ class ExperimentManager:
                 f"Experiment must be armed. Current state: {self.context.state}"
             )
 
-        if self.system_state != self.SYSTEM_READY:
+        if self.platform_state != self.PLATFORM_READY:
             raise RuntimeError(
-                "System must be READY before execution. "
-                "Call initialize_for_slug_runs(seg) first. "
-                f"Current system state: {self.system_state}"
+                "Platform not ready. "
+                f"Reactor={self.reactor_state}, RSG={self.rsg_state}"
             )
 
         self._validate_loaded_plan()
@@ -454,4 +491,30 @@ class ExperimentManager:
         print(f"Experiment: {self.context.experiment_id}")
         print(f"State: {self.context.state}")
         print(f"System state: {self.system_state}")
+        print(f"Reactor state: {self.reactor_state}")
+        print(f"RSG state: {self.rsg_state}")
+        print(f"Platform state: {self.platform_state}")
         print(f"Slug index: {self.context.slug_index}")
+
+    # -------------------------------------------------------------------
+    # Helpers
+    # -------------------------------------------------------------------
+
+    def _update_platform_state(self):
+        if (
+            self.reactor_state == self.REACTOR_READY
+            and self.rsg_state == self.RSG_READY
+        ):
+            self.platform_state = self.PLATFORM_READY
+        else:
+            self.platform_state = self.SYSTEM_UNKNOWN
+
+    def _reset_platform_states(self):
+        """
+        Hard reset all platform readiness flags.
+        Called whenever a new experiment is loaded.
+        """
+        self.reactor_state = self.SYSTEM_UNKNOWN
+        self.rsg_state = self.SYSTEM_UNKNOWN
+        self.platform_state = self.SYSTEM_UNKNOWN
+    
