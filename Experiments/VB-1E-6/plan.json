@@ -1,7 +1,7 @@
 {
   "experiment_id": "VB-1E-6",
   "description": "VB-1E-6 dilution validation test",
-  "created_at": "2026-05-01T13:07:59",
+  "created_at": "2026-05-01T18:58:52",
   "global_conditions": {
     "flowrate_ul_min": 1000.0,
     "gas_prime_s": 20.0
@@ -13,12 +13,16 @@
         {
           "module": "rack2",
           "vial": 1,
-          "volume_uL": 20.0
+          "volume_uL": 20.0,
+          "component": "MeCN",
+          "block_id": "dilution_test"
         },
         {
           "module": "rack2",
           "vial": 1,
-          "volume_uL": 80.0
+          "volume_uL": 80.0,
+          "component": "MeCN",
+          "block_id": "dilution_test"
         }
       ]
     },
@@ -28,12 +32,16 @@
         {
           "module": "rack2",
           "vial": 1,
-          "volume_uL": 40.0
+          "volume_uL": 40.0,
+          "component": "MeCN",
+          "block_id": "dilution_test"
         },
         {
           "module": "rack2",
           "vial": 1,
-          "volume_uL": 60.0
+          "volume_uL": 60.0,
+          "component": "MeCN",
+          "block_id": "dilution_test"
         }
       ]
     },
@@ -43,12 +51,16 @@
         {
           "module": "rack2",
           "vial": 1,
-          "volume_uL": 50.0
+          "volume_uL": 50.0,
+          "component": "MeCN",
+          "block_id": "dilution_test"
         },
         {
           "module": "rack2",
           "vial": 1,
-          "volume_uL": 50.0
+          "volume_uL": 50.0,
+          "component": "MeCN",
+          "block_id": "dilution_test"
         }
       ]
     }

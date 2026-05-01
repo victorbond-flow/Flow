@@ -314,55 +314,55 @@ class ExperimentBuilder:
     description="",
     global_conditions=None,
 ):
-    rows = self._coerce_rows(rows)
-    global_conditions = self._validate_global_conditions(global_conditions)
-
-    # NEW: structural integrity gate (replaces scattered validation)
-    self._validate_rows_integrity(rows)
-
-    ordered_rows = sorted(
-        rows,
-        key=lambda r: (
-            self._order_value(r, "slug_order"),
-            self._order_value(r, "component_order"),
-            r["_input_order"],
-        ),
-    )
-
-    slugs = {}
-    slug_sequence = []
-
-    for r in ordered_rows:
-        sid = r["slug_id"]
-
-        if sid not in slugs:
-            slugs[sid] = {
-                "slug_id": sid,
-                "reaction_plan": []
+        rows = self._coerce_rows(rows)
+        global_conditions = self._validate_global_conditions(global_conditions)
+    
+        # NEW: structural integrity gate (replaces scattered validation)
+        self._validate_rows_integrity(rows)
+    
+        ordered_rows = sorted(
+            rows,
+            key=lambda r: (
+                self._order_value(r, "slug_order"),
+                self._order_value(r, "component_order"),
+                r["_input_order"],
+            ),
+        )
+    
+        slugs = {}
+        slug_sequence = []
+    
+        for r in ordered_rows:
+            sid = r["slug_id"]
+    
+            if sid not in slugs:
+                slugs[sid] = {
+                    "slug_id": sid,
+                    "reaction_plan": []
+                }
+                slug_sequence.append(slugs[sid])
+    
+            component = {
+                "module": r["module"],
+                "vial": int(r["vial"]),
+                "volume_uL": float(r["volume_uL"]),
             }
-            slug_sequence.append(slugs[sid])
-
-        component = {
-            "module": r["module"],
-            "vial": int(r["vial"]),
-            "volume_uL": float(r["volume_uL"]),
+    
+            if not self._is_missing(r.get("component")):
+                component["component"] = r["component"]
+    
+            if not self._is_missing(r.get("block_id")):
+                component["block_id"] = r["block_id"]
+    
+            slugs[sid]["reaction_plan"].append(component)
+    
+        return {
+            "experiment_id": experiment_id,
+            "description": description,
+            "created_at": datetime.now().isoformat(timespec="seconds"),
+            "global_conditions": global_conditions,
+            "slugs": slug_sequence,
         }
-
-        if not self._is_missing(r.get("component")):
-            component["component"] = r["component"]
-
-        if not self._is_missing(r.get("block_id")):
-            component["block_id"] = r["block_id"]
-
-        slugs[sid]["reaction_plan"].append(component)
-
-    return {
-        "experiment_id": experiment_id,
-        "description": description,
-        "created_at": datetime.now().isoformat(timespec="seconds"),
-        "global_conditions": global_conditions,
-        "slugs": slug_sequence,
-    }
 
     # =========================================================
     # Folder creation
