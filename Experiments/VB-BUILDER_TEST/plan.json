@@ -1,0 +1,21 @@
+{
+  "experiment_id": "VB-BUILDER_TEST",
+  "description": "Builder v2 single slug test",
+  "created_at": "2026-05-01T10:04:26",
+  "global_conditions": {
+    "flowrate_ul_min": 1000.0,
+    "gas_prime_s": 20.0
+  },
+  "slugs": [
+    {
+      "slug_id": "slug_1",
+      "reaction_plan": [
+        {
+          "module": "rack2",
+          "vial": 1,
+          "volume_uL": 100.0
+        }
+      ]
+    }
+  ]
+}

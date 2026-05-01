@@ -2,16 +2,20 @@ from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
 import json
+import random
+import pandas as pd
+
+# TODO - Make preview inventory-aware (safety checks for volume consumption from vials? is that a bit much or what? idk)
 
 
 class ExperimentBuilder:
     """
     Builds validated experiment plans + folders.
 
-    Key upgrade:
-    - global_conditions schema is now enforced
-    - flowrate_ul_min is REQUIRED (no silent defaults downstream)
-    - ensures execution layer is deterministic and reproducible
+    v2.1 cleanup:
+    - Single source of truth: self.rows
+    - Fixed add_slug_set inconsistency
+    - Added preview() execution trace
     """
 
     REQUIRED_GLOBAL_CONDITIONS = {
@@ -19,119 +23,216 @@ class ExperimentBuilder:
         "gas_prime_s": float,
     }
 
-    def __init__(self, experiments_root=None):
+    def __init__(self, experiments_root=None, inventory=None):
         repo_root = Path(__file__).resolve().parent.parent
-        self.experiments_root = Path(experiments_root or repo_root / "Experiments")
+        self.experiments_root = Path(
+            experiments_root or repo_root / "Experiments"
+        )
 
-    # ------------------------------------------------------------------
-    # Row handling
-    # ------------------------------------------------------------------
+        self.inventory = inventory
+
+        # single source of truth for stateful builder
+        self.rows = []
+        self.slug_counter = 1
+
+    # =========================================================
+    # Stateful API
+    # =========================================================
+
+    def clear(self):
+        self.rows = []
+        self.slug_counter = 1
+
+    def _next_slug_id(self):
+        slug_id = f"slug_{self.slug_counter}"
+        self.slug_counter += 1
+        return slug_id
+
+    def add_slug(self, components):
+        slug_id = self._next_slug_id()
+
+        for component_order, item in enumerate(components, start=1):
+            name, volume_uL = item
+
+            if self.inventory is None:
+                raise ValueError("Inventory required for add_slug")
+
+            record = self.inventory.lookup(name)
+
+            self.rows.append({
+                "slug_id": slug_id,
+                "slug_order": self.slug_counter - 1,
+                "component_order": component_order,
+                "module": record["module"],
+                "vial": record["vial"],
+                "volume_uL": float(volume_uL),
+            })
+
+            self.inventory.reserve(name, volume_uL)
+
+        return slug_id
+
+    def add_repeated_slug(self, components, n):
+        return [self.add_slug(components) for _ in range(int(n))]
+
+    def add_slug_set(
+        self,
+        df,
+        component_map,
+        fixed_total_volume_uL=None,
+        slug_prefix="slug",
+    ):
+        """
+        Each row = one slug
+        """
+
+        if hasattr(df, "to_dict"):
+            rows = df.to_dict(orient="records")
+        else:
+            rows = list(df)
+
+        for row in rows:
+            slug_id = f"{slug_prefix}_{self.slug_counter}"
+
+            components = []
+            total_volume = 0.0
+
+            for column, material_name in component_map.items():
+                if column not in row:
+                    raise KeyError(f"Missing column: {column}")
+
+                volume = float(row[column])
+
+                if volume <= 0:
+                    continue
+
+                record = self.inventory.lookup(material_name)
+
+                components.append({
+                    "module": record["module"],
+                    "vial": record["vial"],
+                    "volume_uL": volume,
+                })
+
+                total_volume += volume
+
+            if fixed_total_volume_uL is not None:
+                if abs(total_volume - float(fixed_total_volume_uL)) > 1e-6:
+                    raise ValueError(
+                        f"{slug_id} total volume mismatch"
+                    )
+
+            # FIX: now correctly stored in self.rows (not self.slugs)
+            for i, comp in enumerate(components, start=1):
+                self.rows.append({
+                    "slug_id": slug_id,
+                    "slug_order": self.slug_counter,
+                    "component_order": i,
+                    "module": comp["module"],
+                    "vial": comp["vial"],
+                    "volume_uL": comp["volume_uL"],
+                })
+
+            self.slug_counter += 1
+
+    def randomise(self):
+        grouped = {}
+
+        for row in self.rows:
+            grouped.setdefault(row["slug_id"], []).append(row)
+
+        slug_groups = list(grouped.values())
+        random.shuffle(slug_groups)
+
+        new_rows = []
+
+        for slug_order, group in enumerate(slug_groups, start=1):
+            for row in group:
+                r = dict(row)
+                r["slug_order"] = slug_order
+                new_rows.append(r)
+
+        self.rows = new_rows
+
+    def create_experiment(
+        self,
+        experiment_id,
+        description="",
+        global_conditions=None,
+        overwrite=False,
+    ):
+        return self.build_and_create(
+            experiment_id=experiment_id,
+            rows=self.rows,
+            description=description,
+            global_conditions=global_conditions,
+            overwrite=overwrite,
+        )
+
+    # =========================================================
+    # Core build
+    # =========================================================
 
     def _coerce_rows(self, rows):
         if hasattr(rows, "to_dict"):
             rows = rows.to_dict(orient="records")
 
-        if not isinstance(rows, list):
-            raise TypeError("rows must be a list of dicts or a pandas DataFrame.")
-
-        coerced = []
-        for index, row in enumerate(rows):
-            if not isinstance(row, dict):
-                raise TypeError("Each row must be a dict.")
-
-            coerced_row = dict(row)
-            coerced_row["_input_order"] = index
-            coerced.append(coerced_row)
-
-        return coerced
+        return [dict(r) for r in rows]
 
     def _validate_row(self, row):
         required = ("slug_id", "module", "vial", "volume_uL")
         missing = [k for k in required if k not in row]
         if missing:
-            raise ValueError(f"Row missing fields: {missing}")
-
-        volume = float(row["volume_uL"])
-        if volume <= 0:
-            raise ValueError("volume_uL must be > 0")
-
-    # ------------------------------------------------------------------
-    # Global condition validation (NEW)
-    # ------------------------------------------------------------------
+            raise ValueError(f"Missing: {missing}")
 
     def _validate_global_conditions(self, global_conditions):
         if global_conditions is None:
-            raise ValueError(
-                "global_conditions is required (must include flowrate_ul_min, gas_prime_s)"
-            )
+            raise ValueError("global_conditions required")
 
-        missing = []
-        for key in self.REQUIRED_GLOBAL_CONDITIONS:
-            if key not in global_conditions:
-                missing.append(key)
+        return {
+            k: self.REQUIRED_GLOBAL_CONDITIONS[k](global_conditions[k])
+            for k in self.REQUIRED_GLOBAL_CONDITIONS
+        }
 
-        if missing:
-            raise ValueError(
-                f"Missing global_conditions fields: {missing}"
-            )
-
-        # type coercion + validation
-        cleaned = {}
-        for key, typ in self.REQUIRED_GLOBAL_CONDITIONS.items():
-            try:
-                cleaned[key] = typ(global_conditions[key])
-            except Exception:
-                raise ValueError(
-                    f"global_conditions[{key}] must be {typ.__name__}"
-                )
-
-        return cleaned
-
-    # ------------------------------------------------------------------
-    # Plan builder
-    # ------------------------------------------------------------------
-
-    def build_plan(self, experiment_id, rows, description="", global_conditions=None):
-
+    def build_plan(
+        self,
+        experiment_id,
+        rows,
+        description="",
+        global_conditions=None,
+    ):
         rows = self._coerce_rows(rows)
         global_conditions = self._validate_global_conditions(global_conditions)
 
-        for row in rows:
-            self._validate_row(row)
+        for r in rows:
+            self._validate_row(r)
 
         ordered_rows = sorted(
             rows,
             key=lambda r: (
-                r.get("slug_order", r["_input_order"]),
-                r.get("component_order", r["_input_order"]),
-                r["_input_order"],
+                r.get("slug_order", 0),
+                r.get("component_order", 0),
             ),
         )
 
-        slugs_by_id = {}
+        slugs = {}
         slug_sequence = []
 
-        for row in ordered_rows:
-            slug_id = row["slug_id"]
+        for r in ordered_rows:
+            sid = r["slug_id"]
 
-            if slug_id not in slugs_by_id:
-                slug = {
-                    "slug_id": slug_id,
+            if sid not in slugs:
+                slugs[sid] = {
+                    "slug_id": sid,
                     "reaction_plan": []
                 }
-                slugs_by_id[slug_id] = slug
-                slug_sequence.append(slug)
+                slug_sequence.append(slugs[sid])
 
-            component = {
-                "module": row["module"],
-                "vial": int(row["vial"]),
-                "volume_uL": float(row["volume_uL"]),
-            }
-
-            if row.get("pickup_rate") is not None:
-                component["rate"] = float(row["pickup_rate"])
-
-            slugs_by_id[slug_id]["reaction_plan"].append(component)
+            slugs[sid]["reaction_plan"].append({
+                "module": r["module"],
+                "vial": int(r["vial"]),
+                "volume_uL": float(r["volume_uL"]),
+            })
 
         return {
             "experiment_id": experiment_id,
@@ -141,28 +242,27 @@ class ExperimentBuilder:
             "slugs": slug_sequence,
         }
 
-    # ------------------------------------------------------------------
+    # =========================================================
     # Folder creation
-    # ------------------------------------------------------------------
+    # =========================================================
 
     def create_experiment_folder(self, plan, overwrite=False):
-        experiment_id = plan["experiment_id"]
-        exp_dir = self.experiments_root / experiment_id
+        exp_dir = self.experiments_root / plan["experiment_id"]
 
         if exp_dir.exists() and not overwrite:
-            raise FileExistsError(f"Experiment exists: {exp_dir}")
+            raise FileExistsError(exp_dir)
 
         exp_dir.mkdir(parents=True, exist_ok=True)
 
         (exp_dir / "plan.json").write_text(json.dumps(plan, indent=2))
 
-        log_payload = {
-            "experiment_id": experiment_id,
+        log = {
+            "experiment_id": plan["experiment_id"],
             "created_at": datetime.now().isoformat(timespec="seconds"),
             "events": [],
         }
 
-        (exp_dir / "log.json").write_text(json.dumps(log_payload, indent=2))
+        (exp_dir / "log.json").write_text(json.dumps(log, indent=2))
 
         return {
             "experiment_dir": exp_dir,
@@ -170,34 +270,54 @@ class ExperimentBuilder:
             "log_path": exp_dir / "log.json",
         }
 
-    # ------------------------------------------------------------------
-    # Convenience
-    # ------------------------------------------------------------------
+    # =========================================================
+    # Summary
+    # =========================================================
 
     def summarise_plan(self, plan):
-        summary = []
+        out = []
 
-        for slug in plan.get("slugs", []):
-            reaction_plan = slug.get("reaction_plan", [])
+        for s in plan["slugs"]:
+            total = sum(c["volume_uL"] for c in s["reaction_plan"])
 
-            total_volume = sum(
-                c.get("volume_uL", c.get("volume", 0.0))
-                for c in reaction_plan
-            )
-
-            components = ", ".join(
-                f"{c['module']}:{c['vial']} ({c['volume_uL']} uL)"
-                for c in reaction_plan
-            )
-
-            summary.append({
-                "slug_id": slug["slug_id"],
-                "num_components": len(reaction_plan),
-                "total_volume_uL": total_volume,
-                "components": components,
+            out.append({
+                "slug_id": s["slug_id"],
+                "num_components": len(s["reaction_plan"]),
+                "total_volume_uL": total,
+                "components": [
+                    (c["module"], c["vial"], c["volume_uL"])
+                    for c in s["reaction_plan"]
+                ]
             })
 
-        return summary
+        return out
+
+    # =========================================================
+    # NEW: preview layer
+    # =========================================================
+
+    def preview(self, plan):
+        """
+        Execution-level view: what will actually happen step-by-step.
+        """
+
+        rows = []
+
+        for slug in plan["slugs"]:
+            for i, comp in enumerate(slug["reaction_plan"], start=1):
+                rows.append({
+                    "slug_id": slug["slug_id"],
+                    "step": i,
+                    "module": comp["module"],
+                    "vial": comp["vial"],
+                    "volume_uL": comp["volume_uL"],
+                })
+
+        return pd.DataFrame(rows)
+
+    # =========================================================
+    # Final API
+    # =========================================================
 
     def build_and_create(
         self,
@@ -208,16 +328,17 @@ class ExperimentBuilder:
         overwrite=False,
     ):
         plan = self.build_plan(
-            experiment_id=experiment_id,
-            rows=rows,
-            description=description,
-            global_conditions=global_conditions,
+            experiment_id,
+            rows,
+            description,
+            global_conditions,
         )
 
-        paths = self.create_experiment_folder(plan, overwrite=overwrite)
+        paths = self.create_experiment_folder(plan, overwrite)
 
         return {
             "plan": plan,
             "summary": self.summarise_plan(plan),
+            "preview": self.preview(plan),
             **paths,
         }

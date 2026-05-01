@@ -1,0 +1,56 @@
+{
+  "experiment_id": "VB-1E-6",
+  "description": "VB-1E-6 dilution validation test",
+  "created_at": "2026-05-01T13:07:59",
+  "global_conditions": {
+    "flowrate_ul_min": 1000.0,
+    "gas_prime_s": 20.0
+  },
+  "slugs": [
+    {
+      "slug_id": "slug_1",
+      "reaction_plan": [
+        {
+          "module": "rack2",
+          "vial": 1,
+          "volume_uL": 20.0
+        },
+        {
+          "module": "rack2",
+          "vial": 1,
+          "volume_uL": 80.0
+        }
+      ]
+    },
+    {
+      "slug_id": "slug_2",
+      "reaction_plan": [
+        {
+          "module": "rack2",
+          "vial": 1,
+          "volume_uL": 40.0
+        },
+        {
+          "module": "rack2",
+          "vial": 1,
+          "volume_uL": 60.0
+        }
+      ]
+    },
+    {
+      "slug_id": "slug_3",
+      "reaction_plan": [
+        {
+          "module": "rack2",
+          "vial": 1,
+          "volume_uL": 50.0
+        },
+        {
+          "module": "rack2",
+          "vial": 1,
+          "volume_uL": 50.0
+        }
+      ]
+    }
+  ]
+}

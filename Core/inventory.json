@@ -1,0 +1,11 @@
+{
+  "rack2:1": {
+    "module": "rack2",
+    "vial": 1,
+    "name": "MeCN",
+    "concentration_M": null,
+    "solvent": null,
+    "current_volume_uL": 99400.0,
+    "min_safe_volume_uL": 10000
+  }
+}
