@@ -76,23 +76,49 @@ class Inventory:
         return self.slots[key]
 
     def reserve(self, name, volume_uL):
-        key, record = self._find_name(name)
+        self.reserve_many([(name, volume_uL)]) # Just use reserve many
+
+    def reserve_many(self, reservations):
+        totals = {}
+    
+        for name, volume_uL in reservations:
+            totals[name] = totals.get(name, 0.0) + float(volume_uL)
+    
+        # validate once
+        remaining_map = {}
+        for name, total_volume in totals.items():
+            remaining_map[name] = self.check_available(name, total_volume)
+    
+        # commit once
+        for name, remaining in remaining_map.items():
+            key, _ = self._find_name(name)
+            self.slots[key]["current_volume_uL"] = remaining
+    
+        self.save()
+
+    def check_available(self, name, volume_uL):
+        _, record = self._find_name(name)
 
         if record is None:
             raise KeyError(f"{name} not found")
 
+        if float(volume_uL) <= 0:
+            raise ValueError(f"{name}: requested volume must be > 0")
+
         if record["current_volume_uL"] is None:
-            return
+            return None
 
         remaining = record["current_volume_uL"] - float(volume_uL)
 
         if remaining < record["min_safe_volume_uL"]:
             raise ValueError(
-                f"Insufficient safe volume for {name}"
+                f"Insufficient safe volume for {name}: "
+                f"requested {volume_uL} uL, "
+                f"available above safe minimum "
+                f"{record['current_volume_uL'] - record['min_safe_volume_uL']} uL"
             )
 
-        self.slots[key]["current_volume_uL"] = remaining
-        self.save()
+        return remaining
 
     def status(self):
         if not self.slots:

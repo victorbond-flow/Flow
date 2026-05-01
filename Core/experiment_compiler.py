@@ -11,6 +11,8 @@ class CompiledRow:
     volume_uL: float
     component: str
     block_id: Optional[str] = None
+    slug_order: Optional[int] = None
+    component_order: Optional[int] = None
 
 
 class ExperimentCompiler:
@@ -35,36 +37,44 @@ class ExperimentCompiler:
     # Public API
     # ------------------------------------------------------------
 
+    OUTPUT_COLUMNS = [
+        "slug_id",
+        "module",
+        "vial",
+        "volume_uL",
+        "component",
+        "block_id",
+        "slug_order",
+        "component_order",
+    ]
+
     def compile(self, intent: Dict[str, Any]) -> pd.DataFrame:
-        """
-        Main entry point.
-
-        Parameters
-        ----------
-        intent : dict
-            Must contain:
-                - experiment_id
-                - blocks: list of block definitions
-
-        Returns
-        -------
-        pd.DataFrame (Builder-compatible)
-        """
-
+        intent = self._coerce_intent(intent)
+    
         rows = []
-
-        blocks = intent.get("blocks", [])
         experiment_id = intent.get("experiment_id", "EXPT")
-
+        blocks = intent["blocks"]
+    
         for block_index, block in enumerate(blocks):
             block_rows = self._expand_block(
                 block=block,
                 block_index=block_index,
-                experiment_id=experiment_id
+                experiment_id=experiment_id,
             )
             rows.extend(block_rows)
-
-        return pd.DataFrame([r.__dict__ for r in rows])
+    
+        if not rows:
+            raise ValueError("Compilation produced no rows")
+    
+        # enforce strict schema BEFORE dataframe conversion
+        data = [r.__dict__ for r in rows]
+    
+        for i, r in enumerate(data):
+            missing = [c for c in self.OUTPUT_COLUMNS if c not in r]
+            if missing:
+                raise ValueError(f"Row {i} missing columns: {missing}")
+    
+        return pd.DataFrame(data)[self.OUTPUT_COLUMNS]
 
     def normalise(self, experiment_id, slug_spec, block_id="block_1"):
         """
@@ -99,8 +109,14 @@ class ExperimentCompiler:
         """
     
         # Basic structural conversion
+        if not slug_spec:
+            raise ValueError("slug_spec must contain at least one slug")
+
         slugs = []
         for slug_id, composition in slug_spec:
+            if not composition:
+                raise ValueError(f"{slug_id} has no components")
+
             slugs.append({
                 "slug_id": slug_id,
                 "composition": composition
@@ -122,6 +138,25 @@ class ExperimentCompiler:
     # Helpers
     # ------------------------------------------------------------
 
+    def _coerce_intent(self, intent):
+        if isinstance(intent, dict):
+            coerced = intent
+        elif hasattr(intent, "experiment_id") and hasattr(intent, "blocks"):
+            coerced = {
+                "experiment_id": intent.experiment_id,
+                "blocks": intent.blocks,
+            }
+        else:
+            raise TypeError("intent must be a dict or ExperimentIntent-like object")
+    
+        if "blocks" not in coerced or coerced["blocks"] is None:
+            raise ValueError("Intent must contain blocks")
+    
+        if len(coerced["blocks"]) == 0:
+            raise ValueError("Intent must contain at least one block")
+    
+        return coerced
+
     def summarise_slugs(self, df):
         grouped = df.groupby("slug_id")
     
@@ -142,25 +177,31 @@ class ExperimentCompiler:
     # ------------------------------------------------------------
 
     def _expand_block(self, block, block_index, experiment_id):
-        """
-        Expands a single block into multiple slugs.
-        """
-
-        block_id = block.get("block_id", f"block_{block_index}")
-
-        slug_definitions = block["slugs"]
-
+        block_id = block.get("block_id", f"block_{block_index + 1}")
+    
+        slug_definitions = block.get("slugs")
+    
+        if slug_definitions is None:
+            raise ValueError(f"{block_id} must contain slugs")
+    
+        if len(slug_definitions) == 0:
+            raise ValueError(f"{block_id} has no slugs")
+    
         expanded_rows = []
-
+    
         for i, slug in enumerate(slug_definitions):
-            slug_id = slug.get("slug_id", f"{block_id}_slug_{i}")
-
-            composition = slug["composition"]  # list of (name, volume_uL)
-
-            for component_name, volume_uL in composition:
-
+            slug_id = slug.get("slug_id", f"{block_id}_slug_{i + 1}")
+    
+            composition = slug.get("composition")
+    
+            if not composition:
+                raise ValueError(f"{slug_id} has no composition")
+    
+            for j, item in enumerate(composition, start=1):
+                component_name, volume_uL = self._normalise_component(item)
+    
                 resolved = self._resolve_component(component_name)
-
+    
                 expanded_rows.append(
                     CompiledRow(
                         slug_id=slug_id,
@@ -169,10 +210,75 @@ class ExperimentCompiler:
                         volume_uL=float(volume_uL),
                         component=component_name,
                         block_id=block_id,
+                        slug_order=i + 1,            # compiler is authority
+                        component_order=j,           # compiler is authority
                     )
                 )
-
+    
         return expanded_rows
+
+    def _expand_ratio_block(self, block, block_id):
+        components = block.get("components", [])
+        ratios = block.get("ratios", [])
+        total_volume = float(block.get("total_volume_uL", 0))
+
+        if not components:
+            raise ValueError(f"{block_id} must define components")
+
+        if total_volume <= 0:
+            raise ValueError(f"{block_id}: total_volume_uL must be > 0")
+
+        slugs = []
+        for i, ratio in enumerate(ratios, start=1):
+            if len(ratio) != len(components):
+                raise ValueError(
+                    f"{block_id} ratio {ratio} does not match components {components}"
+                )
+
+            ratio_total = sum(float(value) for value in ratio)
+            if ratio_total <= 0:
+                raise ValueError(f"{block_id} ratio total must be > 0")
+
+            composition = []
+            for component, ratio_value in zip(components, ratio):
+                volume = (float(ratio_value) / ratio_total) * total_volume
+                composition.append(
+                    {
+                        "component": component,
+                        "volume_uL": volume,
+                    }
+                )
+
+            slugs.append(
+                {
+                    "slug_id": f"{block_id}_slug_{i}",
+                    "composition": composition,
+                }
+            )
+
+        return slugs
+
+    def _normalise_component(self, item):
+        if isinstance(item, dict):
+            name = item.get("component") or item.get("name")
+            volume = item.get("volume_uL") or item.get("volume")
+        elif isinstance(item, (list, tuple)) and len(item) == 2:
+            name, volume = item
+        else:
+            raise ValueError(f"Invalid component format: {item}")
+    
+        if not name:
+            raise ValueError("Component missing name")
+    
+        try:
+            volume = float(volume)
+        except Exception:
+            raise ValueError(f"{name}: volume must be numeric")
+    
+        if volume <= 0:
+            raise ValueError(f"{name}: volume_uL must be > 0")
+    
+        return name, volume
 
     # ------------------------------------------------------------
     # Inventory resolution
