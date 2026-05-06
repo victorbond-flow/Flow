@@ -1,37 +1,90 @@
 from dataclasses import dataclass, field
-from typing import List, Dict, Any, Optional
-from copy import deepcopy
+from typing import List, Dict, Any
 import pandas as pd
 
 
 @dataclass
 class ExperimentIntent:
     """
-    ExperimentIntent is the *scientific specification layer*.
+    ExperimentIntent = scientific experiment specification layer.
 
-    It captures:
-    - what the experiment is trying to study (intent)
-    - how slugs should be generated (design blocks)
+    PURPOSE:
+    - Describe *what experiment is being done*
+    - NOT how it is executed
+    - NOT how slugs are physically constructed
 
-    It does NOT:
-    - know about hardware
-    - know about execution order
-    - write files
-    - depend on ExperimentBuilder structure directly
-
-    Think of this as:
-        "A structured description of an experiment before it becomes a plan."
+    OUTPUT:
+    - A structured intermediate representation that ExperimentCompiler consumes
     """
 
     experiment_id: str
     description: str = ""
 
-    # Each block defines a *rule for generating slugs*
+    # Low-level fallback structure (still used by compiler)
     blocks: List[Dict[str, Any]] = field(default_factory=list)
 
-    # ------------------------------------------------------------
-    # Block definition (v1 simple API)
-    # ------------------------------------------------------------
+    # ============================================================
+    # HIGH-LEVEL API (NEW)
+    # ============================================================
+
+    def repeat(
+        self,
+        component: str,
+        volume_uL: float,
+        n: int,
+        name: str = "repeat_block",
+    ):
+        """
+        Simple repetition experiment:
+            same composition repeated N times
+        """
+
+        block = {
+            "name": name,
+            "components": [component],
+            "ratios": [[100] for _ in range(n)],
+            "total_volume_uL": volume_uL,
+            "fixed_total_volume": True,
+        }
+
+        self.blocks.append(block)
+        return self
+
+    def series(
+        self,
+        component: str,
+        solvent: str,
+        concentrations: List[float],
+        volume_uL: float,
+        name: str = "series_block",
+    ):
+        """
+        Simple 2-component series (e.g. dilution series).
+
+        NOTE:
+        This keeps logic simple and defers chemistry interpretation
+        to user-level correctness.
+        """
+
+        ratios = []
+
+        for c in concentrations:
+            ratios.append([c * 100, (1 - c) * 100])
+
+        block = {
+            "name": name,
+            "components": [component, solvent],
+            "ratios": ratios,
+            "total_volume_uL": volume_uL,
+            "fixed_total_volume": True,
+        }
+
+        self.blocks.append(block)
+        return self
+
+    # ============================================================
+    # LEGACY API (still supported)
+    # ============================================================
 
     def add_block(
         self,
@@ -42,20 +95,8 @@ class ExperimentIntent:
         fixed_total_volume: bool = True,
     ):
         """
-        Adds a design block.
-
-        A block = rule-set that generates one or more slugs.
-
-        Example:
-            ratios = [[20,80], [40,60]]
-
-        means:
-            slug1 → 20/80 split
-            slug2 → 40/60 split
-
-        NOTE:
-        - We deliberately store *rules*, not expanded slugs
-        - Expansion happens later in .expand()
+        Low-level block definition (kept for backward compatibility).
+        Prefer repeat()/series() where possible.
         """
 
         block = {
@@ -67,22 +108,19 @@ class ExperimentIntent:
         }
 
         self.blocks.append(block)
-        return self  # allows chaining if desired
+        return self
 
-    # ------------------------------------------------------------
-    # Expansion layer (core bridge to existing system)
-    # ------------------------------------------------------------
+    # ============================================================
+    # EXPANSION (unchanged contract for compiler)
+    # ============================================================
 
     def expand(self) -> List[Dict[str, Any]]:
         """
-        Converts intent → flat slug/component rows.
-
-        This is the ONLY place where we "translate" into the format
-        expected by ExperimentBuilder.
+        Converts intent → compiler-readable structure.
 
         IMPORTANT:
-        - This is not chemistry-aware
-        - This is not inventory-aware (yet)
+        - This is NOT chemical logic
+        - This is NOT hardware logic
         - It is purely structural expansion
         """
 
@@ -97,7 +135,6 @@ class ExperimentIntent:
 
             for ratio in ratios_list:
 
-                # Basic sanity check (light-touch, not strict validation layer)
                 if len(ratio) != len(components):
                     raise ValueError(
                         f"Ratio {ratio} does not match components {components}"
@@ -108,14 +145,12 @@ class ExperimentIntent:
 
                 reaction_plan = []
 
-                # Convert ratios → volumes
-                # NOTE: intentionally simple; no chemistry logic here
                 for comp, r in zip(components, ratio):
 
                     volume = (r / 100.0) * total_volume
 
                     reaction_plan.append({
-                        "component": comp,   # still symbolic at this stage
+                        "component": comp,
                         "volume_uL": volume
                     })
 
@@ -126,17 +161,11 @@ class ExperimentIntent:
 
         return rows
 
-    # ------------------------------------------------------------
-    # DataFrame conversion (bridge to ExperimentBuilder)
-    # ------------------------------------------------------------
+    # ============================================================
+    # COMPILER BRIDGE
+    # ============================================================
 
     def to_dataframe(self) -> pd.DataFrame:
-        """
-        Converts expanded intent → row-based format expected by ExperimentBuilder.
-
-        This is intentionally the ONLY coupling point to current system.
-        """
-
         expanded = self.expand()
 
         flat_rows = []
@@ -147,24 +176,19 @@ class ExperimentIntent:
             for comp in slug["reaction_plan"]:
                 flat_rows.append({
                     "slug_id": slug_id,
-                    "module": None,   # will be resolved later via inventory
-                    "vial": None,     # intentionally unresolved at this stage
+                    "module": None,
+                    "vial": None,
                     "volume_uL": comp["volume_uL"],
                     "component": comp["component"],
                 })
 
         return pd.DataFrame(flat_rows)
 
-    # ------------------------------------------------------------
-    # Human-readable summary (VERY useful for sanity checking)
-    # ------------------------------------------------------------
+    # ============================================================
+    # INSPECTION
+    # ============================================================
 
     def summary(self) -> Dict[str, Any]:
-        """
-        Produces a human-readable view of what the experiment WILL do.
-
-        This is critical for trust in the system.
-        """
 
         summary = {
             "experiment_id": self.experiment_id,
