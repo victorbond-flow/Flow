@@ -1,116 +1,252 @@
 # tray.py
+
 """
 Tray manager for the autosampler.
 
-Keeps track of all modules (racks, wash stations, waste, etc.) and their positions.
-Automatically reads offsets from the module objects when added.
+The Tray owns:
+- physical slot footprints
+- valid module placements
+- placement calibrations
+- runtime module assignments
+
+Users assign modules to physical tray slots.
+The Tray automatically determines global offsets.
+
+TODO
+----
+- Add DIM calibration(s)
+- Potentially move slot definitions into a config file later
 """
 
-from .rack import Rack_209, Rack_3dp  # import any other modules as they are added
+from .rack import Rack_209, Rack_3dp
 
 
 class Tray:
     """
-    Represents the autosampler tray layout.
+    Represents the physical autosampler deck.
 
-    The Tray is the ONLY object that knows where modules
-    (racks, wash stations, etc.) physically sit on the deck.
+    The Tray knows:
+    - what physical slots exist
+    - what module types are valid in each slot
+    - where each valid module sits physically
 
-    It assigns:
-    - slot number (physical location on the deck)
-    - a human-friendly name ("rack1", "wash", etc.)
-    - a module instance (Rack_209, WashStation, ...)
-    - global X/Y offsets for that module
+    The Tray does NOT know:
+    - rack internal geometry
+    - vial layouts
+    - vial metadata
+
+    Those belong to the module classes themselves.
     """
 
     def __init__(self):
-        # slot → { name, module, x_offset, y_offset }
-        self.slots = {}
 
-        # name → slot
-        self.name_to_slot = {}
+        # ------------------------------------------------------------------
+        # Physical tray slot definitions
+        #
+        # Structure:
+        #
+        # slot number
+        #   -> allowed module types
+        #       -> placement calibration
+        #
+        # Placement calibration defines the global position of the module
+        # when mounted in that slot.
+        # ------------------------------------------------------------------
 
-    def add_module(self, slot: int, name: str, module, x_offset: float, y_offset: float,
-               x_min: float = None, x_max: float = None, y_min: float = None, y_max: float = None):
+        self.slot_definitions = {
+
+            # ==============================================================
+            # SLOT 1
+            # ==============================================================
+
+            1: {
+
+                "allowed_modules": {
+
+                    "rack_209": {
+                        "x_offset": 155.5,
+                        "y_offset": 10,
+
+                        "x_min": 145,
+                        "x_max": 250,
+
+                        "y_min": 2,
+                        "y_max": 292,
+                    },
+
+                    # Example:
+                    #
+                    # "rack_3dp": {
+                    #     ...
+                    # }
+                }
+            },
+
+            # ==============================================================
+            # SLOT 2
+            # ==============================================================
+
+            2: {
+
+                "allowed_modules": {
+
+                    "rack_3dp": {
+                        "x_offset": 319,
+                        "y_offset": 39,
+
+                        "x_min": 275,
+                        "x_max": 370,
+
+                        "y_min": 2,
+                        "y_max": 292,
+                    }
+                }
+            },
+
+            # ==============================================================
+            # SLOT 3
+            # ==============================================================
+
+            3: {
+
+                "allowed_modules": {
+
+                    # Future DIM placement(s)
+                }
+            }
+        }
+
+        # ------------------------------------------------------------------
+        # Runtime slot occupancy
+        #
+        # Stores modules currently assigned to tray slots.
+        # ------------------------------------------------------------------
+
+        self.assigned_modules = {}
+
+    # ======================================================================
+    # Slot assignment
+    # ======================================================================
+
+    def assign_slot(self, slot: int, module):
         """
-        Add a module (e.g., rack or wash station) to a physical tray slot.
-    
+        Assign a module to a physical tray slot.
+
         Parameters
         ----------
         slot : int
-            Physical tray position to occupy.
-        name : str
-            Human-readable identifier used to reference this module.
+            Physical tray slot number.
+
         module : object
-            The module instance (provides relative geometry).
-        x_offset, y_offset : float
-            Global coordinates (mm) of the module’s origin on the tray.
-        x_min, x_max, y_min, y_max : float, optional
-            Absolute global XY boundaries of the module (for footprint detection).
+            Module instance to place in the slot.
+            Must define self.module_id.
         """
-    
-        if name in self.name_to_slot:
-            raise ValueError(f"Module name '{name}' already exists on the tray.")
-    
-        if slot in self.slots:
-            raise ValueError(f"Slot {slot} already occupied by '{self.slots[slot]['name']}'.")
-    
-        self.slots[slot] = {
-            "name": name,
+
+        # --------------------------------------------------------------
+        # Ensure slot exists
+        # --------------------------------------------------------------
+
+        if slot not in self.slot_definitions:
+            raise ValueError(f"Slot {slot} does not exist on this tray.")
+
+        # --------------------------------------------------------------
+        # Ensure slot is unoccupied
+        # --------------------------------------------------------------
+
+        if slot in self.assigned_modules:
+            raise ValueError(f"Slot {slot} is already occupied.")
+
+        # --------------------------------------------------------------
+        # Determine module type
+        # --------------------------------------------------------------
+
+        module_id = module.module_id
+
+        # --------------------------------------------------------------
+        # Retrieve valid modules for this slot
+        # --------------------------------------------------------------
+
+        allowed_modules = self.slot_definitions[slot]["allowed_modules"]
+
+        # --------------------------------------------------------------
+        # Ensure module is valid for this slot
+        # --------------------------------------------------------------
+
+        if module_id not in allowed_modules:
+            raise ValueError(
+                f"Module '{module_id}' is not valid for slot {slot}."
+            )
+
+        # --------------------------------------------------------------
+        # Retrieve placement calibration
+        # --------------------------------------------------------------
+
+        calibration = allowed_modules[module_id]
+
+        # --------------------------------------------------------------
+        # Register module assignment
+        # --------------------------------------------------------------
+
+        self.assigned_modules[slot] = {
             "module": module,
-            "x_offset": float(x_offset),
-            "y_offset": float(y_offset),
-            "x_min": x_min,
-            "x_max": x_max,
-            "y_min": y_min,
-            "y_max": y_max,
+            "module_id": module_id,
+            **calibration
         }
-        self.name_to_slot[name] = slot
+
+    # ======================================================================
+    # Helper methods
+    # ======================================================================
+
+    def get_module(self, slot: int):
+        """
+        Return the module instance assigned to a slot.
+        """
+
+        if slot not in self.assigned_modules:
+            raise ValueError(f"No module assigned to slot {slot}.")
+
+        return self.assigned_modules[slot]["module"]
+
+    def get_offsets(self, slot: int):
+        """
+        Return global X/Y offsets for a slot.
+        """
+
+        if slot not in self.assigned_modules:
+            raise ValueError(f"No module assigned to slot {slot}.")
+
+        slot_info = self.assigned_modules[slot]
+
+        return (
+            slot_info["x_offset"],
+            slot_info["y_offset"]
+        )
 
     def get_module_at_xy(self, x: float, y: float):
         """
-        Determine which module (if any) the given XY coordinates are over.
-    
-        Parameters
-        ----------
-        x, y : float
-            Absolute XY coordinates of the probe.
-    
-        Returns
-        -------
-        str or None
-            Name of the module under the coordinates, or None if no module is under them.
+        Determine which assigned module footprint contains the given XY.
         """
-        for slot_info in self.slots.values():
-            # Use the XY boundaries stored in the tray, not in the module
-            x_min = slot_info["x_min"]
-            x_max = slot_info["x_max"]
-            y_min = slot_info["y_min"]
-            y_max = slot_info["y_max"]
-    
-            # Check if the probe is within this module's footprint
-            if x_min <= x <= x_max and y_min <= y <= y_max:
-                return slot_info["name"]
-    
-        # If no module matches
+
+        for slot_info in self.assigned_modules.values():
+
+            if (
+                slot_info["x_min"] <= x <= slot_info["x_max"]
+                and
+                slot_info["y_min"] <= y <= slot_info["y_max"]
+            ):
+                return slot_info["module_id"]
+
         return None
 
+    def list_assignments(self):
+        """
+        Return currently assigned modules.
+        """
 
-    def get_module(self, name: str):
-        """Return the module instance for this tray name."""
-        slot = self.name_to_slot[name]
-        return self.slots[slot]["module"]
-
-    def get_offsets(self, name: str):
-        """Return global X/Y offsets for a module by name."""
-        slot = self.name_to_slot[name]
-        d = self.slots[slot]
-        return d["x_offset"], d["y_offset"]
-
-    def get_slot(self, name: str):
-        """Return the tray slot number for this module."""
-        return self.name_to_slot[name]
-
-    def list_modules(self):
-        """Return a list of registered module names."""
-        return list(self.name_to_slot.keys())
+        return [
+            {
+                "slot": slot,
+                "module_id": info["module_id"]
+            }
+            for slot, info in self.assigned_modules.items()
+        ]
