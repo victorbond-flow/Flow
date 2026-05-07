@@ -178,6 +178,9 @@ class Rack_209(BaseRack):
             staggered=True,
         )
 
+        # Rack is given an identifier for the Tray
+        module_id = "rack_209"
+
         # Rack-specific Z limits
         self.z_limits = {
             "safe": 127.0,
@@ -223,6 +226,9 @@ class Rack_3dp(BaseRack):
             vial2vial_x = 0,
             vial2vial_y = 67,
         )
+
+        # Rack is given an identifier for the Tray
+        module_id = "rack_3dp"
 
         # Rack-specific Z limits
         self.z_limits = {
