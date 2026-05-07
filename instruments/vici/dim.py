@@ -1,6 +1,6 @@
 import serial
 from enum import Enum, auto
-from Core.logging import flow_logger as logger, log_call
+from core.logging import flow_logger as logger, log_call
 
 class DIMState(Enum):
     LOAD = auto()
@@ -18,9 +18,8 @@ class DIM:
         self.timeout = timeout
         self.ser = None
 
-        # --- Relative geometry (tray applies global offsets) ---
-        self.offset_x = 0.0
-        self.offset_y = 0.0
+        # DIM is given an identifier for the tray 
+        self.module_id = "dim"
 
         # --- Z limits ---
         self.z_limits = {

@@ -2,8 +2,8 @@ import time
 from enum import Enum, auto
 from dataclasses import dataclass
 
-from Instruments.VICI_valves.dim import DIMState
-from Instruments.VICI_valves.fsm import FSMState
+from instruments.vici.dim import DIMState
+from instruments.vici.fsm import FSMState
 
 
 class SegmentationPhase(Enum):

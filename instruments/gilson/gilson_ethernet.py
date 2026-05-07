@@ -1,7 +1,7 @@
 import socket
 import time
 import xml.etree.ElementTree as ET
-from Core.logging import flow_logger as logger, log_call
+from core.logging import flow_logger as logger, log_call
 
 #############################################################################################
 # gilson_ethernet.py

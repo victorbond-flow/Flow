@@ -5,7 +5,7 @@ from datetime import datetime
 import json
 import time
 
-from Core.experiment_validator import ExperimentValidator
+from core.experiment_validator import ExperimentValidator
 
 
 @dataclass

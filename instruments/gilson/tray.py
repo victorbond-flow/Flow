@@ -14,11 +14,11 @@ The Tray automatically determines global offsets.
 
 TODO
 ----
-- Add DIM calibration(s)
 - Potentially move slot definitions into a config file later
 """
 
-from .rack import Rack_209, Rack_3dp
+from instruments.gilson.rack import Rack_209, Rack_3dp
+from instruments.vici.dim import DIM
 
 
 class Tray:
@@ -72,13 +72,7 @@ class Tray:
 
                         "y_min": 2,
                         "y_max": 292,
-                    },
-
-                    # Example:
-                    #
-                    # "rack_3dp": {
-                    #     ...
-                    # }
+                    }
                 }
             },
 
@@ -104,14 +98,24 @@ class Tray:
             },
 
             # ==============================================================
-            # SLOT 3
+            # SLOT 3 (DIM ONLY)
             # ==============================================================
 
             3: {
 
                 "allowed_modules": {
 
-                    # Future DIM placement(s)
+                    "dim": {
+
+                        "x_offset": 9,
+                        "y_offset": 104,
+
+                        "x_min": 0,
+                        "x_max": 25,
+
+                        "y_min": 75,
+                        "y_max": 120,
+                    }
                 }
             }
         }

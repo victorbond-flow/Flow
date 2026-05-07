@@ -1,6 +1,6 @@
 import numpy as np
 from .vial import Vial
-from Core.logging import flow_logger as logger, log_call
+from core.logging import flow_logger as logger, log_call
 
 # ==========================================================================================
 # rack.py
