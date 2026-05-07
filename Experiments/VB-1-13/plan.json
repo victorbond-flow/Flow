@@ -1,29 +1,131 @@
 {
   "experiment_id": "VB-1-13",
-  "description": "Benzyl alcohol slug reproducibility and leaching baseline using inline HPLC sampling",
-
+  "description": "10x repeated 100 uL BnOH_stock slug in MeCN",
+  "created_at": "2026-05-06T15:03:07",
   "global_conditions": {
-    "stock_solution": "0.0811 M benzyl alcohol in MeCN",
-    "slug_volume_uL": 100,
-    "air_gap_uL": 20,
-    "flow_system": "RSG + DIM segmented flow platform"
+    "flowrate_ul_min": 1000.0,
+    "gas_prime_s": 20.0
   },
-
   "slugs": [
     {
-      "slug_id": "VB-1-13-slug1",
-      "volume_uL": 100,
-      "air_gap_uL": 20
+      "slug_id": "block_1_slug_1",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0,
+          "component": "BnOH_stock",
+          "block_id": "block_1"
+        }
+      ]
     },
     {
-      "slug_id": "VB-1-13-slug2",
-      "volume_uL": 100,
-      "air_gap_uL": 20
+      "slug_id": "block_1_slug_2",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0,
+          "component": "BnOH_stock",
+          "block_id": "block_1"
+        }
+      ]
     },
     {
-      "slug_id": "VB-1-13-slug3",
-      "volume_uL": 100,
-      "air_gap_uL": 20
+      "slug_id": "block_1_slug_3",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0,
+          "component": "BnOH_stock",
+          "block_id": "block_1"
+        }
+      ]
+    },
+    {
+      "slug_id": "block_1_slug_4",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0,
+          "component": "BnOH_stock",
+          "block_id": "block_1"
+        }
+      ]
+    },
+    {
+      "slug_id": "block_1_slug_5",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0,
+          "component": "BnOH_stock",
+          "block_id": "block_1"
+        }
+      ]
+    },
+    {
+      "slug_id": "block_1_slug_6",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0,
+          "component": "BnOH_stock",
+          "block_id": "block_1"
+        }
+      ]
+    },
+    {
+      "slug_id": "block_1_slug_7",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0,
+          "component": "BnOH_stock",
+          "block_id": "block_1"
+        }
+      ]
+    },
+    {
+      "slug_id": "block_1_slug_8",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0,
+          "component": "BnOH_stock",
+          "block_id": "block_1"
+        }
+      ]
+    },
+    {
+      "slug_id": "block_1_slug_9",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0,
+          "component": "BnOH_stock",
+          "block_id": "block_1"
+        }
+      ]
+    },
+    {
+      "slug_id": "block_1_slug_10",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0,
+          "component": "BnOH_stock",
+          "block_id": "block_1"
+        }
+      ]
     }
   ]
 }

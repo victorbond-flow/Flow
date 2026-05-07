@@ -179,6 +179,19 @@ class ExperimentCompiler:
     def _expand_block(self, block, block_index, experiment_id):
         block_id = block.get("block_id", f"block_{block_index + 1}")
     
+        # ----------------------------
+        # INTENT-STYLE BLOCK (NEW)
+        # ----------------------------
+        components = block.get("components")
+        ratios = block.get("ratios")
+        total_volume = block.get("total_volume_uL")
+    
+        if components is not None and ratios is not None:
+            return self._expand_ratio_block(block, block_id)
+    
+        # ----------------------------
+        # OLD SLUG-STYLE BLOCK (LEGACY)
+        # ----------------------------
         slug_definitions = block.get("slugs")
     
         if slug_definitions is None:
@@ -210,8 +223,8 @@ class ExperimentCompiler:
                         volume_uL=float(volume_uL),
                         component=component_name,
                         block_id=block_id,
-                        slug_order=i + 1,            # compiler is authority
-                        component_order=j,           # compiler is authority
+                        slug_order=i + 1,
+                        component_order=j,
                     )
                 )
     
@@ -221,42 +234,48 @@ class ExperimentCompiler:
         components = block.get("components", [])
         ratios = block.get("ratios", [])
         total_volume = float(block.get("total_volume_uL", 0))
-
+    
         if not components:
             raise ValueError(f"{block_id} must define components")
-
+    
         if total_volume <= 0:
             raise ValueError(f"{block_id}: total_volume_uL must be > 0")
-
-        slugs = []
+    
+        expanded_rows = []
+    
         for i, ratio in enumerate(ratios, start=1):
+    
             if len(ratio) != len(components):
                 raise ValueError(
                     f"{block_id} ratio {ratio} does not match components {components}"
                 )
-
-            ratio_total = sum(float(value) for value in ratio)
+    
+            ratio_total = sum(float(v) for v in ratio)
             if ratio_total <= 0:
                 raise ValueError(f"{block_id} ratio total must be > 0")
-
-            composition = []
-            for component, ratio_value in zip(components, ratio):
+    
+            slug_id = f"{block_id}_slug_{i}"
+    
+            for j, (component, ratio_value) in enumerate(zip(components, ratio), start=1):
+    
                 volume = (float(ratio_value) / ratio_total) * total_volume
-                composition.append(
-                    {
-                        "component": component,
-                        "volume_uL": volume,
-                    }
+    
+                resolved = self._resolve_component(component)
+    
+                expanded_rows.append(
+                    CompiledRow(
+                        slug_id=slug_id,
+                        module=resolved["module"],
+                        vial=resolved["vial"],
+                        volume_uL=float(volume),
+                        component=component,
+                        block_id=block_id,
+                        slug_order=i,
+                        component_order=j,
+                    )
                 )
-
-            slugs.append(
-                {
-                    "slug_id": f"{block_id}_slug_{i}",
-                    "composition": composition,
-                }
-            )
-
-        return slugs
+    
+        return expanded_rows
 
     def _normalise_component(self, item):
         if isinstance(item, dict):

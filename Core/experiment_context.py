@@ -263,6 +263,111 @@ class ExperimentManager:
         print("[SYSTEM] RSG READY")
 
     # ------------------------------------------------------------------
+    # Preview Execution (full trace)
+    # ------------------------------------------------------------------
+    def preview_execution(
+    self,
+    seg,
+    gas_prime_s=None,
+    flowrate_ul_min=None,
+    air_gap_between=None,
+    wash_policy="none",
+):
+        """
+        Dry-run execution trace of the experiment.
+    
+        Returns a list of steps representing EXACT execution order.
+        Does NOT send commands to hardware.
+        """
+    
+        if self.context is None:
+            raise Exception("No experiment loaded")
+    
+        defaults = self.context.plan.get("global_conditions", {})
+    
+        if gas_prime_s is None:
+            gas_prime_s = defaults["gas_prime_s"]
+    
+        if flowrate_ul_min is None:
+            flowrate_ul_min = defaults["flowrate_ul_min"]
+    
+        if air_gap_between is None:
+            air_gap_between = defaults.get("air_gap_between_uL", 5.0)
+    
+        # ⚠️ MUST match RSG behaviour
+        POST_AIR_GAP = 5.0
+    
+        slugs = self.context.plan["slugs"]
+    
+        trace = []
+    
+        for i, slug in enumerate(slugs):
+            slug_id = slug.get("slug_id", f"slug_{i+1}")
+    
+            trace.append(f"\n--- SLUG {i+1}: {slug_id} ---")
+    
+            if i == 0:
+                trace.append(f"seg.prime_gas_path({gas_prime_s}s)")
+            else:
+                trace.append("seg.reset_for_next_slug()")
+    
+            trace.append("seg.create_slug(...)")
+            trace.append("  → RSG.build_rxn_segment()")
+    
+            # --------------------------------------------------
+            # Handle both possible formats
+            # --------------------------------------------------
+            components = (
+                slug.get("reaction_plan")
+                or slug.get("components")
+                or []
+            )
+    
+            liquid_volume = 0.0
+    
+            for comp in components:
+                vol = comp["volume_uL"]
+                liquid_volume += vol
+    
+                trace.append(
+                    f"    → pickup {vol} uL "
+                    f"from {comp['module']} vial {comp['vial']}"
+                )
+    
+            n_components = len(components)
+    
+            between_gap_total = (
+                air_gap_between * (n_components - 1)
+                if n_components > 1 else 0.0
+            )
+    
+            if n_components > 1:
+                trace.append(
+                    f"    → internal air gaps: {air_gap_between} uL × {n_components - 1}"
+                )
+    
+            trace.append(f"    → post-pickup air gap ({POST_AIR_GAP} uL)")
+    
+            total_volume = liquid_volume + between_gap_total + POST_AIR_GAP
+    
+            # --------------------------------------------------
+            # CRITICAL LINE (this is what you wanted)
+            # --------------------------------------------------
+            trace.append(
+                f"  → dispense {total_volume:.1f} uL to DIM "
+                f"({liquid_volume:.1f} liquid + "
+                f"{between_gap_total:.1f} between + "
+                f"{POST_AIR_GAP:.1f} post-air)"
+            )
+    
+            trace.append("  → switch DIM to inject")
+            trace.append(f"  → start carrier flow ({flowrate_ul_min} uL/min)")
+    
+            if wash_policy == "needle":
+                trace.append("  → RSG.needle_wash()")
+    
+        return trace
+    # ------------------------------------------------------------------
     # Execute
     # ------------------------------------------------------------------
 
@@ -272,6 +377,7 @@ class ExperimentManager:
         gas_prime_s=None,
         flowrate_ul_min=None,
         air_gap_between=None,
+        wash_policy: str = "needle_only",
     ):
         if self.context is None:
             raise Exception("No experiment loaded")
@@ -280,41 +386,41 @@ class ExperimentManager:
             raise Exception(
                 f"Experiment must be armed. Current state: {self.context.state}"
             )
-
+    
         if self.platform_state != self.PLATFORM_READY:
             raise RuntimeError(
                 "Platform not ready. "
                 f"Reactor={self.reactor_state}, RSG={self.rsg_state}"
             )
-
+    
         self._validate_loaded_plan()
-
+    
         self.context.state = "running"
         self.system_state = self.SYSTEM_RUNNING
-
+    
         results = []
-
+    
         try:
             defaults = self.context.plan.get("global_conditions", {})
-
+    
             if gas_prime_s is None:
                 gas_prime_s = defaults["gas_prime_s"]
-
+    
             if flowrate_ul_min is None:
                 flowrate_ul_min = defaults["flowrate_ul_min"]
-
+    
             if air_gap_between is None:
                 air_gap_between = defaults.get("air_gap_between_uL", 5.0)
-
+    
             slugs = self.context.plan["slugs"]
-
+    
             print(f"[EXPERIMENT] Executing {self.context.experiment_id}")
-
+    
             for i in range(self.context.slug_index, len(slugs)):
-
+    
                 slug = slugs[i]
                 slug_id = slug.get("slug_id", f"slug_{i + 1}")
-
+    
                 self._append_event(
                     "slug_started",
                     {
@@ -323,20 +429,36 @@ class ExperimentManager:
                         "slug_id": slug_id,
                     },
                 )
-
+    
                 try:
                     # First slug vs subsequent slugs
                     if i == 0:
                         seg.prime_gas_path(duration_s=gas_prime_s)
                     else:
                         seg.reset_for_next_slug()
-
+    
+                        # -----------------------------
+                        # WASH POLICY (NEW)
+                        # -----------------------------
+                        if wash_policy == "needle_only":
+                            seg.rsg.needle_wash()
+    
+                        elif wash_policy == "full":
+                            seg.rsg.between_slug_wash()
+    
+                        elif wash_policy == "none":
+                            pass
+    
+                        else:
+                            raise ValueError(f"Unknown wash_policy: {wash_policy}")
+    
                     result = seg.create_slug(
                         slug_plan=slug,
                         gas_prime_s=gas_prime_s,
                         flowrate_ul_min=flowrate_ul_min,
                         air_gap_between=air_gap_between,
                     )
+    
                 except Exception as exc:
                     self._append_event(
                         "slug_failed",
@@ -349,11 +471,11 @@ class ExperimentManager:
                         },
                     )
                     raise
-
+    
                 results.append(result)
-
+    
                 self.context.slug_index += 1
-
+    
                 self._append_event(
                     "slug_created",
                     {
@@ -365,24 +487,24 @@ class ExperimentManager:
                         "launched": result["launched"],
                     },
                 )
-
+    
                 print(
                     f"[EXPERIMENT] Completed {result['slug_id']} "
                     f"({result['dispensed_volume_ul']} uL)"
                 )
-
+    
             self.context.state = "completed"
             self.system_state = self.SYSTEM_UNKNOWN
-
+    
             self._append_event(
                 "experiment_completed",
                 {"experiment_id": self.context.experiment_id},
             )
-
+    
             print(f"[EXPERIMENT] {self.context.experiment_id} completed")
-
+    
             return results
-
+    
         except KeyboardInterrupt:
             self.context.state = "aborted"
             self.system_state = self.SYSTEM_FAULT
@@ -396,7 +518,7 @@ class ExperimentManager:
             self._abort_seg(seg)
             print(f"[EXPERIMENT] {self.context.experiment_id} aborted by user")
             raise
-
+    
         except Exception as exc:
             self.context.state = "failed"
             self.system_state = self.SYSTEM_FAULT

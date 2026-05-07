@@ -137,16 +137,17 @@ class RSG:
             raise
 
     def pickup_from_vial(
-        self,
-        module_name: str,
-        vial_pos: int,
-        volume: float,
-        rate: float = 0.05,
-    ):
+    self,
+    module_name: str,
+    vial_pos: int,
+    volume: float,
+    rate: float = 0.05,
+):
         print(f"[Pickup] {volume}uL from {module_name} vial {vial_pos} @ {rate}mL/min")
-
+    
         self.gilson.go_into_vial(module_name, vial_pos)
         self.pump.withdraw_volume(volume, rate)
+    
         wait_time = (volume / (rate * 1000)) * 60
         time.sleep(wait_time + 1)
 
@@ -265,34 +266,50 @@ class RSG:
     # ------------------------------------------------------------------
     # Higher-level sequences
     # ------------------------------------------------------------------
-    def assemble_reaction(self, reaction_plan, air_gap_between: float = 5.0):
+    def assemble_reaction(
+    self,
+    reaction_plan,
+    air_gap_between: float = 5.0,
+    post_pickup_air_gap: float = 5.0,
+):
         self._require_idle()
         self.state = RSGState.RUNNING
-
+    
         try:
             reaction_plan = self._normalise_reaction_plan(reaction_plan)
+    
             total_volume = 0.0
-
+            n = len(reaction_plan)
+    
             for i, component in enumerate(reaction_plan):
+    
+                # 1. pickup component
                 self.pickup_from_vial(
                     module_name=component["module"],
                     vial_pos=component["vial"],
                     volume=component["volume_ul"],
                     rate=component["rate_ml_min"],
                 )
-
+    
                 total_volume += component["volume_ul"]
-
-                if air_gap_between > 0 and i < len(reaction_plan) - 1:
+    
+                # 2. between-component air gap (only if NOT last component)
+                if i < n - 1 and air_gap_between > 0:
                     self.take_air_gap(air_gap_between)
                     total_volume += air_gap_between
-
+    
+            # 3. post-pickup air gap (ONLY once per slug, after final component)
+            if post_pickup_air_gap > 0:
+                self.take_air_gap(post_pickup_air_gap)
+                total_volume += post_pickup_air_gap
+    
             self.state = RSGState.IDLE
-
+    
             return {
                 "total_volume_ul": total_volume,
-                "num_components": len(reaction_plan),
+                "num_components": n,
             }
+    
         except Exception:
             self.state = RSGState.ERROR
             raise

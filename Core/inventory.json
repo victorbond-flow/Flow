@@ -4,8 +4,17 @@
     "vial": 1,
     "name": "MeCN",
     "concentration_M": null,
-    "solvent": null,
-    "current_volume_uL": 99400.0,
-    "min_safe_volume_uL": 10000
+    "solvent": "MeCN",
+    "current_volume_uL": 80000,
+    "min_safe_volume_uL": 20000
+  },
+  "rack1:1": {
+    "module": "rack1",
+    "vial": 1,
+    "name": "BnOH_stock",
+    "concentration_M": 0.0811,
+    "solvent": "MeCN",
+    "current_volume_uL": 1500,
+    "min_safe_volume_uL": 200
   }
 }
