@@ -179,7 +179,7 @@ class Rack_209(BaseRack):
         )
 
         # Rack is given an identifier for the Tray
-        module_id = "rack_209"
+        self.module_id = "rack_209"
 
         # Rack-specific Z limits
         self.z_limits = {
@@ -228,7 +228,7 @@ class Rack_3dp(BaseRack):
         )
 
         # Rack is given an identifier for the Tray
-        module_id = "rack_3dp"
+        self.module_id = "rack_3dp"
 
         # Rack-specific Z limits
         self.z_limits = {
