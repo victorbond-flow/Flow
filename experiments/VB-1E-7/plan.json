@@ -1,0 +1,23 @@
+{
+  "experiment_id": "VB-1E-7",
+  "description": "Single 100uL MeCN slug for VB-1E-7",
+  "created_at": "2026-05-08T12:07:37",
+  "global_conditions": {
+    "flowrate_ul_min": 1000.0,
+    "gas_prime_s": 20.0
+  },
+  "slugs": [
+    {
+      "slug_id": "block_1_slug_1",
+      "reaction_plan": [
+        {
+          "module": "rack2",
+          "vial": 1,
+          "volume_uL": 100.0,
+          "component": "MeCN",
+          "block_id": "block_1"
+        }
+      ]
+    }
+  ]
+}

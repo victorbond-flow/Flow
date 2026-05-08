@@ -273,98 +273,66 @@ class ExperimentManager:
     air_gap_between=None,
     wash_policy="none",
 ):
-        """
-        Dry-run execution trace of the experiment.
-    
-        Returns a list of steps representing EXACT execution order.
-        Does NOT send commands to hardware.
-        """
-    
+
         if self.context is None:
             raise Exception("No experiment loaded")
     
         defaults = self.context.plan.get("global_conditions", {})
     
-        if gas_prime_s is None:
-            gas_prime_s = defaults["gas_prime_s"]
-    
-        if flowrate_ul_min is None:
-            flowrate_ul_min = defaults["flowrate_ul_min"]
-    
-        if air_gap_between is None:
-            air_gap_between = defaults.get("air_gap_between_uL", 5.0)
-    
-        # ⚠️ MUST match RSG behaviour
-        POST_AIR_GAP = 5.0
+        gas_prime_s = gas_prime_s or defaults["gas_prime_s"]
+        flowrate_ul_min = flowrate_ul_min or defaults["flowrate_ul_min"]
+        air_gap_between = air_gap_between or defaults.get("air_gap_between_uL", 5.0)
     
         slugs = self.context.plan["slugs"]
-    
         trace = []
     
         for i, slug in enumerate(slugs):
-            slug_id = slug.get("slug_id", f"slug_{i+1}")
     
+            slug_id = slug.get("slug_id", f"slug_{i+1}")
             trace.append(f"\n--- SLUG {i+1}: {slug_id} ---")
+    
+            # ------------------------------------------------------------
+            # EXACT MIRROR OF execute_experiment
+            # ------------------------------------------------------------
     
             if i == 0:
                 trace.append(f"seg.prime_gas_path({gas_prime_s}s)")
             else:
                 trace.append("seg.reset_for_next_slug()")
     
+                if wash_policy == "needle":
+                    trace.append("seg.rsg.needle_wash()")
+                elif wash_policy == "full":
+                    trace.append("seg.rsg.between_slug_wash()")
+    
             trace.append("seg.create_slug(...)")
-            trace.append("  → RSG.build_rxn_segment()")
     
-            # --------------------------------------------------
-            # Handle both possible formats
-            # --------------------------------------------------
-            components = (
-                slug.get("reaction_plan")
-                or slug.get("components")
-                or []
-            )
+            # ------------------------------------------------------------
+            # NOW EXPAND create_slug PROPERLY (NOT STRING GUESSING)
+            # ------------------------------------------------------------
     
-            liquid_volume = 0.0
+            trace.append("  → prepare_slug()")
+            trace.append("    → DIM.load()")
+            trace.append("    → RSG.build_rxn_segment()")
     
-            for comp in components:
-                vol = comp["volume_uL"]
-                liquid_volume += vol
-    
+            for comp in slug.get("reaction_plan", []):
                 trace.append(
-                    f"    → pickup {vol} uL "
+                    f"      → pickup {comp['volume_uL']} uL "
                     f"from {comp['module']} vial {comp['vial']}"
                 )
     
-            n_components = len(components)
+            trace.append(f"    → post-pickup air gap ({air_gap_between} uL)")
+            trace.append("    → dispense to DIM")
     
-            between_gap_total = (
-                air_gap_between * (n_components - 1)
-                if n_components > 1 else 0.0
-            )
+            trace.append("  → launch_segment()")
     
-            if n_components > 1:
-                trace.append(
-                    f"    → internal air gaps: {air_gap_between} uL × {n_components - 1}"
-                )
+            # THIS IS THE CRITICAL PART (your bug lives here)
+            trace.append("    → FSM.carrier_to_dim()")
+            trace.append("    → DIM.inject()")
+            trace.append(f"    → carrier.set_flow_rate({flowrate_ul_min})")
+            trace.append("    → carrier.start_flow()")
     
-            trace.append(f"    → post-pickup air gap ({POST_AIR_GAP} uL)")
-    
-            total_volume = liquid_volume + between_gap_total + POST_AIR_GAP
-    
-            # --------------------------------------------------
-            # CRITICAL LINE (this is what you wanted)
-            # --------------------------------------------------
-            trace.append(
-                f"  → dispense {total_volume:.1f} uL to DIM "
-                f"({liquid_volume:.1f} liquid + "
-                f"{between_gap_total:.1f} between + "
-                f"{POST_AIR_GAP:.1f} post-air)"
-            )
-    
-            trace.append("  → switch DIM to inject")
-            trace.append(f"  → start carrier flow ({flowrate_ul_min} uL/min)")
-    
-            if wash_policy == "needle":
-                trace.append("  → RSG.needle_wash()")
+            trace.append("    → phase transition: LOOP_LOADED → RUNNING")
     
         return trace
     # ------------------------------------------------------------------

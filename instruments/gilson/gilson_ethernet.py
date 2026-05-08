@@ -301,7 +301,7 @@ class GilsonEthernet:
         # --- Determine current module based on XY + Z ---
         module = self.tray.get_module_at_xy(self.current_x, self.current_y)
         if module is not None and self.current_z < module.z_limits["safe"]:
-            self.current_module = module.name
+            self.current_module = module.module_id
         else:
             self.current_module = None
 
@@ -381,7 +381,8 @@ class GilsonEthernet:
         # --- Update current_module based on current XY ---
         if self.tray is not None:
             current_module_name = self.tray.get_module_at_xy(self.current_x, self.current_y)
-            self.current_module = current_module_name
+            slot = self.resolve_slot(module_name)
+            self.current_module = self.tray.assigned_modules[slot]["module_id"]
         
         # --- Enforce Z safety before horizontal move ---
         self.ensure_z_safe(destination_module=destination_module)
@@ -413,7 +414,7 @@ class GilsonEthernet:
         # --- Update current_module based on current XY ---
         if self.tray is not None:
             current_module_name = self.tray.get_module_at_xy(self.current_x, self.current_y)
-            self.current_module = current_module_name
+            self.current_module = module_name
         
         # --- Enforce Z safety before horizontal move ---
         self.ensure_z_safe(destination_module=destination_module)
@@ -447,7 +448,8 @@ class GilsonEthernet:
         # 1. Choose Z limit set (module-specific or global)
         # ----------------------------------------------------------
         if module_name is not None:
-            rack = self.tray.get_module(module_name)
+            slot = self.resolve_slot(module_name)
+            rack = self.tray.get_module(slot)
             z_limits = rack.z_limits
         else:
             z_limits = {
@@ -493,7 +495,7 @@ class GilsonEthernet:
             )
     
             if module_name_at_xy is not None:
-                module = self.tray.get_module(module_name_at_xy)
+                module = module_name_at_xy
                 if self.current_z < module.z_limits["safe"]:
                     self.current_module = module_name_at_xy
                 else:
@@ -524,7 +526,7 @@ class GilsonEthernet:
         # --- Update current_module based on current XY ---
         if self.tray is not None:
             current_module_name = self.tray.get_module_at_xy(self.current_x, self.current_y)
-            self.current_module = current_module_name
+            self.current_module = module_name
         
         # --- Enforce Z safety before horizontal move ---
         self.ensure_z_safe(destination_module=destination_module)
@@ -599,8 +601,10 @@ class GilsonEthernet:
         # ----------------------------------------------------------
         # 1. Resolve module + coordinates
         # ----------------------------------------------------------
-        rack = self.tray.get_module(module_name)        # fail-fast if unknown
-        off_x, off_y = self.tray.get_offsets(module_name)
+        slot = self.resolve_slot(module_name)
+
+        rack = self.tray.get_module(slot)
+        off_x, off_y = self.tray.get_offsets(slot)
         x_rel, y_rel = rack.get_vial_coordinates(vial_pos)
     
         x = off_x + x_rel
@@ -637,8 +641,10 @@ class GilsonEthernet:
         """
     
         # --- resolve rack + coordinates ---
-        rack = self.tray.get_module(module_name)
-        off_x, off_y = self.tray.get_offsets(module_name)
+        slot = self.resolve_slot(module_name)
+
+        rack = self.tray.get_module(slot)
+        off_x, off_y = self.tray.get_offsets(slot)
         x_rel, y_rel = rack.get_vial_coordinates(vial_pos)
     
         x_abs = off_x + x_rel
@@ -664,7 +670,8 @@ class GilsonEthernet:
         finally:
             self.allow_in_vial = False
 
-        self.current_module = module_name
+        slot = self.resolve_slot(module_name)
+        self.current_module = self.tray.assigned_modules[slot]["module_id"]
     
         return x_abs, y_abs, z_target
 
@@ -683,7 +690,8 @@ class GilsonEthernet:
         # ----------------------------------------------------------
         # 1. Resolve module + coordinates
         # ----------------------------------------------------------
-        off_x, off_y = self.tray.get_offsets(module_name)
+        slot = self.resolve_slot("dim")
+        off_x, off_y = self.tray.get_offsets(slot)
     
         x = off_x
         y = off_y
@@ -721,7 +729,8 @@ class GilsonEthernet:
         module_name = "dim"
         dim = self.tray.get_module(module_name)
     
-        off_x, off_y = self.tray.get_offsets(module_name)
+        slot = self.resolve_slot("dim")
+        off_x, off_y = self.tray.get_offsets(slot)
         x_abs = off_x
         y_abs = off_y
         z_target = dim.z_limits["working_min"]
@@ -754,7 +763,8 @@ class GilsonEthernet:
         finally:
             self.allow_in_vial = False
     
-        self.current_module = module_name
+        slot = self.resolve_slot(module_name)
+        self.current_module = self.tray.assigned_modules[slot]["module_id"]
     
         return x_abs, y_abs, z_target
 
@@ -779,6 +789,30 @@ class GilsonEthernet:
         self.current_module = None
     
         return z_safe
+
+    def resolve_slot(self, name):
+        """
+        Resolve ANY identifier to a tray slot:
+        - alias ("rack2")
+        - module_id ("rack_3dp")
+        - slot (2)
+        """
+    
+        # 1. direct slot
+        if isinstance(name, int):
+            return name
+    
+        # 2. alias match
+        for slot, info in self.tray.assigned_modules.items():
+            if info.get("alias") == name:
+                return slot
+    
+        # 3. module_id match
+        for slot, info in self.tray.assigned_modules.items():
+            if info.get("module_id") == name:
+                return slot
+    
+        raise ValueError(f"Unknown module identifier: {name}")
 
 
     def close(self):

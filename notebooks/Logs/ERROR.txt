@@ -75,3 +75,23 @@
 [29/04/26 15:52:19] | ERROR | EXP:None | EXCEPTION in connect after 0.001s: could not open port 'COM10': PermissionError(13, 'Access is denied.', None, 5)
 [29/04/26 15:54:23] | ERROR | EXP:None | EXCEPTION in connect after 0.000s: could not open port 'COM2': PermissionError(13, 'Access is denied.', None, 5)
 [29/04/26 15:55:06] | ERROR | EXP:None | EXCEPTION in connect after 0.001s: could not open port 'COM4': PermissionError(13, 'Access is denied.', None, 5)
+[08/05/26 11:09:23] | ERROR | EXP:VB-1E-7 | EXCEPTION in go_to_pos after 0.001s: Serial port not open
+[08/05/26 11:12:36] | ERROR | EXP:VB-1E-7 | EXCEPTION in go_to_pos after 0.001s: Serial port not open
+[08/05/26 11:49:21] | ERROR | EXP:VB-1E-7 | EXCEPTION in move_z after 0.552s: No module assigned to slot <instruments.gilson.rack.Rack_3dp object at 0x0000014AB9808610>.
+[08/05/26 11:59:54] | ERROR | EXP:VB-1E-7 | EXCEPTION in go_to_vial after 0.001s: No module assigned to slot rack2.
+[08/05/26 12:20:20] | ERROR | EXP:VB-1E-7 | EXCEPTION in go_into_vial after 0.001s: Module 'rack2' not assigned to any slot.
+[08/05/26 12:28:41] | ERROR | EXP:VB-1E-7 | EXCEPTION in go_into_vial after 0.001s: Module 'rack2' not assigned to any slot.
+[08/05/26 12:28:50] | ERROR | EXP:VB-1E-7 | EXCEPTION in go_into_vial after 0.001s: Module 'rack2' not assigned to any slot.
+[08/05/26 12:31:22] | ERROR | EXP:VB-1E-7 | EXCEPTION in go_into_vial after 0.000s: Module 'rack2' not assigned to any slot.
+[08/05/26 12:37:50] | ERROR | EXP:VB-1E-7 | EXCEPTION in move_xy after 0.002s: No module assigned with id <instruments.gilson.rack.Rack_3dp object at 0x0000027FE0B46C90>
+[08/05/26 12:37:50] | ERROR | EXP:VB-1E-7 | EXCEPTION in go_to_vial after 0.003s: No module assigned with id <instruments.gilson.rack.Rack_3dp object at 0x0000027FE0B46C90>
+[08/05/26 12:37:50] | ERROR | EXP:VB-1E-7 | EXCEPTION in go_into_vial after 0.008s: No module assigned with id <instruments.gilson.rack.Rack_3dp object at 0x0000027FE0B46C90>
+[08/05/26 12:49:07] | ERROR | EXP:VB-1E-7 | EXCEPTION in go_into_vial after 0.001s: Unknown module identifier: rack2
+[08/05/26 12:55:16] | ERROR | EXP:VB-1E-7 | EXCEPTION in go_to_vial after 0.000s: 'Tray' object has no attribute 'tray'
+[08/05/26 12:55:16] | ERROR | EXP:VB-1E-7 | EXCEPTION in go_into_vial after 0.001s: 'Tray' object has no attribute 'tray'
+[08/05/26 12:58:04] | ERROR | EXP:VB-1E-7 | EXCEPTION in move_xy after 0.001s: No module assigned with id rack2
+[08/05/26 12:58:04] | ERROR | EXP:VB-1E-7 | EXCEPTION in go_to_vial after 0.002s: No module assigned with id rack2
+[08/05/26 12:58:04] | ERROR | EXP:VB-1E-7 | EXCEPTION in go_into_vial after 0.003s: No module assigned with id rack2
+[08/05/26 13:00:40] | ERROR | EXP:VB-1E-7 | EXCEPTION in move_xy after 0.001s: Unknown module identifier: <instruments.gilson.rack.Rack_3dp object at 0x000001A9769E0890>. Known aliases: ['rack1', 'rack2', 'dim']
+[08/05/26 13:00:40] | ERROR | EXP:VB-1E-7 | EXCEPTION in go_to_vial after 0.001s: Unknown module identifier: <instruments.gilson.rack.Rack_3dp object at 0x000001A9769E0890>. Known aliases: ['rack1', 'rack2', 'dim']
+[08/05/26 13:00:40] | ERROR | EXP:VB-1E-7 | EXCEPTION in go_into_vial after 0.002s: Unknown module identifier: <instruments.gilson.rack.Rack_3dp object at 0x000001A9769E0890>. Known aliases: ['rack1', 'rack2', 'dim']

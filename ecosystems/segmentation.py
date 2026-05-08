@@ -63,8 +63,9 @@ class Segmentation:
                 self.fsm.carrier_to_dim()
             if self.dim is not None:
                 self.dim.inject()
-        except Exception:
-            print("[Segmentation] Hardware init skipped (likely simulation mode)")
+        except Exception as exc:
+            print(f"[Segmentation] Hardware init failed: {exc}")
+            raise
 
     # ------------------------------------------------------------------
     # Solvent flush / conditioning
