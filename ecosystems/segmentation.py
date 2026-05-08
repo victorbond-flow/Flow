@@ -158,11 +158,11 @@ class Segmentation:
     def launch_segment(self, flowrate_ul_min):
         self._require_phase(SegmentationPhase.LOOP_LOADED)
 
-        self.dim.inject()
-        self.state.dim = DIMState.INJECT
-
         self.fsm.carrier_to_dim()
         self.state.fsm = FSMState.CARRIER_TO_DIM
+
+        self.dim.inject()
+        self.state.dim = DIMState.INJECT
 
         self.carrier.set_flow_rate(flowrate_ul_min)
         self.carrier.start_flow()
