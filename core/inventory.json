@@ -5,7 +5,7 @@
     "name": "MeCN",
     "concentration_M": null,
     "solvent": "MeCN",
-    "current_volume_uL": 80000,
+    "current_volume_uL": 40000,
     "min_safe_volume_uL": 20000
   },
   "rack1:1": {
