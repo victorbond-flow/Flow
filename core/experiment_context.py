@@ -370,6 +370,16 @@ class ExperimentManager:
     
         try:
             defaults = self.context.plan.get("global_conditions", {})
+
+            dispense_rate_ml_min = defaults.get(
+                "dispense_rate_ml_min",
+                0.5,
+            )
+
+            withdraw_rate_ml_min = defaults.get(
+                "withdraw_rate_ml_min",
+                None,
+            )
     
             if gas_prime_s is None:
                 gas_prime_s = defaults["gas_prime_s"]
@@ -425,6 +435,8 @@ class ExperimentManager:
                         gas_prime_s=gas_prime_s,
                         flowrate_ul_min=flowrate_ul_min,
                         air_gap_between=air_gap_between,
+                        dispense_rate=dispense_rate_ml_min,
+                        withdraw_rate=withdraw_rate_ml_min,
                     )
     
                 except Exception as exc:

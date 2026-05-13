@@ -132,7 +132,7 @@ class Segmentation:
     # Load reaction segment into loop
     # ------------------------------------------------------------------
 
-    def prepare_slug(self, slug_plan, air_gap_between=5.0):
+    def prepare_slug(self, slug_plan, air_gap_between=5.0, dispense_rate = 0.5, withdraw_rate = None,):
         """
         Build liquid reaction slug and load into DIM loop.
         """
@@ -146,6 +146,8 @@ class Segmentation:
         result = self.rsg.build_rxn_segment(
             slug_plan=slug_plan,
             air_gap_between=air_gap_between,
+            withdraw_rate=withdraw_rate,
+            dispense_rate=dispense_rate,
         )
 
         self._set_phase(SegmentationPhase.LOOP_LOADED)
@@ -206,6 +208,8 @@ class Segmentation:
     gas_prime_s,
     flowrate_ul_min,
     air_gap_between=5.0,
+    dispense_rate = 0.5,
+    withdraw_rate = None
 ):
         """
         Executes a single slug cycle.
@@ -226,6 +230,8 @@ class Segmentation:
         result = self.prepare_slug(
             slug_plan=slug_plan,
             air_gap_between=air_gap_between,
+            withdraw_rate=withdraw_rate,
+            dispense_rate=dispense_rate,
         )
 
         self.launch_segment(flowrate_ul_min=flowrate_ul_min)

@@ -21,6 +21,8 @@ class ExperimentBuilder:
     REQUIRED_GLOBAL_CONDITIONS = {
         "flowrate_ul_min": float,
         "gas_prime_s": float,
+        "withdraw_rate_ml_min": float,
+        "dispense_rate_ml_min": float,
     }
 
     def __init__(self, experiments_root=None, inventory=None):

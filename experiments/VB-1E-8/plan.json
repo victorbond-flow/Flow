@@ -1,10 +1,12 @@
 {
   "experiment_id": "VB-1E-8",
-  "description": "Single 100uL MeCN slug for VB-1E-8",
-  "created_at": "2026-05-12T16:10:08",
+  "description": "Single 100uL MeCN (blue) slug for VB-1E-8",
+  "created_at": "2026-05-13T13:38:57",
   "global_conditions": {
     "flowrate_ul_min": 1000.0,
-    "gas_prime_s": 20.0
+    "gas_prime_s": 20.0,
+    "withdraw_rate_ml_min": 0.3,
+    "dispense_rate_ml_min": 0.5
   },
   "slugs": [
     {

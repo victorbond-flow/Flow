@@ -271,6 +271,7 @@ class RSG:
     reaction_plan,
     air_gap_between: float = 5.0,
     post_pickup_air_gap: float = 5.0,
+    withdraw_rate: float = None,
 ):
         self._require_idle()
         self.state = RSGState.RUNNING
@@ -288,7 +289,11 @@ class RSG:
                     module_name=component["module"],
                     vial_pos=component["vial"],
                     volume=component["volume_ul"],
-                    rate=component["rate_ml_min"],
+                    rate=(
+                        withdraw_rate
+                        if withdraw_rate is not None
+                        else component["rate_ml_min"]
+                )
                 )
     
                 total_volume += component["volume_ul"]
@@ -329,6 +334,7 @@ class RSG:
         slug_plan,
         air_gap_between: float = 5.0,
         dispense_rate: float = 0.5,
+        withdraw_rate: float = None,
     ):
         """
         Build a liquid reaction segment and charge it into the DIM loop.
@@ -362,6 +368,7 @@ class RSG:
         result = self.assemble_reaction(
             reaction_plan=reaction_plan,
             air_gap_between=air_gap_between,
+            withdraw_rate=withdraw_rate
         )
 
         self.dispense_in_dim(

@@ -11,10 +11,10 @@
   "rack1:1": {
     "module": "rack1",
     "vial": 1,
-    "name": "BnOH_stock",
-    "concentration_M": 0.0811,
+    "name": "Blue",
+    "concentration_M": null,
     "solvent": "MeCN",
     "current_volume_uL": 1500,
-    "min_safe_volume_uL": 200
+    "min_safe_volume_uL": 500
   }
 }
