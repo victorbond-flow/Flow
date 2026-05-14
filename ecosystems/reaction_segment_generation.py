@@ -25,11 +25,12 @@ class RSG:
     - No mirroring of Gilson internals
     """
 
-    def __init__(self, gilson, pump, dim=None, probe_state=None):
+    def __init__(self, gilson, pump, dim=None, probe=None, wash_safety_margin_ul=3.0):
         self.gilson = gilson
         self.pump = pump
         self.dim = dim
-        self.probe_state = probe_state
+        self.probe = probe
+        self.wash_safety_margin_ul = wash_safety_margin_ul
         self.state = RSGState.IDLE
 
     # ------------------------------------------------------------------
@@ -119,38 +120,44 @@ class RSG:
         )
 
     def initialise(self, air_gap: float = 20.0, rate_wdr: float = 0.25):
-        """
-        Set up known start condition before any slug sequence.
-        Call this once at the beginning of a run, after lines are primed
-        with working fluid.
-        """
         print("[Initialise] Setting up start condition")
 
         self._require_idle()
         self.state = RSGState.RUNNING
 
         try:
+            # First, reset logical state
+            if self.probe is not None:
+                self.probe.reset()
+
+            # Then, physical action
             self.take_air_gap(volume=air_gap, rate=rate_wdr)
+
             self.state = RSGState.IDLE
             print("[Initialise] Ready - air gap in place")
+
         except Exception:
             self.state = RSGState.ERROR
             raise
 
     def pickup_from_vial(
-    self,
-    module_name: str,
-    vial_pos: int,
-    volume: float,
-    rate: float = 0.05,
-):
+        self,
+        module_name: str,
+        vial_pos: int,
+        volume: float,
+        rate: float = 0.05,
+    ):
         print(f"[Pickup] {volume}uL from {module_name} vial {vial_pos} @ {rate}mL/min")
-    
+
         self.gilson.go_into_vial(module_name, vial_pos)
         self.pump.withdraw_volume(volume, rate)
-    
+
         wait_time = (volume / (rate * 1000)) * 60
         time.sleep(wait_time + 1)
+
+        if self.probe is not None:
+            self.probe.add("sample", volume)
+            print(f"[Probe] {self.probe.status()}")
 
     def dispense_in_vial(
         self,
@@ -163,8 +170,13 @@ class RSG:
 
         self.gilson.go_into_vial(module_name, vial_pos)
         self.pump.infuse_volume(volume, rate)
+
         wait_time = (volume / (rate * 1000)) * 60
         time.sleep(wait_time + 1)
+
+        if self.probe is not None:
+            self.probe.consume(volume)
+            print(f"[Probe] {self.probe.status()}")
 
     def dispense_in_waste(self, volume: float, rate: float = 0.5):
         print(f"[Waste] {volume}uL to waste @ {rate}mL/min")
@@ -175,25 +187,131 @@ class RSG:
         self.gilson.go_to_vial(module_name, vial_pos)
         self.gilson.go_into_vial(module_name, vial_pos)
         self.pump.infuse_volume(volume, rate)
+
         wait_time = (volume / (rate * 1000)) * 60
         time.sleep(wait_time + 1)
+
         self.gilson.ensure_z_safe()
 
-    def dispense_in_dim(self, volume: float, rate: float = 0.5):
-        print(f"[DIM] {volume}uL dispensed in DIM @ {rate}mL/min")
+        if self.probe is not None:
+            self.probe.consume(volume)
+            print(f"[Probe] {self.probe.status()}")
 
+    def dispense_in_dim(
+    self,
+    rate: float = 0.5,
+    volume: float | None = None,
+    front_air_use: float = 10.0,
+):
+        print(f"[DIM] ================= START =================")
+    
+        if self.probe is None:
+            raise RuntimeError("Probe required for deterministic DIM dispense")
+    
+        # ------------------------------------------------------------
+        # 1. Read probe state
+        # ------------------------------------------------------------
+        print("[Step 1] Reading probe state...")
+        print(f"         Current: {self.probe.status()}")
+    
+        contents = self.probe.contents
+    
+        # ------------------------------------------------------------
+        # 2. Extract expected structure (from end of stack)
+        # ------------------------------------------------------------
+        # We assume order was built as:
+        # [working_fluid] [air] [sample] [air]
+        #
+        # We only act on the end of the list.
+    
+        if len(contents) < 3:
+            raise RuntimeError("Probe state too short for DIM dispense")
+    
+        # Identify segments from end
+        post_air = contents[-1]
+        sample = contents[-2]
+    
+        if sample["type"] != "sample":
+            raise RuntimeError("Expected sample before post-air segment")
+    
+        # leading air segment (closest air before sample)
+        # we search backwards for last air before sample
+        front_air_index = None
+        for i in range(len(contents) - 3, -1, -1):
+            if contents[i]["type"] == "air":
+                front_air_index = i
+                break
+    
+        if front_air_index is None:
+            raise RuntimeError("No air segment found before sample")
+    
+        front_air = contents[front_air_index]
+    
+        # ------------------------------------------------------------
+        # 3. Compute injection volumes
+        # ------------------------------------------------------------
+        sample_vol = sample["volume_ul"]
+        post_air_vol = post_air["volume_ul"]
+        
+        derived_volume = sample_vol + post_air_vol + front_air_use
+        
+        # ------------------------------------------------------------
+        # resolve final injection volume
+        # ------------------------------------------------------------
+        if volume is None:
+            inject_volume = derived_volume
+        else:
+            inject_volume = volume
+        
+            # sanity check (important for debugging VB-1E-9)
+            if inject_volume < sample_vol + post_air_vol:
+                raise ValueError(
+                    "Provided volume too small to contain sample + post-air"
+                )
+    
+        # ------------------------------------------------------------
+        # 4. Physical injection
+        # ------------------------------------------------------------
         self.gilson.go_into_dim()
-        self.pump.infuse_volume(volume, rate)
-        wait_time = (volume / (rate * 1000)) * 60
+        self.pump.infuse_volume(inject_volume, rate)
+    
+        wait_time = (inject_volume / (rate * 1000)) * 60
         time.sleep(wait_time + 1)
+    
+        print("[Step 3] Physical infusion complete")
+    
+        # ------------------------------------------------------------
+        # 5. Update probe state deterministically
+        # ------------------------------------------------------------
+        print("[Step 4] Updating probe state...")
+    
+        # consume in correct order from tip side
+        self.probe.consume(post_air_vol)
+        self.probe.consume(sample_vol)
+        self.probe.consume(front_air_use)
+    
+        print("[Step 5] Post-consume state:")
+        print(f"         {self.probe.status()}")
+    
+        # ------------------------------------------------------------
+        # 6. Safety / reset motion
+        # ------------------------------------------------------------
+        self.gilson.ensure_z_safe()
+    
+        print("[DIM] ================= COMPLETE =================")
 
     def take_air_gap(self, volume: float, rate: float = 0.05):
         print(f"[Air Gap] {volume}uL @ {rate}mL/min")
 
         self.gilson.ensure_z_safe()
         self.pump.withdraw_volume(volume, rate)
+
         wait_time = (volume / (rate * 1000)) * 60
         time.sleep(wait_time + 1)
+
+        if self.probe is not None:
+            self.probe.add("air", volume)
+            print(f"[Probe] {self.probe.status()}")
 
     def prepickup(self, volume: float = 10.0, rate: float = 0.05):
         print(f"[Pre-pickup] {volume}uL from rack2 vial 1 @ {rate} mL/min")
@@ -203,53 +321,94 @@ class RSG:
 
         self.gilson.go_into_vial(module_name, vial_pos)
         self.pump.withdraw_volume(volume, rate)
+
         wait_time = (volume / (rate * 1000)) * 60
         time.sleep(wait_time + 1)
+
         self.gilson.ensure_z_safe()
 
     # ------------------------------------------------------------------
     # Washes
     # ------------------------------------------------------------------
-    def needle_wash(self, rate_wdr: float = 0.25, rate_inf: float = 0.5):
-        """Wash the needle after a slug charge."""
-        print("[Needle Wash] Starting")
-
+    def needle_wash(
+    self,
+    wash_solvent_volume: float,
+    rate_wdr: float = 0.25,
+    rate_inf: float = 0.5,
+    safety_margin_ul: float = 10.0,
+):
+        print("\n[Needle Wash] ================= START =================")
+    
+        # ------------------------------------------------------------
+        # 0. Safety positioning
+        # ------------------------------------------------------------
+        print("[Step 0] Ensuring Z safe...")
         self.gilson.ensure_z_safe()
-        self.pump.withdraw_volume(15, rate_wdr)
-        time.sleep((15 / (rate_wdr * 1000)) * 60 + 1)
-
-        self.gilson.go_into_vial("rack2", 1)
-        self.pump.withdraw_volume(80, rate_wdr)
-        time.sleep((80 / (rate_wdr * 1000)) * 60 + 1)
-
+    
+        if self.probe is None:
+            raise RuntimeError("Probe required for deterministic wash")
+    
+        print("[Step 1] Reading probe state...")
+        print(f"         Current: {self.probe.status()}")
+    
+        # ------------------------------------------------------------
+        # 1. quantify what is currently in probe (from state model)
+        # ------------------------------------------------------------
+        air_remaining = sum(
+            x["volume_ul"]
+            for x in self.probe.contents
+            if x["type"] == "air"
+        )
+    
+        print(f"[Step 2] Air remaining (from state): {air_remaining:.2f} uL")
+    
+        # ------------------------------------------------------------
+        # 2. acquire wash solvent using REAL pickup method
+        # ------------------------------------------------------------
+        print(f"[Step 3] Picking up wash solvent: {wash_solvent_volume} uL")
+    
+        self.pickup_from_vial(
+            module_name="rack2",
+            vial_pos=1,
+            volume=wash_solvent_volume,
+            rate=rate_wdr,
+        )
+    
+        # ------------------------------------------------------------
+        # 3. compute purge requirement
+        # ------------------------------------------------------------
+        purge_volume = wash_solvent_volume + air_remaining + safety_margin_ul
+    
+        print(f"[Step 4] Purge calculation:")
+        print(f"         wash solvent: {wash_solvent_volume}")
+        print(f"         air remaining: {air_remaining}")
+        print(f"         safety margin: {safety_margin_ul}")
+        print(f"         => purge total: {purge_volume} uL")
+    
+        # ------------------------------------------------------------
+        # 4. infuse to waste
+        # ------------------------------------------------------------
+        print("[Step 5] Infusing to waste...")
+    
         self.gilson.go_into_vial("rack2", 2)
-        self.pump.infuse_volume(95, rate_inf)
-        time.sleep((95 / (rate_inf * 1000)) * 60 + 1)
-
+        self.pump.infuse_volume(purge_volume, rate_inf)
+    
+        time.sleep((purge_volume / (rate_inf * 1000)) * 60 + 1)
+    
+        print("[Step 6] Infusion complete")
+    
+        # ------------------------------------------------------------
+        # 5. reset probe state (clean slate after deterministic purge)
+        # ------------------------------------------------------------
+        print("[Step 7] Resetting probe state...")
+        self.probe.reset()
+    
         self.gilson.ensure_z_safe()
-        print("[Needle Wash] Complete")
-
-    def dim_wash(self, rate_wdr: float = 0.25, rate_inf: float = 0.5):
-        """Flush the DIM dead volume after a slug charge."""
-        print("[DIM Wash] Starting")
-
-        self.gilson.ensure_z_safe()
-        self.pump.withdraw_volume(15, rate_wdr)
-        time.sleep((15 / (rate_wdr * 1000)) * 60 + 1)
-
-        self.gilson.go_into_vial("rack2", 1)
-        self.pump.withdraw_volume(50, rate_wdr)
-        time.sleep((50 / (rate_wdr * 1000)) * 60 + 1)
-
-        self.gilson.go_into_dim()
-        self.pump.infuse_volume(65, rate_inf)
-        time.sleep((65 / (rate_inf * 1000)) * 60 + 1)
-
-        self.gilson.ensure_z_safe()
-        print("[DIM Wash] Complete")
+    
+        print("[Needle Wash] ================= COMPLETE =================\n")
+        print(f"[Final Probe State] {self.probe.status()}")
 
     def between_slug_wash(self, rate_wdr: float = 0.25, rate_inf: float = 0.5):
-        """Full between-slug wash. Needle wash followed by DIM wash."""
         print("[Between Slug Wash] Starting")
 
         self._require_idle()
@@ -264,28 +423,24 @@ class RSG:
             self.state = RSGState.ERROR
             raise
 
-    # ------------------------------------------------------------------
-    # Higher-level sequences
-    # ------------------------------------------------------------------
     def assemble_reaction(
-    self,
-    reaction_plan,
-    air_gap_between: float = 5.0,
-    post_pickup_air_gap: float = 5.0,
-    withdraw_rate: float = None,
-):
+        self,
+        reaction_plan,
+        air_gap_between: float = 5.0,
+        post_pickup_air_gap: float = 5.0,
+        withdraw_rate: float = None,
+    ):
         self._require_idle()
         self.state = RSGState.RUNNING
-    
+
         try:
             reaction_plan = self._normalise_reaction_plan(reaction_plan)
-    
+
             total_volume = 0.0
             n = len(reaction_plan)
-    
+
             for i, component in enumerate(reaction_plan):
-    
-                # 1. pickup component
+
                 self.pickup_from_vial(
                     module_name=component["module"],
                     vial_pos=component["vial"],
@@ -294,37 +449,31 @@ class RSG:
                         withdraw_rate
                         if withdraw_rate is not None
                         else component["rate_ml_min"]
+                    ),
                 )
-                )
-    
+
                 total_volume += component["volume_ul"]
-    
-                # 2. between-component air gap (only if NOT last component)
+
                 if i < n - 1 and air_gap_between > 0:
                     self.take_air_gap(air_gap_between)
                     total_volume += air_gap_between
-    
-            # 3. post-pickup air gap (ONLY once per slug, after final component)
+
             if post_pickup_air_gap > 0:
                 self.take_air_gap(post_pickup_air_gap)
                 total_volume += post_pickup_air_gap
-    
+
             self.state = RSGState.IDLE
-    
+
             return {
                 "total_volume_ul": total_volume,
                 "num_components": n,
             }
-    
+
         except Exception:
             self.state = RSGState.ERROR
             raise
 
     def build_reaction(self, reaction_plan, air_gap_between: float = 5.0):
-        """
-        Backward-compatible wrapper for existing notebooks.
-        Prefer assemble_reaction() for new code.
-        """
         return self.assemble_reaction(
             reaction_plan=reaction_plan,
             air_gap_between=air_gap_between,
@@ -337,25 +486,6 @@ class RSG:
         dispense_rate: float = 0.5,
         withdraw_rate: float = None,
     ):
-        """
-        Build a liquid reaction segment and charge it into the DIM loop.
-
-        Assumes:
-        - Segmentation layer has already positioned DIM in LOAD
-        - Gas spacer geometry has already been established externally
-
-        Responsibilities:
-        1. normalise slug plan
-        2. aspirate components into syringe line
-        3. optionally place internal air gaps between components
-        4. dispense full liquid segment into DIM loop
-
-        Does NOT:
-        - generate gas spacers
-        - switch DIM to INJECT
-        - launch carrier flow
-        """
-
         self._require_dim()
 
         reaction_plan = self._reaction_plan_from_slug(slug_plan)
@@ -363,13 +493,12 @@ class RSG:
 
         print(f"[Build Reaction Segment] {slug_id}")
 
-        # DIM should already be in LOAD from Segmentation
         self.dim.assert_load()
 
         result = self.assemble_reaction(
             reaction_plan=reaction_plan,
             air_gap_between=air_gap_between,
-            withdraw_rate=withdraw_rate
+            withdraw_rate=withdraw_rate,
         )
 
         self.dispense_in_dim(
@@ -388,3 +517,6 @@ class RSG:
         self.pump.stop()
         self.gilson.ensure_z_safe()
         self.state = RSGState.ERROR
+
+        if self.probe is not None:
+            self.probe.invalidate()

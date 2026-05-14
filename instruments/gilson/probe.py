@@ -3,48 +3,72 @@ class ProbeState:
     def __init__(self):
         self.reset()
 
-
     def reset(self):
-
-        self.air_reserve_ul = 0.0
+        self.contents = [
+            {
+                "type": "working_fluid",
+                "volume_ul": float("inf"),  # reservoir, but still uniform structure
+                "is_infinite": True,
+            }
+        ]
         self.known = True
 
+    # ------------------------------------------------------------
+    # ADD SEGMENT
+    # ------------------------------------------------------------
+    def add(self, fluid_type, volume_ul):
+        self.contents.append(
+            {
+                "type": fluid_type,
+                "volume_ul": float(volume_ul),
+                "is_infinite": False,
+            }
+        )
 
-    def initialise_air_reserve(
-        self,
-        volume_ul,
-    ):
-        self.air_reserve_ul = volume_ul
+    # ------------------------------------------------------------
+    # CONSUME (stack-based displacement model)
+    # ------------------------------------------------------------
+    def consume(self, volume_ul):
+        remaining = volume_ul
 
+        while remaining > 0 and self.contents:
 
-    def consume_air(
-        self,
-        volume_ul,
-    ):
+            segment = self.contents[-1]
 
-        if volume_ul > self.air_reserve_ul:
-            raise RuntimeError(
-                f"Requested {volume_ul} uL "
-                f"but only "
-                f"{self.air_reserve_ul} uL remains"
-            )
+            # infinite reservoir cannot be depleted
+            if segment.get("is_infinite", False):
+                raise RuntimeError(
+                    "Attempted to consume from infinite reservoir segment"
+                )
 
-        self.air_reserve_ul -= volume_ul
+            if segment["volume_ul"] <= remaining:
+                remaining -= segment["volume_ul"]
+                self.contents.pop()
 
+            else:
+                segment["volume_ul"] -= remaining
+                remaining = 0
 
-    def remaining_air(self):
+    # ------------------------------------------------------------
+    # STATUS (human readable only)
+    # ------------------------------------------------------------
+    def status(self):
+        parts = []
 
-        return self.air_reserve_ul
+        for x in self.contents:
+            if x.get("is_infinite", False):
+                parts.append(f"[{x['type']}]")
+            else:
+                parts.append(f"[{x['type']} ({x['volume_ul']} uL)]")
 
+        return " ".join(parts)
 
+    # ------------------------------------------------------------
+    # INVALIDATION
+    # ------------------------------------------------------------
     def invalidate(self):
-
         self.known = False
 
-
     def assert_known(self):
-
         if not self.known:
-            raise RuntimeError(
-                "Probe state unknown"
-            )
+            raise RuntimeError("Probe state unknown")

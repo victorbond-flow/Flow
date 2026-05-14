@@ -148,10 +148,19 @@ class ExperimentIntent:
                 for comp, r in zip(components, ratio):
 
                     volume = (r / 100.0) * total_volume
-
+                
+                    if isinstance(comp, str):
+                        comp = {
+                            "name": comp,
+                            "concentration_M": None,
+                            "solvent": None,
+                        }
+                
                     reaction_plan.append({
-                        "component": comp,
-                        "volume_uL": volume
+                        "component": comp["name"],
+                        "concentration_M": comp["concentration_M"],
+                        "solvent": comp["solvent"],
+                        "volume_uL": volume,
                     })
 
                 rows.append({

@@ -9,7 +9,11 @@ class CompiledRow:
     module: str
     vial: int
     volume_uL: float
+
     component: str
+    concentration_M: Optional[float] = None
+    solvent: Optional[str] = None
+
     block_id: Optional[str] = None
     slug_order: Optional[int] = None
     component_order: Optional[int] = None
@@ -42,7 +46,11 @@ class ExperimentCompiler:
         "module",
         "vial",
         "volume_uL",
+    
         "component",
+        "concentration_M",
+        "solvent",
+    
         "block_id",
         "slug_order",
         "component_order",
@@ -211,9 +219,18 @@ class ExperimentCompiler:
                 raise ValueError(f"{slug_id} has no composition")
     
             for j, item in enumerate(composition, start=1):
-                component_name, volume_uL = self._normalise_component(item)
+                component_data = self._normalise_component(item)
+
+                component_name = component_data["name"]
+                volume_uL = component_data["volume_uL"]
+                concentration_M = component_data["concentration_M"]
+                solvent = component_data["solvent"]
     
-                resolved = self._resolve_component(component_name)
+                resolved = self._resolve_component(
+                    name=component_name,
+                    concentration_M=concentration_M,
+                    solvent=solvent,
+                )
     
                 expanded_rows.append(
                     CompiledRow(
@@ -221,7 +238,11 @@ class ExperimentCompiler:
                         module=resolved["module"],
                         vial=resolved["vial"],
                         volume_uL=float(volume_uL),
+                
                         component=component_name,
+                        concentration_M=concentration_M,
+                        solvent=solvent,
+                
                         block_id=block_id,
                         slug_order=i + 1,
                         component_order=j,
@@ -251,16 +272,38 @@ class ExperimentCompiler:
                 )
     
             ratio_total = sum(float(v) for v in ratio)
+    
             if ratio_total <= 0:
-                raise ValueError(f"{block_id} ratio total must be > 0")
+                raise ValueError(
+                    f"{block_id} ratio total must be > 0"
+                )
     
             slug_id = f"{block_id}_slug_{i}"
     
-            for j, (component, ratio_value) in enumerate(zip(components, ratio), start=1):
+            for j, (component, ratio_value) in enumerate(
+                zip(components, ratio),
+                start=1
+            ):
     
-                volume = (float(ratio_value) / ratio_total) * total_volume
+                volume = (
+                    float(ratio_value) / ratio_total
+                ) * total_volume
     
-                resolved = self._resolve_component(component)
+                # Backwards compatibility:
+                # allow plain strings OR richer component definitions
+                if isinstance(component, str):
+    
+                    component = {
+                        "name": component,
+                        "concentration_M": None,
+                        "solvent": None,
+                    }
+    
+                resolved = self._resolve_component(
+                    name=component["name"],
+                    concentration_M=component["concentration_M"],
+                    solvent=component["solvent"],
+                )
     
                 expanded_rows.append(
                     CompiledRow(
@@ -268,7 +311,11 @@ class ExperimentCompiler:
                         module=resolved["module"],
                         vial=resolved["vial"],
                         volume_uL=float(volume),
-                        component=component,
+    
+                        component=component["name"],
+                        concentration_M=component["concentration_M"],
+                        solvent=component["solvent"],
+    
                         block_id=block_id,
                         slug_order=i,
                         component_order=j,
@@ -297,20 +344,38 @@ class ExperimentCompiler:
         if volume <= 0:
             raise ValueError(f"{name}: volume_uL must be > 0")
     
-        return name, volume
+        return {
+            "name": name,
+            "volume_uL": volume,
+            "concentration_M": item.get("concentration_M")
+                if isinstance(item, dict)
+                else None,
+            "solvent": item.get("solvent")
+                if isinstance(item, dict)
+                else None,
+        }
 
     # ------------------------------------------------------------
     # Inventory resolution
     # ------------------------------------------------------------
 
-    def _resolve_component(self, name: str) -> Dict[str, Any]:
-        """
-        Maps chemical name → physical vial.
-        """
+    def _resolve_component(
+    self,
+    name: str,
+    concentration_M=None,
+    solvent=None,
+) -> Dict[str, Any]:
+    """
+    Maps chemical identity → physical vial.
+    """
 
-        record = self.inventory.lookup(name)
+    record = self.inventory.lookup(
+        name=name,
+        concentration_M=concentration_M,
+        solvent=solvent,
+    )
 
-        return {
-            "module": record["module"],
-            "vial": record["vial"],
-        }
+    return {
+        "module": record["module"],
+        "vial": record["vial"],
+    }
