@@ -25,10 +25,11 @@ class RSG:
     - No mirroring of Gilson internals
     """
 
-    def __init__(self, gilson, pump, dim=None):
+    def __init__(self, gilson, pump, dim=None, probe_state=None):
         self.gilson = gilson
         self.pump = pump
         self.dim = dim
+        self.probe_state = probe_state
         self.state = RSGState.IDLE
 
     # ------------------------------------------------------------------
