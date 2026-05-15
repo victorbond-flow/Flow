@@ -12,7 +12,7 @@
     "module": "rack1",
     "vial": 1,
     "name": "BnOH",
-    "concentration_M": null,
+    "concentration_M": 0.0428,
     "solvent": "MeCN",
     "current_volume_uL": 1500,
     "min_safe_volume_uL": 500
@@ -21,7 +21,7 @@
     "module": "rack1",
     "vial": 2,
     "name": "BnOH",
-    "concentration_M": null,
+    "concentration_M": 0.0428,
     "solvent": "MeCN",
     "current_volume_uL": 1500,
     "min_safe_volume_uL": 500

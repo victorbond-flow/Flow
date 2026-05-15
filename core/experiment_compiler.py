@@ -36,8 +36,9 @@ class ExperimentCompiler:
     - scheduling
     """
 
-    def __init__(self, inventory):
+    def __init__(self, inventory, trace=False):
         self.inventory = inventory
+        self.trace = trace
 
     # ------------------------------------------------------------
     # Public API
@@ -165,6 +166,10 @@ class ExperimentCompiler:
     # Helpers
     # ------------------------------------------------------------
 
+    def _trace(self, message):
+        if self.trace:
+            print(message)
+
     def _coerce_intent(self, intent):
         if isinstance(intent, dict):
             coerced = intent
@@ -198,6 +203,34 @@ class ExperimentCompiler:
         })
     
         return summary
+
+    def _build_insufficient_inventory_error(
+    self,
+    name,
+    required_volume,
+    candidates
+):
+        """
+        Creates a human-readable failure message for the chemist.
+        """
+    
+        total_available = sum(c["usable"] for c in candidates)
+    
+        lines = [
+            f"\n❌ INSUFFICIENT INVENTORY: {name}",
+            f"Required: {required_volume:.1f} µL",
+            f"Available (usable): {total_available:.1f} µL",
+            f"Shortfall: {required_volume - total_available:.1f} µL",
+            "",
+            "Breakdown:"
+        ]
+    
+        for c in candidates:
+            lines.append(
+                f"  - rack {c['module']} vial {c['vial']}: {c['usable']:.1f} µL usable"
+            )
+    
+        return "\n".join(lines)
 
     # ------------------------------------------------------------
     # Block expansion
@@ -392,19 +425,18 @@ class ExperimentCompiler:
     shadow,
 ):
         """
-        Deterministic vial resolver using scalar remaining-volume shadow.
+        Deterministic resolver with optional trace output.
         """
     
         if volume_uL <= 0:
             raise ValueError("Requested volume must be > 0")
     
+        self._trace(f"\n[RESOLVE] {name} | request={volume_uL} µL")
+    
         candidates = []
     
         for key, record in self.inventory.find_all(name):
     
-            # -------------------------
-            # inventory filtering layer
-            # -------------------------
             if concentration_M is not None and record["concentration_M"] != concentration_M:
                 continue
     
@@ -418,10 +450,11 @@ class ExperimentCompiler:
     
             usable = available - record["min_safe_volume_uL"]
     
-            # -------------------------
-            # shadow depletion layer
-            # -------------------------
             remaining = shadow.get(key, usable)
+    
+            self._trace(
+                f"  candidate {key}: usable={usable:.1f}, remaining={remaining:.1f}"
+            )
     
             if remaining >= volume_uL:
                 candidates.append({
@@ -431,22 +464,54 @@ class ExperimentCompiler:
                     "remaining": remaining,
                 })
     
-        # deterministic ordering
-        candidates.sort(key=lambda x: (x["module"], x["vial"]))
-    
         if not candidates:
-            raise ValueError(
-                f"No vial can satisfy {volume_uL} uL of {name} "
-                f"(conc={concentration_M}, solvent={solvent})"
+            # rebuild full candidate list for diagnostics
+            diagnostic_candidates = []
+        
+            for key, record in self.inventory.find_all(name):
+        
+                if concentration_M is not None and record["concentration_M"] != concentration_M:
+                    continue
+        
+                if solvent is not None and record["solvent"] != solvent:
+                    continue
+        
+                available = record["current_volume_uL"]
+        
+                if available is None:
+                    continue
+        
+                usable = available - record["min_safe_volume_uL"]
+        
+                diagnostic_candidates.append({
+                    "module": record["module"],
+                    "vial": record["vial"],
+                    "usable": usable,
+                })
+        
+            message = self._build_insufficient_inventory_error(
+                name=name,
+                required_volume=volume_uL,
+                candidates=diagnostic_candidates
             )
+        
+            raise ValueError(message)
+    
+        candidates.sort(key=lambda x: (x["module"], x["vial"]))
     
         selected = candidates[0]
         key = selected["key"]
     
-        # -------------------------
-        # commit depletion
-        # -------------------------
+        self._trace(
+            f"  ✅ selected {key} (vial {selected['vial']}) "
+            f"| remaining before={selected['remaining']:.1f}"
+        )
+    
         shadow[key] = shadow.get(key, selected["remaining"]) - volume_uL
+    
+        self._trace(
+            f"  → remaining after={shadow[key]:.1f}"
+        )
     
         return {
             "module": selected["module"],
