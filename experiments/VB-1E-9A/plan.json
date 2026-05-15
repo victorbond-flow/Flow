@@ -1,0 +1,253 @@
+{
+  "experiment_id": "VB-1E-9A",
+  "description": "Series of 20 slugs of BnOH (concurrent sampling valve plumbing + 1mL/min)",
+  "created_at": "2026-05-15T13:15:21",
+  "global_conditions": {
+    "flowrate_ul_min": 1000.0,
+    "gas_prime_s": 20.0,
+    "withdraw_rate_ml_min": 0.25,
+    "dispense_rate_ml_min": 0.5
+  },
+  "slugs": [
+    {
+      "slug_id": "block_1_slug_1",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0,
+          "component": "BnOH",
+          "block_id": "block_1"
+        }
+      ]
+    },
+    {
+      "slug_id": "block_1_slug_2",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0,
+          "component": "BnOH",
+          "block_id": "block_1"
+        }
+      ]
+    },
+    {
+      "slug_id": "block_1_slug_3",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0,
+          "component": "BnOH",
+          "block_id": "block_1"
+        }
+      ]
+    },
+    {
+      "slug_id": "block_1_slug_4",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0,
+          "component": "BnOH",
+          "block_id": "block_1"
+        }
+      ]
+    },
+    {
+      "slug_id": "block_1_slug_5",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0,
+          "component": "BnOH",
+          "block_id": "block_1"
+        }
+      ]
+    },
+    {
+      "slug_id": "block_1_slug_6",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0,
+          "component": "BnOH",
+          "block_id": "block_1"
+        }
+      ]
+    },
+    {
+      "slug_id": "block_1_slug_7",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0,
+          "component": "BnOH",
+          "block_id": "block_1"
+        }
+      ]
+    },
+    {
+      "slug_id": "block_1_slug_8",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0,
+          "component": "BnOH",
+          "block_id": "block_1"
+        }
+      ]
+    },
+    {
+      "slug_id": "block_1_slug_9",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0,
+          "component": "BnOH",
+          "block_id": "block_1"
+        }
+      ]
+    },
+    {
+      "slug_id": "block_1_slug_10",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 1,
+          "volume_uL": 100.0,
+          "component": "BnOH",
+          "block_id": "block_1"
+        }
+      ]
+    },
+    {
+      "slug_id": "block_1_slug_11",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 2,
+          "volume_uL": 100.0,
+          "component": "BnOH",
+          "block_id": "block_1"
+        }
+      ]
+    },
+    {
+      "slug_id": "block_1_slug_12",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 2,
+          "volume_uL": 100.0,
+          "component": "BnOH",
+          "block_id": "block_1"
+        }
+      ]
+    },
+    {
+      "slug_id": "block_1_slug_13",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 2,
+          "volume_uL": 100.0,
+          "component": "BnOH",
+          "block_id": "block_1"
+        }
+      ]
+    },
+    {
+      "slug_id": "block_1_slug_14",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 2,
+          "volume_uL": 100.0,
+          "component": "BnOH",
+          "block_id": "block_1"
+        }
+      ]
+    },
+    {
+      "slug_id": "block_1_slug_15",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 2,
+          "volume_uL": 100.0,
+          "component": "BnOH",
+          "block_id": "block_1"
+        }
+      ]
+    },
+    {
+      "slug_id": "block_1_slug_16",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 2,
+          "volume_uL": 100.0,
+          "component": "BnOH",
+          "block_id": "block_1"
+        }
+      ]
+    },
+    {
+      "slug_id": "block_1_slug_17",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 2,
+          "volume_uL": 100.0,
+          "component": "BnOH",
+          "block_id": "block_1"
+        }
+      ]
+    },
+    {
+      "slug_id": "block_1_slug_18",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 2,
+          "volume_uL": 100.0,
+          "component": "BnOH",
+          "block_id": "block_1"
+        }
+      ]
+    },
+    {
+      "slug_id": "block_1_slug_19",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 2,
+          "volume_uL": 100.0,
+          "component": "BnOH",
+          "block_id": "block_1"
+        }
+      ]
+    },
+    {
+      "slug_id": "block_1_slug_20",
+      "reaction_plan": [
+        {
+          "module": "rack1",
+          "vial": 2,
+          "volume_uL": 100.0,
+          "component": "BnOH",
+          "block_id": "block_1"
+        }
+      ]
+    }
+  ]
+}

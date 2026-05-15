@@ -135,22 +135,16 @@ class Inventory:
 
     def reserve_many(self, reservations):
 
-        reservation_plan = []
-    
-        # temporary state for planning
-        temp_slots = {
-            k: v.copy()
-            for k, v in self.slots.items()
-        }
-    
         for request in reservations:
     
             if len(request) == 2:
+    
                 name, volume_uL = request
                 concentration_M = None
                 solvent = None
     
             else:
+    
                 (
                     name,
                     volume_uL,
@@ -158,35 +152,12 @@ class Inventory:
                     solvent,
                 ) = request
     
-            # temporarily swap inventory state
-            original = self.slots
-            self.slots = temp_slots
-    
-            plan = self.plan_sources(
+            source = self.find_source(
                 name=name,
                 volume_uL=volume_uL,
                 concentration_M=concentration_M,
                 solvent=solvent,
             )
-    
-            # apply immediately to temp state
-            for source in plan:
-    
-                key = self._slot_key(
-                    source["module"],
-                    source["vial"]
-                )
-    
-                temp_slots[key]["current_volume_uL"] -= (
-                    source["volume_uL"]
-                )
-    
-            reservation_plan.extend(plan)
-    
-            self.slots = original
-    
-        # commit real state
-        for source in reservation_plan:
     
             key = self._slot_key(
                 source["module"],
@@ -194,21 +165,21 @@ class Inventory:
             )
     
             self.slots[key]["current_volume_uL"] -= (
-                source["volume_uL"]
+                float(volume_uL)
             )
     
         self.save()
 
     def check_available(
-        self,
-        name,
-        volume_uL,
-        concentration_M=None,
-        solvent=None,
-    ):
+    self,
+    name,
+    volume_uL,
+    concentration_M=None,
+    solvent=None,
+):
         try:
     
-            self.plan_sources(
+            self.find_source(
                 name=name,
                 volume_uL=volume_uL,
                 concentration_M=concentration_M,
@@ -218,6 +189,7 @@ class Inventory:
             return True
     
         except Exception:
+    
             return False
 
     def status(self):
@@ -245,96 +217,167 @@ class Inventory:
     # Planning (non-mutating)
     # ---------------------------------------------------------
 
-    def plan_sources(
-        self,
-        name: str,
-        volume_uL: float,
-        concentration_M=None,
-        solvent=None,
-    ):
+    def find_source(
+    self,
+    name,
+    volume_uL,
+    concentration_M=None,
+    solvent=None,
+):
         """
-            Plan how to source a required volume of a chemically-defined reagent
-            across multiple vials in deterministic order.
-        
-            Matching is based on:
-                - name
-                - solvent
-                - concentration_M
-        
-            Does NOT mutate inventory.
-            """
-        
-            if volume_uL <= 0:
-                raise ValueError("Requested volume must be > 0")
-        
-            candidates = []
-        
-            for key, record in self.slots.items():
-        
-                # -----------------------------------------------------
-                # chemical identity filter
-                # -----------------------------------------------------
-                if record["name"] != name:
-                    continue
-        
-                if solvent is not None and record["solvent"] != solvent:
-                    continue
-        
-                if concentration_M is not None and record["concentration_M"] != concentration_M:
-                    continue
-        
-                # -----------------------------------------------------
-                # usable volume check
-                # -----------------------------------------------------
-                available = record["current_volume_uL"]
-        
-                if available is None:
-                    raise RuntimeError(
-                        f"{name}: vial {record['module']}:{record['vial']} "
-                        "has unknown volume"
-                    )
-        
-                usable = available - record["min_safe_volume_uL"]
-        
-                if usable > 0:
-                    candidates.append(
-                        {
-                            "module": record["module"],
-                            "vial": record["vial"],
-                            "usable_uL": usable,
-                        }
-                    )
-        
-            # FIFO ordering (stable + deterministic)
-            candidates.sort(key=lambda x: (x["module"], x["vial"]))
-        
-            remaining = float(volume_uL)
-            plan = []
-        
-            for c in candidates:
-        
-                if remaining <= 0:
-                    break
-        
-                take = min(c["usable_uL"], remaining)
-        
-                if take > 0:
-                    plan.append(
-                        {
-                            "module": c["module"],
-                            "vial": c["vial"],
-                            "volume_uL": float(take),
-                        }
-                    )
-        
-                    remaining -= take
-        
-            if remaining > 1e-9:
-                raise ValueError(
-                    f"Insufficient {name} "
-                    f"(solvent={solvent}, conc={concentration_M}): "
-                    f"short by {remaining:.2f} uL above safety limits"
+        Find a single vial capable of satisfying the request.
+    
+        Matching:
+            - name
+            - concentration_M
+            - solvent
+    
+        Returns:
+            {
+                "module": ...,
+                "vial": ...,
+                "volume_uL": ...
+            }
+    
+        Does NOT mutate inventory.
+        """
+    
+        if float(volume_uL) <= 0:
+            raise ValueError(
+                "Requested volume must be > 0"
+            )
+    
+        candidates = []
+    
+        for _, record in self.find_all(name):
+    
+            # ---------------------------------------------
+            # Chemical identity matching
+            # ---------------------------------------------
+            if (
+                concentration_M is not None
+                and record["concentration_M"] != concentration_M
+            ):
+                continue
+    
+            if (
+                solvent is not None
+                and record["solvent"] != solvent
+            ):
+                continue
+    
+            # ---------------------------------------------
+            # Volume availability
+            # ---------------------------------------------
+            available = record["current_volume_uL"]
+    
+            if available is None:
+                continue
+    
+            usable = (
+                available
+                - record["min_safe_volume_uL"]
+            )
+    
+            # vial must satisfy ENTIRE request
+            if usable >= volume_uL:
+    
+                candidates.append(
+                    {
+                        "module": record["module"],
+                        "vial": record["vial"],
+                        "usable_uL": usable,
+                    }
                 )
-        
-            return plan
+    
+        # deterministic ordering
+        candidates.sort(
+            key=lambda x: (
+                x["module"],
+                x["vial"]
+            )
+        )
+    
+        if not candidates:
+    
+            raise ValueError(
+                f"No vial can satisfy "
+                f"{volume_uL} uL of {name} "
+                f"(conc={concentration_M}, "
+                f"solvent={solvent})"
+            )
+    
+        selected = candidates[0]
+    
+        return {
+            "module": selected["module"],
+            "vial": selected["vial"],
+            "volume_uL": float(volume_uL),
+        }
+
+    def allocate_sources(
+    self,
+    name,
+    volume_uL,
+    concentration_M=None,
+    solvent=None,
+):
+        """
+        Deterministically allocate required volume across vials.
+        NO rollover logic. NO optimisation. Just ordered depletion.
+        """
+    
+        if volume_uL <= 0:
+            raise ValueError("Requested volume must be > 0")
+    
+        # gather candidates
+        candidates = []
+    
+        for _, record in self.find_all(name):
+    
+            if concentration_M is not None and record["concentration_M"] != concentration_M:
+                continue
+    
+            if solvent is not None and record["solvent"] != solvent:
+                continue
+    
+            if record["current_volume_uL"] is None:
+                continue
+    
+            usable = record["current_volume_uL"] - record["min_safe_volume_uL"]
+    
+            if usable > 0:
+                candidates.append({
+                    "module": record["module"],
+                    "vial": record["vial"],
+                    "usable": usable,
+                })
+    
+        # deterministic ordering
+        candidates.sort(key=lambda x: (x["module"], x["vial"]))
+    
+        remaining = float(volume_uL)
+        plan = []
+    
+        for c in candidates:
+            if remaining <= 0:
+                break
+    
+            take = min(c["usable"], remaining)
+    
+            if take > 0:
+                plan.append({
+                    "module": c["module"],
+                    "vial": c["vial"],
+                    "volume_uL": float(take),
+                })
+    
+                remaining -= take
+    
+        if remaining > 1e-9:
+            raise ValueError(
+                f"Insufficient {name}: need {volume_uL}, short by {remaining:.2f} uL"
+            )
+    
+        return plan
             

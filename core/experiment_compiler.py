@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import Dict, Any, List, Optional
 import pandas as pd
+from collections import defaultdict
+import copy
 
 
 @dataclass
@@ -57,6 +59,14 @@ class ExperimentCompiler:
     ]
 
     def compile(self, intent: Dict[str, Any]) -> pd.DataFrame:
+        shadow = {
+            key: (
+                record["current_volume_uL"] - record["min_safe_volume_uL"]
+                if record["current_volume_uL"] is not None
+                else 0.0
+            )
+            for key, record in self.inventory.slots.items()
+        }
         intent = self._coerce_intent(intent)
     
         rows = []
@@ -68,11 +78,20 @@ class ExperimentCompiler:
                 block=block,
                 block_index=block_index,
                 experiment_id=experiment_id,
+                shadow=shadow
             )
             rows.extend(block_rows)
     
         if not rows:
             raise ValueError("Compilation produced no rows")
+    
+        # ------------------------------------------------------------
+        # NEW: global feasibility gate (non-mutating)
+        # ------------------------------------------------------------
+        feasibility_report = self._validate_global_feasibility(rows)
+    
+        if feasibility_report["status"] == "infeasible":
+            raise ValueError(feasibility_report["message"])
     
         # enforce strict schema BEFORE dataframe conversion
         data = [r.__dict__ for r in rows]
@@ -184,7 +203,7 @@ class ExperimentCompiler:
     # Block expansion
     # ------------------------------------------------------------
 
-    def _expand_block(self, block, block_index, experiment_id):
+    def _expand_block(self, block, block_index, experiment_id, shadow):
         block_id = block.get("block_id", f"block_{block_index + 1}")
     
         # ----------------------------
@@ -195,7 +214,7 @@ class ExperimentCompiler:
         total_volume = block.get("total_volume_uL")
     
         if components is not None and ratios is not None:
-            return self._expand_ratio_block(block, block_id)
+            return self._expand_ratio_block(block, block_id, shadow)
     
         # ----------------------------
         # OLD SLUG-STYLE BLOCK (LEGACY)
@@ -228,8 +247,10 @@ class ExperimentCompiler:
     
                 resolved = self._resolve_component(
                     name=component_name,
+                    volume_uL=volume_uL,
                     concentration_M=concentration_M,
                     solvent=solvent,
+                    shadow=shadow
                 )
     
                 expanded_rows.append(
@@ -251,7 +272,7 @@ class ExperimentCompiler:
     
         return expanded_rows
 
-    def _expand_ratio_block(self, block, block_id):
+    def _expand_ratio_block(self, block, block_id, shadow):
         components = block.get("components", [])
         ratios = block.get("ratios", [])
         total_volume = float(block.get("total_volume_uL", 0))
@@ -297,12 +318,15 @@ class ExperimentCompiler:
                         "name": component,
                         "concentration_M": None,
                         "solvent": None,
+                        "volume_uL": volume
                     }
     
                 resolved = self._resolve_component(
                     name=component["name"],
+                    volume_uL=volume,
                     concentration_M=component["concentration_M"],
                     solvent=component["solvent"],
+                    shadow=shadow
                 )
     
                 expanded_rows.append(
@@ -356,26 +380,176 @@ class ExperimentCompiler:
         }
 
     # ------------------------------------------------------------
-    # Inventory resolution
+    # Inventory resolution + feasibility check
     # ------------------------------------------------------------
 
     def _resolve_component(
     self,
-    name: str,
-    concentration_M=None,
-    solvent=None,
-) -> Dict[str, Any]:
-    """
-    Maps chemical identity → physical vial.
-    """
+    name,
+    volume_uL,
+    concentration_M,
+    solvent,
+    shadow,
+):
+        """
+        Deterministic vial resolver using scalar remaining-volume shadow.
+        """
+    
+        if volume_uL <= 0:
+            raise ValueError("Requested volume must be > 0")
+    
+        candidates = []
+    
+        for key, record in self.inventory.find_all(name):
+    
+            # -------------------------
+            # inventory filtering layer
+            # -------------------------
+            if concentration_M is not None and record["concentration_M"] != concentration_M:
+                continue
+    
+            if solvent is not None and record["solvent"] != solvent:
+                continue
+    
+            available = record["current_volume_uL"]
+    
+            if available is None:
+                continue
+    
+            usable = available - record["min_safe_volume_uL"]
+    
+            # -------------------------
+            # shadow depletion layer
+            # -------------------------
+            remaining = shadow.get(key, usable)
+    
+            if remaining >= volume_uL:
+                candidates.append({
+                    "key": key,
+                    "module": record["module"],
+                    "vial": record["vial"],
+                    "remaining": remaining,
+                })
+    
+        # deterministic ordering
+        candidates.sort(key=lambda x: (x["module"], x["vial"]))
+    
+        if not candidates:
+            raise ValueError(
+                f"No vial can satisfy {volume_uL} uL of {name} "
+                f"(conc={concentration_M}, solvent={solvent})"
+            )
+    
+        selected = candidates[0]
+        key = selected["key"]
+    
+        # -------------------------
+        # commit depletion
+        # -------------------------
+        shadow[key] = shadow.get(key, selected["remaining"]) - volume_uL
+    
+        return {
+            "module": selected["module"],
+            "vial": selected["vial"],
+            "volume_uL": float(volume_uL),
+        }
 
-    record = self.inventory.lookup(
-        name=name,
-        concentration_M=concentration_M,
-        solvent=solvent,
-    )
 
-    return {
-        "module": record["module"],
-        "vial": record["vial"],
-    }
+    def _validate_global_feasibility(self, rows):
+
+        totals = defaultdict(float)
+    
+        for r in rows:
+            key = (r.component, r.concentration_M, r.solvent)
+            totals[key] += float(r.volume_uL)
+    
+        shortages = []
+        limiting = []
+    
+        for (name, conc, solvent), required in totals.items():
+    
+            # -----------------------------------------
+            # gather usable pool across all vials
+            # -----------------------------------------
+            candidates = []
+    
+            for _, record in self.inventory.find_all(name):
+    
+                if conc is not None and record["concentration_M"] != conc:
+                    continue
+    
+                if solvent is not None and record["solvent"] != solvent:
+                    continue
+    
+                available = record["current_volume_uL"]
+    
+                if available is None:
+                    continue
+    
+                usable = available - record["min_safe_volume_uL"]
+    
+                if usable > 0:
+                    candidates.append({
+                        "module": record["module"],
+                        "vial": record["vial"],
+                        "usable": usable,
+                    })
+    
+            total_available = sum(c["usable"] for c in candidates)
+    
+            if total_available < required:
+                shortages.append({
+                    "name": name,
+                    "concentration_M": conc,
+                    "solvent": solvent,
+                    "required_uL": required,
+                    "available_uL": total_available,
+                })
+                continue
+    
+            # -----------------------------------------
+            # deterministic allocation (NO rollover logic)
+            # -----------------------------------------
+            candidates.sort(key=lambda x: (x["module"], x["vial"]))
+    
+            remaining = required
+            plan = []
+    
+            for c in candidates:
+                if remaining <= 0:
+                    break
+    
+                take = min(c["usable"], remaining)
+    
+                plan.append({
+                    "name": name,
+                    "module": c["module"],
+                    "vial": c["vial"],
+                    "volume_uL": take,
+                })
+    
+                remaining -= take
+    
+            limiting.append({
+                "name": name,
+                "plan": plan,
+                "limiting_vial": max(plan, key=lambda x: x["volume_uL"]) if plan else None
+            })
+    
+        if shortages:
+            return {
+                "status": "infeasible",
+                "message": "Experiment infeasible:\n" + "\n".join(
+                    f"- {s['name']}: need {s['required_uL']} uL, have {s['available_uL']} uL"
+                    for s in shortages
+                ),
+                "shortages": shortages,
+                "limiting": limiting,
+            }
+    
+        return {
+            "status": "feasible",
+            "message": "OK",
+            "shortages": [],
+            "limiting": limiting,
+        }
