@@ -23,6 +23,8 @@ class ExperimentBuilder:
         "gas_prime_s": float,
         "withdraw_rate_ml_min": float,
         "dispense_rate_ml_min": float,
+        "needle_wash_volume_ul": float,
+        "between_slug_wash_volume_ul": float,
     }
 
     def __init__(self, experiments_root=None, inventory=None):

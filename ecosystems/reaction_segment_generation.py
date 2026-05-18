@@ -86,7 +86,7 @@ class RSG:
                 {
                     "module": module,
                     "vial": vial,
-                    "volume_ul": volume,
+                    "volume_uL": volume,
                     "rate_ml_min": float(component.get("rate", 0.05)),
                 }
             )
@@ -147,16 +147,16 @@ class RSG:
             raise
 
     def pickup_from_vial(
-        self,
-        module_name: str,
-        vial_pos: int,
-        volume: float,
-        rate: float = 0.05,
-        dry_run=False,
-        trace=None,
-    ):
+    self,
+    module_name: str,
+    vial_pos: int,
+    volume: float,
+    rate: float = 0.05,
+    dry_run=False,
+    trace=None,
+):
         print(f"[Pickup] {volume}uL from {module_name} vial {vial_pos} @ {rate}mL/min")
-
+    
         append_trace(
             trace,
             step="rsg",
@@ -166,18 +166,19 @@ class RSG:
             volume_uL=volume,
             rate=rate,
         )
-
+    
         if dry_run:
             self.pump.withdraw_volume(volume, rate, dry_run=True, trace=trace)
         else:
             self.gilson.go_into_vial(module_name, vial_pos)
             self.pump.withdraw_volume(volume, rate)
-
+    
             wait_time = (volume / (rate * 1000)) * 60
             time.sleep(wait_time + 1)
-
+    
         if self.probe is not None:
             self.probe.add("sample", volume)
+    
             append_trace(
                 trace,
                 step="probe",
@@ -185,6 +186,15 @@ class RSG:
                 volume_uL=volume,
                 notes="sample",
             )
+    
+            # NEW: probe snapshot after pump + state mutation
+            append_trace(
+                trace,
+                step="probe",
+                action="snapshot",
+                notes=self.probe.status(),
+            )
+    
             print(f"[Probe] {self.probe.status()}")
 
     def dispense_in_vial(
@@ -266,81 +276,97 @@ class RSG:
             print(f"[Probe] {self.probe.status()}")
 
     def dispense_in_dim(
-        self,
-        rate: float = 0.5,
-        volume: Optional[float] = None,
-        front_air_use: float = 10.0,
-        dry_run=False,
-        trace=None,
-    ):
+    self,
+    rate: float = 0.5,
+    volume: Optional[float] = None,
+    front_air_use: float = 5.0,
+    dry_run=False,
+    trace=None,
+):
         print(f"[DIM] ================= START =================")
     
         if self.probe is None:
             raise RuntimeError("Probe required for deterministic DIM dispense")
     
-        # ------------------------------------------------------------
-        # 1. Read probe state
-        # ------------------------------------------------------------
         print("[Step 1] Reading probe state...")
         print(f"         Current: {self.probe.status()}")
     
         contents = self.probe.contents
     
-        # ------------------------------------------------------------
-        # 2. Extract expected structure (from end of stack)
-        # ------------------------------------------------------------
-        # We assume order was built as:
-        # [working_fluid] [air] [sample] [air]
-        #
-        # We only act on the end of the list.
-    
         if len(contents) < 3:
             raise RuntimeError("Probe state too short for DIM dispense")
     
-        # Identify segments from end
-        post_air = contents[-1]
-        sample = contents[-2]
+        # ------------------------------------------------------------
+        # 1. Find POST AIR (must be last air)
+        # ------------------------------------------------------------
+        post_air_index = None
+        for i in range(len(contents) - 1, -1, -1):
+            if contents[i]["type"] == "air":
+                post_air_index = i
+                break
     
-        if sample["type"] != "sample":
-            raise RuntimeError("Expected sample before post-air segment")
+        if post_air_index is None:
+            raise RuntimeError("No post-air segment found")
     
-        # leading air segment (closest air before sample)
-        # we search backwards for last air before sample
+        post_air = contents[post_air_index]
+    
+        # ------------------------------------------------------------
+        # 2. Find SAMPLE (must be before post-air)
+        # ------------------------------------------------------------
+        sample_index = None
+        for i in range(post_air_index - 1, -1, -1):
+            if contents[i]["type"] == "sample":
+                sample_index = i
+                break
+    
+        if sample_index is None:
+            raise RuntimeError("No sample segment found before post-air")
+    
+        sample = contents[sample_index]
+    
+        # ------------------------------------------------------------
+        # 3. Find FRONT AIR (air before sample)
+        # ------------------------------------------------------------
         front_air_index = None
-        for i in range(len(contents) - 3, -1, -1):
+        for i in range(sample_index - 1, -1, -1):
             if contents[i]["type"] == "air":
                 front_air_index = i
                 break
     
         if front_air_index is None:
-            raise RuntimeError("No air segment found before sample")
+            raise RuntimeError("No front air segment found before sample")
     
         front_air = contents[front_air_index]
     
         # ------------------------------------------------------------
-        # 3. Compute injection volumes
+        # DEBUG OUTPUT
+        # ------------------------------------------------------------
+        print("\n==============================")
+        print("[RSG DISPENSE DEBUG ENTRY]")
+        print("==============================")
+    
+        for i, s in enumerate(contents):
+            print(i, s)
+    
+        print("\n[IDENTIFIED STRUCTURE]")
+        print("front_air:", front_air)
+        print("sample:", sample)
+        print("post_air:", post_air)
+    
+        # ------------------------------------------------------------
+        # 4. Compute volume
         # ------------------------------------------------------------
         sample_vol = sample["volume_ul"]
         post_air_vol = post_air["volume_ul"]
-        
+    
         derived_volume = sample_vol + post_air_vol + front_air_use
-        
-        # ------------------------------------------------------------
-        # resolve final injection volume
-        # ------------------------------------------------------------
-        if volume is None:
-            inject_volume = derived_volume
-        else:
-            inject_volume = volume
-        
-            # sanity check (important for debugging VB-1E-9)
-            if inject_volume < sample_vol + post_air_vol:
-                raise ValueError(
-                    "Provided volume too small to contain sample + post-air"
-                )
+        inject_volume = derived_volume if volume is None else volume
+    
+        if inject_volume < sample_vol + post_air_vol:
+            raise ValueError("Inject volume too small for payload + post-air")
     
         # ------------------------------------------------------------
-        # 4. Physical injection
+        # 5. Physical injection
         # ------------------------------------------------------------
         append_trace(
             trace,
@@ -350,24 +376,22 @@ class RSG:
             volume_uL=inject_volume,
             rate=rate,
         )
-
+    
         if dry_run:
             self.pump.infuse_volume(inject_volume, rate, dry_run=True, trace=trace)
         else:
             self.gilson.go_into_dim()
             self.pump.infuse_volume(inject_volume, rate)
-
-            wait_time = (inject_volume / (rate * 1000)) * 60
-            time.sleep(wait_time + 1)
+            time.sleep((inject_volume / (rate * 1000)) * 60 + 1)
     
         print("[Step 3] Physical infusion complete")
     
         # ------------------------------------------------------------
-        # 5. Update probe state deterministically
+        # 6. Deterministic consumption (LIFO-safe)
         # ------------------------------------------------------------
         print("[Step 4] Updating probe state...")
     
-        # consume in correct order from tip side
+        # post_air
         self.probe.consume(post_air_vol)
         append_trace(
             trace,
@@ -376,6 +400,15 @@ class RSG:
             volume_uL=post_air_vol,
             notes="post_air",
         )
+    
+        append_trace(
+            trace,
+            step="probe",
+            action="snapshot",
+            notes=self.probe.status(),
+        )
+    
+        # sample
         self.probe.consume(sample_vol)
         append_trace(
             trace,
@@ -384,6 +417,15 @@ class RSG:
             volume_uL=sample_vol,
             notes="sample",
         )
+    
+        append_trace(
+            trace,
+            step="probe",
+            action="snapshot",
+            notes=self.probe.status(),
+        )
+    
+        # front air
         self.probe.consume(front_air_use)
         append_trace(
             trace,
@@ -393,12 +435,16 @@ class RSG:
             notes="front_air",
         )
     
+        append_trace(
+            trace,
+            step="probe",
+            action="snapshot",
+            notes=self.probe.status(),
+        )
+    
         print("[Step 5] Post-consume state:")
         print(f"         {self.probe.status()}")
     
-        # ------------------------------------------------------------
-        # 6. Safety / reset motion
-        # ------------------------------------------------------------
         if not dry_run:
             self.gilson.ensure_z_safe()
     
@@ -588,6 +634,7 @@ class RSG:
         reaction_plan,
         air_gap_between: float = 5.0,
         post_pickup_air_gap: float = 5.0,
+        front_air_gap: float = 5.0,
         withdraw_rate: float = None,
         dry_run=False,
         trace=None,
@@ -601,12 +648,27 @@ class RSG:
             total_volume = 0.0
             n = len(reaction_plan)
 
+            # ---------------------------------------------------
+            # 0. FRONT AIR (CRITICAL FIX)
+            # ---------------------------------------------------
+            if front_air_gap > 0:
+                self.take_air_gap(front_air_gap, dry_run=dry_run, trace=trace)
+                total_volume += front_air_gap
+
+            # ---------------------------------------------------
+            # 1. BUILD CORE STREAM
+            # ---------------------------------------------------
+            print("\n[ASSEMBLE REACTION INPUT]")
+            print(reaction_plan)
+            
+            for i, component in enumerate(reaction_plan):
+                print(f"[COMPONENT {i}] {component}")
             for i, component in enumerate(reaction_plan):
 
                 self.pickup_from_vial(
                     module_name=component["module"],
                     vial_pos=component["vial"],
-                    volume=component["volume_ul"],
+                    volume=component["volume_uL"],
                     rate=(
                         withdraw_rate
                         if withdraw_rate is not None
@@ -616,12 +678,15 @@ class RSG:
                     trace=trace,
                 )
 
-                total_volume += component["volume_ul"]
+                total_volume += component["volume_uL"]
 
                 if i < n - 1 and air_gap_between > 0:
                     self.take_air_gap(air_gap_between, dry_run=dry_run, trace=trace)
                     total_volume += air_gap_between
 
+            # ---------------------------------------------------
+            # 2. POST AIR (kept as terminal buffer)
+            # ---------------------------------------------------
             if post_pickup_air_gap > 0:
                 self.take_air_gap(post_pickup_air_gap, dry_run=dry_run, trace=trace)
                 total_volume += post_pickup_air_gap

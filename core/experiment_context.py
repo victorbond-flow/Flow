@@ -318,20 +318,20 @@ class ExperimentManager:
     ):
         if self.context is None:
             raise Exception("No experiment loaded")
-    
+
         if not dry_run and self.context.state != "armed":
             raise Exception(
                 f"Experiment must be armed. Current state: {self.context.state}"
             )
-    
+
         if not dry_run and self.platform_state != self.PLATFORM_READY:
             raise RuntimeError(
                 "Platform not ready. "
                 f"Reactor={self.reactor_state}, RSG={self.rsg_state}"
             )
-    
+
         self._validate_loaded_plan()
-    
+
         self.context.state = "running"
         self.system_state = self.SYSTEM_RUNNING
 
@@ -342,47 +342,41 @@ class ExperimentManager:
                 action="start",
                 notes=self.context.experiment_id,
             )
-    
+
         results = []
-    
+
         try:
             defaults = self.context.plan.get("global_conditions", {})
 
-            dispense_rate_ml_min = defaults.get(
-                "dispense_rate_ml_min",
-                0.5,
-            )
+            # -------------------------
+            # FIX: wash config (FLAT, simple, no nesting assumptions)
+            # -------------------------
+            needle_wash_volume_ul = defaults.get("needle_wash_volume_ul", 50.0)
+            between_slug_wash_volume_ul = defaults.get("between_slug_wash_volume_ul", 100.0)
 
-            withdraw_rate_ml_min = defaults.get(
-                "withdraw_rate_ml_min",
-                None,
-            )
-    
+            dispense_rate_ml_min = defaults.get("dispense_rate_ml_min", 0.5)
+            withdraw_rate_ml_min = defaults.get("withdraw_rate_ml_min", None)
+
             if gas_prime_s is None:
                 gas_prime_s = defaults["gas_prime_s"]
-    
+
             if flowrate_ul_min is None:
                 flowrate_ul_min = defaults["flowrate_ul_min"]
-    
+
             if air_gap_between is None:
                 air_gap_between = defaults.get("air_gap_between_uL", 5.0)
-    
+
             slugs = self.context.plan["slugs"]
-    
+
             print(f"[EXPERIMENT] Executing {self.context.experiment_id}")
-    
+
             for i in range(self.context.slug_index, len(slugs)):
-    
+
                 slug = slugs[i]
                 slug_id = slug.get("slug_id", f"slug_{i + 1}")
-    
+
                 if dry_run:
-                    append_trace(
-                        trace,
-                        step=f"slug_{i + 1}",
-                        action="start",
-                        notes=slug_id,
-                    )
+                    append_trace(trace, step=f"slug_{i + 1}", action="start", notes=slug_id)
                 else:
                     self._append_event(
                         "slug_started",
@@ -392,9 +386,11 @@ class ExperimentManager:
                             "slug_id": slug_id,
                         },
                     )
-    
+
                 try:
-                    # First slug vs subsequent slugs
+                    # -------------------------
+                    # FIRST SLUG vs NEXT SLUGS
+                    # -------------------------
                     if i == 0:
                         if dry_run:
                             seg.prime_gas_path(
@@ -404,33 +400,56 @@ class ExperimentManager:
                             )
                         else:
                             seg.prime_gas_path(duration_s=gas_prime_s)
+
                     else:
                         if dry_run:
                             seg.reset_for_next_slug(dry_run=True, trace=trace)
                         else:
                             seg.reset_for_next_slug()
-    
-                        # -----------------------------
-                        # WASH POLICY (NEW)
-                        # -----------------------------
+
+                        # -------------------------
+                        # WASH POLICY (FIXED)
+                        # -------------------------
                         if wash_policy == "needle_only":
                             if dry_run:
-                                seg.rsg.needle_wash(dry_run=True, trace=trace)
+                                seg.rsg.needle_wash(
+                                    wash_solvent_volume=needle_wash_volume_ul,
+                                    dry_run=True,
+                                    trace=trace,
+                                )
                             else:
-                                seg.rsg.needle_wash()
-    
+                                seg.rsg.needle_wash(
+                                    wash_solvent_volume=needle_wash_volume_ul,
+                                )
+
                         elif wash_policy == "full":
                             if dry_run:
-                                seg.rsg.between_slug_wash(dry_run=True, trace=trace)
+                                seg.rsg.between_slug_wash(
+                                    wash_solvent_volume=between_slug_wash_volume_ul,
+                                    dry_run=True,
+                                    trace=trace,
+                                )
                             else:
-                                seg.rsg.between_slug_wash()
-    
+                                seg.rsg.between_slug_wash(
+                                    wash_solvent_volume=between_slug_wash_volume_ul,
+                                )
+
                         elif wash_policy == "none":
                             pass
-    
+
                         else:
                             raise ValueError(f"Unknown wash_policy: {wash_policy}")
-    
+
+                    # -------------------------
+                    # SLUG CREATION
+                    # -------------------------
+
+                    print("[EXECUTION ENTRY PLAN TYPE]", type(self.context.plan))
+
+                    if hasattr(self.context.plan, "head"):
+                        print("[EXECUTION ENTRY DF SHAPE]", self.context.plan.shape)
+                        print("[EXECUTION ENTRY COLUMNS]", self.context.plan.columns.tolist())
+                    
                     if dry_run:
                         result = seg.create_slug(
                             slug_plan=slug,
@@ -451,7 +470,7 @@ class ExperimentManager:
                             dispense_rate=dispense_rate_ml_min,
                             withdraw_rate=withdraw_rate_ml_min,
                         )
-    
+
                 except Exception as exc:
                     if not dry_run:
                         self._append_event(
@@ -465,11 +484,10 @@ class ExperimentManager:
                             },
                         )
                     raise
-    
+
                 results.append(result)
-    
                 self.context.slug_index += 1
-    
+
                 if dry_run:
                     append_trace(
                         trace,
@@ -490,15 +508,15 @@ class ExperimentManager:
                             "launched": result["launched"],
                         },
                     )
-    
+
                 print(
                     f"[EXPERIMENT] Completed {result['slug_id']} "
                     f"({result['dispensed_volume_ul']} uL)"
                 )
-    
+
             self.context.state = "completed"
             self.system_state = self.SYSTEM_UNKNOWN
-    
+
             if dry_run:
                 append_trace(
                     trace,
@@ -511,11 +529,10 @@ class ExperimentManager:
                     "experiment_completed",
                     {"experiment_id": self.context.experiment_id},
                 )
-    
+
             print(f"[EXPERIMENT] {self.context.experiment_id} completed")
-    
             return results
-    
+
         except KeyboardInterrupt:
             self.context.state = "aborted"
             self.system_state = self.SYSTEM_FAULT
@@ -530,7 +547,7 @@ class ExperimentManager:
                 self._abort_seg(seg)
             print(f"[EXPERIMENT] {self.context.experiment_id} aborted by user")
             raise
-    
+
         except Exception as exc:
             self.context.state = "failed"
             self.system_state = self.SYSTEM_FAULT

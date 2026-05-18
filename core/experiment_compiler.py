@@ -3,6 +3,8 @@ from typing import Dict, Any, List, Optional
 import pandas as pd
 from collections import defaultdict
 import copy
+import hashlib
+import json
 
 
 @dataclass
@@ -102,7 +104,13 @@ class ExperimentCompiler:
             if missing:
                 raise ValueError(f"Row {i} missing columns: {missing}")
     
-        return pd.DataFrame(data)[self.OUTPUT_COLUMNS]
+        plan_df = pd.DataFrame(data)[self.OUTPUT_COLUMNS]
+
+        print("[COMPILER OUTPUT SHAPE]", plan_df.shape)
+        print("[COMPILER OUTPUT COLUMNS]", plan_df.columns.tolist())
+        print("[COMPILER SAMPLE ROW]", plan_df.iloc[0].to_dict())
+        
+        return plan_df
 
     def normalise(self, experiment_id, slug_spec, block_id="block_1"):
         """
@@ -159,7 +167,6 @@ class ExperimentCompiler:
                 }
             ]
         }
-    
         return intent
 
     # ------------------------------------------------------------
