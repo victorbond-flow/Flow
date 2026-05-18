@@ -14,6 +14,8 @@ class KnauerPumpS100:
         self.baudrate = baudrate
         self.timeout = timeout
         self.ser = None
+        self.flow_rate_ul_min = None
+        self.is_running = False
 
     @log_call
     def connect(self):
@@ -46,6 +48,7 @@ class KnauerPumpS100:
     @log_call
     def set_flow_rate(self, flow_rate, dry_run=False, trace=None):
         if dry_run:
+            self.flow_rate_ul_min = flow_rate
             append_trace(
                 trace,
                 step="carrier_pump",
@@ -57,6 +60,7 @@ class KnauerPumpS100:
             return None
 
         byteData = self.command(f"F{int(flow_rate)}")
+        self.flow_rate_ul_min = flow_rate
         if byteData == "OK":
             print(f"[k_pump] Flow rate set to {flow_rate} uL/min")
         return byteData
@@ -69,10 +73,12 @@ class KnauerPumpS100:
     @log_call
     def start_flow(self, dry_run=False, trace=None):
         if dry_run:
+            self.is_running = True
             append_trace(trace, step="carrier_pump", action="start_flow")
             print("[Pump] Dry-run flow started")
             return None
         byteData = self.command('M1')
+        self.is_running = True
         if byteData == "OK":
             print("[Pump] Flow started")
         return byteData
@@ -80,10 +86,12 @@ class KnauerPumpS100:
     @log_call
     def stop_flow(self, dry_run=False, trace=None):
         if dry_run:
+            self.is_running = False
             append_trace(trace, step="carrier_pump", action="stop_flow")
             print("[Pump] Dry-run flow stopped")
             return None
         byteData = self.command('M0')
+        self.is_running = False
         if byteData == "OK":
             print("[Pump] Flow stopped")
         return byteData

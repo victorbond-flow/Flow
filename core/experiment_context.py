@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Optional
 from pathlib import Path
 from datetime import datetime
+import copy
 import json
 import time
 
@@ -16,6 +17,7 @@ class ExperimentContext:
     slug_index: int
     log_path: Path
     state: str   # prepared / armed / running / completed / failed / aborted
+    system_snapshot: Optional[dict] = None
 
 
 class ExperimentManager:
@@ -80,7 +82,8 @@ class ExperimentManager:
             plan=plan,
             slug_index=0,
             log_path=log_path,
-            state="prepared"
+            state="prepared",
+            system_snapshot=None,
         )
         
         self.mode = "experiment"
@@ -260,6 +263,12 @@ class ExperimentManager:
                 "air_gap_uL": air_gap,
                 "rate_wdr_mL_min": rate_wdr,
             },
+        )
+
+        self.context.system_snapshot = self._capture_experiment_snapshot(
+            seg,
+            air_gap=air_gap,
+            rate_wdr=rate_wdr,
         )
     
         print("[SYSTEM] RSG READY")
@@ -603,6 +612,167 @@ class ExperimentManager:
                     "error": str(exc),
                 },
             )
+
+    # ------------------------------------------------------------------
+    # Experiment snapshot
+    # ------------------------------------------------------------------
+
+    def _capture_experiment_snapshot(self, seg, air_gap: float, rate_wdr: float):
+        """
+        Store a frozen diagnostic record of state after prepare_rsg.
+        The snapshot lives with ExperimentContext because it is experiment-scoped
+        and should not be shared by reusable hardware/controller instances.
+        It is for debugging and inspection only; preview_execution must run
+        from the actual live Segmentation/RSG object state, never this snapshot.
+        """
+        rsg = getattr(seg, "rsg", None)
+        probe = getattr(rsg, "probe", None)
+        dim = getattr(seg, "dim", None)
+        fsm = getattr(seg, "fsm", None)
+        carrier = getattr(seg, "carrier", None)
+        seg_state = getattr(seg, "state", None)
+        seg_phase = getattr(seg_state, "phase", None)
+
+        snapshot = {
+            "experiment_id": self.context.experiment_id,
+            "captured_after": "prepare_rsg",
+            "probe": {
+                "known": getattr(probe, "known", None),
+                "contents": copy.deepcopy(getattr(probe, "contents", [])),
+            },
+            "dim": {
+                "state": getattr(getattr(dim, "state", None), "name", None),
+                "valve_position": self._dim_valve_position(
+                    getattr(dim, "state", None)
+                ),
+            },
+            "fsm": {
+                "state": getattr(getattr(fsm, "state", None), "name", None),
+                "valve_position": self._fsm_valve_position(
+                    getattr(fsm, "state", None)
+                ),
+            },
+            "segmentation": {
+                "phase": getattr(seg_phase, "name", None),
+            },
+            "rsg": {
+                "state": getattr(getattr(rsg, "state", None), "name", None),
+                "initial_air_gap_uL": float(air_gap),
+                "initial_air_gap_rate_mL_min": float(rate_wdr),
+            },
+            "carrier_pump": {
+                "flow_rate_ul_min": getattr(carrier, "flow_rate_ul_min", None),
+                "running": getattr(carrier, "is_running", None),
+            },
+        }
+
+        self._validate_experiment_snapshot(snapshot)
+        return copy.deepcopy(snapshot)
+
+    def _validate_experiment_snapshot(self, snapshot=None):
+        snapshot = snapshot or getattr(self.context, "system_snapshot", None)
+
+        if snapshot is None:
+            raise RuntimeError(
+                "No experiment snapshot found. Run manager.prepare_rsg(...) "
+                "before validating the experiment snapshot."
+            )
+
+        if snapshot.get("captured_after") != "prepare_rsg":
+            raise RuntimeError(
+                "Invalid experiment snapshot: expected state captured after "
+                "prepare_rsg()."
+            )
+
+        probe = snapshot.get("probe", {})
+        contents = probe.get("contents")
+
+        if probe.get("known") is False:
+            raise RuntimeError("Invalid experiment snapshot: probe state is unknown.")
+
+        if not isinstance(contents, list) or not contents:
+            raise RuntimeError(
+                "Invalid experiment snapshot: probe contents are missing."
+            )
+
+        finite_air_segments = []
+
+        for index, segment in enumerate(contents):
+            if not isinstance(segment, dict):
+                raise RuntimeError(
+                    f"Invalid experiment snapshot: probe segment {index} "
+                    "is not a dict."
+                )
+
+            fluid_type = segment.get("type")
+            if fluid_type is None:
+                raise RuntimeError(
+                    f"Invalid experiment snapshot: probe segment {index} "
+                    "is missing type."
+                )
+
+            if "volume_ul" not in segment:
+                raise RuntimeError(
+                    f"Invalid experiment snapshot: probe segment {index} "
+                    "is missing volume_ul."
+                )
+
+            is_infinite = bool(segment.get("is_infinite", False))
+            volume = segment["volume_ul"]
+
+            if is_infinite and index != 0:
+                raise RuntimeError(
+                    "Invalid experiment snapshot: infinite reservoir segment "
+                    "must be at the bottom of the probe stack."
+                )
+
+            if not is_infinite and volume <= 0:
+                raise RuntimeError(
+                    f"Invalid experiment snapshot: probe segment {index} "
+                    f"has non-positive volume {volume}."
+                )
+
+            if fluid_type == "air" and not is_infinite:
+                finite_air_segments.append(segment)
+
+        if not finite_air_segments:
+            raise RuntimeError(
+                "Invalid experiment snapshot: missing prepared air segment in "
+                "probe stack. Run manager.prepare_rsg(...) successfully before "
+                "snapshot validation."
+            )
+
+        required_state_fields = (
+            ("dim", "state"),
+            ("fsm", "state"),
+            ("segmentation", "phase"),
+            ("rsg", "state"),
+        )
+        for section, field in required_state_fields:
+            if not snapshot.get(section, {}).get(field):
+                raise RuntimeError(
+                    f"Invalid experiment snapshot: missing {section}.{field}."
+                )
+
+        return True
+
+    @staticmethod
+    def _dim_valve_position(state):
+        state_name = getattr(state, "name", None)
+        if state_name == "INJECT":
+            return "A"
+        if state_name == "LOAD":
+            return "B"
+        return None
+
+    @staticmethod
+    def _fsm_valve_position(state):
+        state_name = getattr(state, "name", None)
+        if state_name == "GAS_TO_DIM":
+            return "A"
+        if state_name == "CARRIER_TO_DIM":
+            return "B"
+        return None
 
     # ------------------------------------------------------------------
     # Status

@@ -34,6 +34,8 @@ class RSG:
         self.probe = probe
         self.wash_safety_margin_ul = wash_safety_margin_ul
         self.state = RSGState.IDLE
+        self.initial_air_gap_uL = None
+        self.initial_air_gap_rate_mL_min = None
 
     # ------------------------------------------------------------------
     # Primitive actions
@@ -134,6 +136,8 @@ class RSG:
 
             # Then, physical action
             self.take_air_gap(volume=air_gap, rate=rate_wdr, dry_run=dry_run, trace=trace)
+            self.initial_air_gap_uL = float(air_gap)
+            self.initial_air_gap_rate_mL_min = float(rate_wdr)
 
             self.state = RSGState.IDLE
             print("[Initialise] Ready - air gap in place")
