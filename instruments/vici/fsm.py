@@ -1,5 +1,6 @@
 from enum import Enum, auto
 from core.logging import flow_logger as logger, log_call
+from core.tracing import append_trace
 import serial
 
 
@@ -61,10 +62,9 @@ class FSM:
         return resp[-1]
 
     @log_call
-    def go_to_pos(self, pos: str):
+    def go_to_pos(self, pos: str, dry_run=False, trace=None):
         """Move valve to 'A' or 'B'."""
         pos = pos.upper()
-        current = self.read_pos()
 
         # Determine semantic state (UPDATED MAPPING)
         if pos == "A":
@@ -73,6 +73,19 @@ class FSM:
             new_state = FSMState.CARRIER_TO_DIM
         else:
             raise ValueError("Position must be 'A' or 'B'")
+
+        if dry_run:
+            self.state = new_state
+            append_trace(
+                trace,
+                step="fsm",
+                action="go_to_pos",
+                notes=pos,
+            )
+            print(f"[FSM] Dry-run valve to {pos} -> state = {self.state.name}")
+            return
+
+        current = self.read_pos()
 
         # Sync current state
         self._sync_state()
@@ -106,14 +119,16 @@ class FSM:
     # --- Semantic wrappers ---
 
     @log_call
-    def gas_to_dim(self):
+    def gas_to_dim(self, dry_run=False, trace=None):
         """Route gas to DIM (now position A)."""
-        self.go_to_pos("A")
+        append_trace(trace, step="fsm", action="gas_to_dim")
+        self.go_to_pos("A", dry_run=dry_run, trace=trace)
 
     @log_call
-    def carrier_to_dim(self):
+    def carrier_to_dim(self, dry_run=False, trace=None):
         """Route carrier to DIM (now position B)."""
-        self.go_to_pos("B")
+        append_trace(trace, step="fsm", action="carrier_to_dim")
+        self.go_to_pos("B", dry_run=dry_run, trace=trace)
 
     # ------------------------------------------------------------------
     # Internal helpers

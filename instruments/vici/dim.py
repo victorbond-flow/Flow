@@ -1,6 +1,7 @@
 import serial
 from enum import Enum, auto
 from core.logging import flow_logger as logger, log_call
+from core.tracing import append_trace
 
 class DIMState(Enum):
     LOAD = auto()
@@ -70,13 +71,32 @@ class DIM:
         return resp[-1]  # sometimes last char is the position
 
     @log_call
-    def go_to_pos(self, pos: str):
+    def go_to_pos(self, pos: str, dry_run=False, trace=None):
         """
         Moves valve to 'A' or 'B'.
         A = CW   (clockwise)
         B = CC   (counter-clockwise)
         """
         pos = pos.upper()
+
+        if dry_run:
+            if pos == "A":
+                self.state = DIMState.INJECT
+            elif pos == "B":
+                self.state = DIMState.LOAD
+            else:
+                raise ValueError("Position must be 'A' or 'B'")
+
+            append_trace(
+                trace,
+                step="dim",
+                action="go_to_pos",
+                module="dim",
+                notes=pos,
+            )
+            print(f"[DIM] Dry-run valve to {pos} -> state = {self.state}")
+            return
+
         current = self.read_pos()
     
         # --- Always sync internal state with hardware ---
@@ -113,19 +133,30 @@ class DIM:
         else:
             print(f"Unknown position '{p}' — cannot toggle.")
 
-    def load(self):
+    def load(self, dry_run=False, trace=None):
         """ Connects injection assay to sample loop """
-        self.go_to_pos("B")
+        append_trace(trace, step="dim", action="load", module="dim")
+        self.go_to_pos("B", dry_run=dry_run, trace=trace)
 
-    def inject(self):
+    def inject(self, dry_run=False, trace=None):
         """ Connects injection assay to waste (gas/solvent from Runze toward sample loop now) """
-        self.go_to_pos("A")
+        append_trace(trace, step="dim", action="inject", module="dim")
+        self.go_to_pos("A", dry_run=dry_run, trace=trace)
 
-    def assert_load(self):
+    def assert_load(self, dry_run=False, trace=None):
         """
         Ensure the DIM is in LOAD (B) position.
         Sync internal state with hardware before asserting.
         """
+        if dry_run:
+            append_trace(trace, step="dim", action="assert_load", module="dim")
+            if self.state != DIMState.LOAD:
+                raise RuntimeError(
+                    f"DIM must be in LOAD to accept liquid. "
+                    f"Internal state: {self.state}"
+                )
+            return
+
         pos = self.read_pos()  # query valve
         if pos == "B":
             self.state = DIMState.LOAD
@@ -140,11 +171,20 @@ class DIM:
                 f"Current valve position: {pos}, internal state: {self.state}"
             )
 
-    def assert_inject(self):
+    def assert_inject(self, dry_run=False, trace=None):
         """
         Ensure the DIM is in INJECT (A) position.
         Sync internal state with hardware before asserting.
         """
+        if dry_run:
+            append_trace(trace, step="dim", action="assert_inject", module="dim")
+            if self.state != DIMState.INJECT:
+                raise RuntimeError(
+                    f"DIM must be in INJECT to launch flow. "
+                    f"Internal state: {self.state}"
+                )
+            return
+
         pos = self.read_pos()  # query valve
         if pos == "B":
             self.state = DIMState.LOAD

@@ -6,6 +6,7 @@ import json
 import time
 
 from core.experiment_validator import ExperimentValidator
+from core.tracing import append_trace
 
 
 @dataclass
@@ -37,6 +38,7 @@ class ExperimentManager:
 
         self.repo_root = Path(__file__).resolve().parent.parent
         self.experiments_root = self.repo_root / "Experiments"
+        self.trace = []
 
     # ------------------------------------------------------------------
     # Load
@@ -266,75 +268,31 @@ class ExperimentManager:
     # Preview Execution (full trace)
     # ------------------------------------------------------------------
     def preview_execution(
-    self,
-    seg,
-    gas_prime_s=None,
-    flowrate_ul_min=None,
-    air_gap_between=None,
-    wash_policy="none",
-):
+        self,
+        seg,
+        gas_prime_s=None,
+        flowrate_ul_min=None,
+        air_gap_between=None,
+        wash_policy="none",
+        dry_run=True,
+    ):
 
         if self.context is None:
             raise Exception("No experiment loaded")
-    
-        defaults = self.context.plan.get("global_conditions", {})
-    
-        gas_prime_s = gas_prime_s or defaults["gas_prime_s"]
-        flowrate_ul_min = flowrate_ul_min or defaults["flowrate_ul_min"]
-        air_gap_between = air_gap_between or defaults.get("air_gap_between_uL", 5.0)
-    
-        slugs = self.context.plan["slugs"]
-        trace = []
-    
-        for i, slug in enumerate(slugs):
-    
-            slug_id = slug.get("slug_id", f"slug_{i+1}")
-            trace.append(f"\n--- SLUG {i+1}: {slug_id} ---")
-    
-            # ------------------------------------------------------------
-            # EXACT MIRROR OF execute_experiment
-            # ------------------------------------------------------------
-    
-            if i == 0:
-                trace.append(f"seg.prime_gas_path({gas_prime_s}s)")
-            else:
-                trace.append("seg.reset_for_next_slug()")
-    
-                if wash_policy == "needle":
-                    trace.append("seg.rsg.needle_wash()")
-                elif wash_policy == "full":
-                    trace.append("seg.rsg.between_slug_wash()")
-    
-            trace.append("seg.create_slug(...)")
-    
-            # ------------------------------------------------------------
-            # NOW EXPAND create_slug PROPERLY (NOT STRING GUESSING)
-            # ------------------------------------------------------------
-    
-            trace.append("  → prepare_slug()")
-            trace.append("    → DIM.load()")
-            trace.append("    → RSG.build_rxn_segment()")
-    
-            for comp in slug.get("reaction_plan", []):
-                trace.append(
-                    f"      → pickup {comp['volume_uL']} uL "
-                    f"from {comp['module']} vial {comp['vial']}"
-                )
-    
-            trace.append(f"    → post-pickup air gap ({air_gap_between} uL)")
-            trace.append("    → dispense to DIM")
-    
-            trace.append("  → launch_segment()")
-    
-            # THIS IS THE CRITICAL PART (your bug lives here)
-            trace.append("    → FSM.carrier_to_dim()")
-            trace.append("    → DIM.inject()")
-            trace.append(f"    → carrier.set_flow_rate({flowrate_ul_min})")
-            trace.append("    → carrier.start_flow()")
-    
-            trace.append("    → phase transition: LOOP_LOADED → RUNNING")
-    
-        return trace
+
+        self.trace = []
+
+        self.execute_experiment(
+            seg=seg,
+            gas_prime_s=gas_prime_s,
+            flowrate_ul_min=flowrate_ul_min,
+            air_gap_between=air_gap_between,
+            wash_policy=wash_policy,
+            dry_run=dry_run,
+            trace=self.trace,
+        )
+
+        return self.trace
     # ------------------------------------------------------------------
     # Execute
     # ------------------------------------------------------------------
@@ -346,16 +304,18 @@ class ExperimentManager:
         flowrate_ul_min=None,
         air_gap_between=None,
         wash_policy: str = "needle_only",
+        dry_run: bool = False,
+        trace=None,
     ):
         if self.context is None:
             raise Exception("No experiment loaded")
     
-        if self.context.state != "armed":
+        if not dry_run and self.context.state != "armed":
             raise Exception(
                 f"Experiment must be armed. Current state: {self.context.state}"
             )
     
-        if self.platform_state != self.PLATFORM_READY:
+        if not dry_run and self.platform_state != self.PLATFORM_READY:
             raise RuntimeError(
                 "Platform not ready. "
                 f"Reactor={self.reactor_state}, RSG={self.rsg_state}"
@@ -365,6 +325,14 @@ class ExperimentManager:
     
         self.context.state = "running"
         self.system_state = self.SYSTEM_RUNNING
+
+        if dry_run:
+            append_trace(
+                trace,
+                step="experiment",
+                action="start",
+                notes=self.context.experiment_id,
+            )
     
         results = []
     
@@ -399,30 +367,54 @@ class ExperimentManager:
                 slug = slugs[i]
                 slug_id = slug.get("slug_id", f"slug_{i + 1}")
     
-                self._append_event(
-                    "slug_started",
-                    {
-                        "slug_index": i,
-                        "slug_number": i + 1,
-                        "slug_id": slug_id,
-                    },
-                )
+                if dry_run:
+                    append_trace(
+                        trace,
+                        step=f"slug_{i + 1}",
+                        action="start",
+                        notes=slug_id,
+                    )
+                else:
+                    self._append_event(
+                        "slug_started",
+                        {
+                            "slug_index": i,
+                            "slug_number": i + 1,
+                            "slug_id": slug_id,
+                        },
+                    )
     
                 try:
                     # First slug vs subsequent slugs
                     if i == 0:
-                        seg.prime_gas_path(duration_s=gas_prime_s)
+                        if dry_run:
+                            seg.prime_gas_path(
+                                duration_s=gas_prime_s,
+                                dry_run=True,
+                                trace=trace,
+                            )
+                        else:
+                            seg.prime_gas_path(duration_s=gas_prime_s)
                     else:
-                        seg.reset_for_next_slug()
+                        if dry_run:
+                            seg.reset_for_next_slug(dry_run=True, trace=trace)
+                        else:
+                            seg.reset_for_next_slug()
     
                         # -----------------------------
                         # WASH POLICY (NEW)
                         # -----------------------------
                         if wash_policy == "needle_only":
-                            seg.rsg.needle_wash()
+                            if dry_run:
+                                seg.rsg.needle_wash(dry_run=True, trace=trace)
+                            else:
+                                seg.rsg.needle_wash()
     
                         elif wash_policy == "full":
-                            seg.rsg.between_slug_wash()
+                            if dry_run:
+                                seg.rsg.between_slug_wash(dry_run=True, trace=trace)
+                            else:
+                                seg.rsg.between_slug_wash()
     
                         elif wash_policy == "none":
                             pass
@@ -430,43 +422,65 @@ class ExperimentManager:
                         else:
                             raise ValueError(f"Unknown wash_policy: {wash_policy}")
     
-                    result = seg.create_slug(
-                        slug_plan=slug,
-                        gas_prime_s=gas_prime_s,
-                        flowrate_ul_min=flowrate_ul_min,
-                        air_gap_between=air_gap_between,
-                        dispense_rate=dispense_rate_ml_min,
-                        withdraw_rate=withdraw_rate_ml_min,
-                    )
+                    if dry_run:
+                        result = seg.create_slug(
+                            slug_plan=slug,
+                            gas_prime_s=gas_prime_s,
+                            flowrate_ul_min=flowrate_ul_min,
+                            air_gap_between=air_gap_between,
+                            dispense_rate=dispense_rate_ml_min,
+                            withdraw_rate=withdraw_rate_ml_min,
+                            dry_run=True,
+                            trace=trace,
+                        )
+                    else:
+                        result = seg.create_slug(
+                            slug_plan=slug,
+                            gas_prime_s=gas_prime_s,
+                            flowrate_ul_min=flowrate_ul_min,
+                            air_gap_between=air_gap_between,
+                            dispense_rate=dispense_rate_ml_min,
+                            withdraw_rate=withdraw_rate_ml_min,
+                        )
     
                 except Exception as exc:
-                    self._append_event(
-                        "slug_failed",
-                        {
-                            "slug_index": i,
-                            "slug_number": i + 1,
-                            "slug_id": slug_id,
-                            "error_type": type(exc).__name__,
-                            "error": str(exc),
-                        },
-                    )
+                    if not dry_run:
+                        self._append_event(
+                            "slug_failed",
+                            {
+                                "slug_index": i,
+                                "slug_number": i + 1,
+                                "slug_id": slug_id,
+                                "error_type": type(exc).__name__,
+                                "error": str(exc),
+                            },
+                        )
                     raise
     
                 results.append(result)
     
                 self.context.slug_index += 1
     
-                self._append_event(
-                    "slug_created",
-                    {
-                        "slug_index": i,
-                        "slug_number": i + 1,
-                        "slug_id": result["slug_id"],
-                        "dispensed_volume_ul": result["dispensed_volume_ul"],
-                        "num_components": result["num_components"],
-                        "launched": result["launched"],
-                    },
-                )
+                if dry_run:
+                    append_trace(
+                        trace,
+                        step=f"slug_{i + 1}",
+                        action="complete",
+                        volume_uL=result["dispensed_volume_ul"],
+                        notes=result["slug_id"],
+                    )
+                else:
+                    self._append_event(
+                        "slug_created",
+                        {
+                            "slug_index": i,
+                            "slug_number": i + 1,
+                            "slug_id": result["slug_id"],
+                            "dispensed_volume_ul": result["dispensed_volume_ul"],
+                            "num_components": result["num_components"],
+                            "launched": result["launched"],
+                        },
+                    )
     
                 print(
                     f"[EXPERIMENT] Completed {result['slug_id']} "
@@ -476,10 +490,18 @@ class ExperimentManager:
             self.context.state = "completed"
             self.system_state = self.SYSTEM_UNKNOWN
     
-            self._append_event(
-                "experiment_completed",
-                {"experiment_id": self.context.experiment_id},
-            )
+            if dry_run:
+                append_trace(
+                    trace,
+                    step="experiment",
+                    action="complete",
+                    notes=self.context.experiment_id,
+                )
+            else:
+                self._append_event(
+                    "experiment_completed",
+                    {"experiment_id": self.context.experiment_id},
+                )
     
             print(f"[EXPERIMENT] {self.context.experiment_id} completed")
     
@@ -488,30 +510,32 @@ class ExperimentManager:
         except KeyboardInterrupt:
             self.context.state = "aborted"
             self.system_state = self.SYSTEM_FAULT
-            self._append_event(
-                "user_aborted",
-                {
-                    "experiment_id": self.context.experiment_id,
-                    "slug_index": self.context.slug_index,
-                },
-            )
-            self._abort_seg(seg)
+            if not dry_run:
+                self._append_event(
+                    "user_aborted",
+                    {
+                        "experiment_id": self.context.experiment_id,
+                        "slug_index": self.context.slug_index,
+                    },
+                )
+                self._abort_seg(seg)
             print(f"[EXPERIMENT] {self.context.experiment_id} aborted by user")
             raise
     
         except Exception as exc:
             self.context.state = "failed"
             self.system_state = self.SYSTEM_FAULT
-            self._append_event(
-                "experiment_failed",
-                {
-                    "experiment_id": self.context.experiment_id,
-                    "slug_index": self.context.slug_index,
-                    "error_type": type(exc).__name__,
-                    "error": str(exc),
-                },
-            )
-            self._abort_seg(seg)
+            if not dry_run:
+                self._append_event(
+                    "experiment_failed",
+                    {
+                        "experiment_id": self.context.experiment_id,
+                        "slug_index": self.context.slug_index,
+                        "error_type": type(exc).__name__,
+                        "error": str(exc),
+                    },
+                )
+                self._abort_seg(seg)
             print(f"[EXPERIMENT] {self.context.experiment_id} failed: {exc}")
             raise
 

@@ -3,6 +3,7 @@ import serial
 import re
 import time
 from core.flow_logging import FlowLogger
+from core.tracing import append_trace
 
 logger = FlowLogger()
 log_call = logger.log_call
@@ -39,8 +40,19 @@ class KnauerPumpAzura:
         return byteData
 
     @log_call
-    def set_flow_rate(self, flow_rate):
+    def set_flow_rate(self, flow_rate, dry_run=False, trace=None):
         """Set the flow rate in uL/min."""
+        if dry_run:
+            append_trace(
+                trace,
+                step="carrier_pump",
+                action="set_flow_rate",
+                volume_uL=flow_rate,
+                notes="uL/min",
+            )
+            print(f"[k_pump] Dry-run flow rate set to {flow_rate} uL/min")
+            return None
+
         byteData = self.command(f"FLOW:{flow_rate}")
         print(f"[k_pump] Flow rate set to {flow_rate} uL/min")
         return byteData
@@ -50,14 +62,21 @@ class KnauerPumpAzura:
         return byteData
 
     @log_call
-    def start_flow(self):
+    def start_flow(self, dry_run=False, trace=None):
+        if dry_run:
+            append_trace(trace, step="carrier_pump", action="start_flow")
+            print("[Pump] Dry-run flow started")
+            return None
         byteData = self.command("ON")
         print("[Pump] Flow started")
         return byteData
 
     @log_call
-    def stop_flow(self):
+    def stop_flow(self, dry_run=False, trace=None):
+        if dry_run:
+            append_trace(trace, step="carrier_pump", action="stop_flow")
+            print("[Pump] Dry-run flow stopped")
+            return None
         byteData = self.command("OFF")
         print("[Pump] Flow stopped")
         return byteData
-    

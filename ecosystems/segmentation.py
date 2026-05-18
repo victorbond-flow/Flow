@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 from instruments.vici.dim import DIMState
 from instruments.vici.fsm import FSMState
+from core.tracing import append_trace
 
 
 class SegmentationPhase(Enum):
@@ -71,7 +72,7 @@ class Segmentation:
     # Solvent flush / conditioning
     # ------------------------------------------------------------------
 
-    def prime_with_solvent(self, flowrate_ul_min, duration_s):
+    def prime_with_solvent(self, flowrate_ul_min, duration_s, dry_run=False, trace=None):
         """
         Flush system with solvent.
         Allowed from READY or RUNNING.
@@ -85,18 +86,32 @@ class Segmentation:
                 f"Cannot solvent prime from {self.state.phase.name}"
             )
 
-        self.fsm.carrier_to_dim()
+        if dry_run:
+            self.fsm.carrier_to_dim(dry_run=True, trace=trace)
+        else:
+            self.fsm.carrier_to_dim()
         self.state.fsm = FSMState.CARRIER_TO_DIM
 
-        self.dim.inject()
+        if dry_run:
+            self.dim.inject(dry_run=True, trace=trace)
+        else:
+            self.dim.inject()
         self.state.dim = DIMState.INJECT
 
-        self.carrier.set_flow_rate(flowrate_ul_min)
-        self.carrier.start_flow()
+        if dry_run:
+            self.carrier.set_flow_rate(flowrate_ul_min, dry_run=True, trace=trace)
+            self.carrier.start_flow(dry_run=True, trace=trace)
+        else:
+            self.carrier.set_flow_rate(flowrate_ul_min)
+            self.carrier.start_flow()
 
-        time.sleep(duration_s)
+        if not dry_run:
+            time.sleep(duration_s)
 
-        self.carrier.stop_flow()
+        if dry_run:
+            self.carrier.stop_flow(dry_run=True, trace=trace)
+        else:
+            self.carrier.stop_flow()
 
         self._set_phase(SegmentationPhase.READY)
 
@@ -104,7 +119,7 @@ class Segmentation:
     # Gas spacer generation
     # ------------------------------------------------------------------
 
-    def prime_gas_path(self, duration_s):
+    def prime_gas_path(self, duration_s, dry_run=False, trace=None):
         """
         Establish gas spacer geometry for next slug.
         Allowed from READY or RUNNING.
@@ -118,13 +133,27 @@ class Segmentation:
                 f"Cannot prime gas path from {self.state.phase.name}"
             )
 
-        self.fsm.gas_to_dim()
+        if dry_run:
+            self.fsm.gas_to_dim(dry_run=True, trace=trace)
+        else:
+            self.fsm.gas_to_dim()
         self.state.fsm = FSMState.GAS_TO_DIM
 
-        self.dim.inject()
+        if dry_run:
+            self.dim.inject(dry_run=True, trace=trace)
+        else:
+            self.dim.inject()
         self.state.dim = DIMState.INJECT
 
-        time.sleep(duration_s)
+        append_trace(
+            trace,
+            step="segmentation",
+            action="prime_gas_path",
+            notes=f"duration_s={duration_s}",
+        )
+
+        if not dry_run:
+            time.sleep(duration_s)
 
         self._set_phase(SegmentationPhase.GAS_PRIMED)
 
@@ -132,7 +161,15 @@ class Segmentation:
     # Load reaction segment into loop
     # ------------------------------------------------------------------
 
-    def prepare_slug(self, slug_plan, air_gap_between=5.0, dispense_rate = 0.5, withdraw_rate = None,):
+    def prepare_slug(
+        self,
+        slug_plan,
+        air_gap_between=5.0,
+        dispense_rate=0.5,
+        withdraw_rate=None,
+        dry_run=False,
+        trace=None,
+    ):
         """
         Build liquid reaction slug and load into DIM loop.
         """
@@ -140,7 +177,10 @@ class Segmentation:
         self._require_phase(SegmentationPhase.GAS_PRIMED)
         self._set_phase(SegmentationPhase.LOOP_LOADING)
 
-        self.dim.load()
+        if dry_run:
+            self.dim.load(dry_run=True, trace=trace)
+        else:
+            self.dim.load()
         self.state.dim = DIMState.LOAD
 
         result = self.rsg.build_rxn_segment(
@@ -148,6 +188,8 @@ class Segmentation:
             air_gap_between=air_gap_between,
             withdraw_rate=withdraw_rate,
             dispense_rate=dispense_rate,
+            dry_run=dry_run,
+            trace=trace,
         )
 
         self._set_phase(SegmentationPhase.LOOP_LOADED)
@@ -158,17 +200,27 @@ class Segmentation:
     # Launch slug downstream
     # ------------------------------------------------------------------
 
-    def launch_segment(self, flowrate_ul_min):
+    def launch_segment(self, flowrate_ul_min, dry_run=False, trace=None):
         self._require_phase(SegmentationPhase.LOOP_LOADED)
 
-        self.fsm.carrier_to_dim()
+        if dry_run:
+            self.fsm.carrier_to_dim(dry_run=True, trace=trace)
+        else:
+            self.fsm.carrier_to_dim()
         self.state.fsm = FSMState.CARRIER_TO_DIM
 
-        self.dim.inject()
+        if dry_run:
+            self.dim.inject(dry_run=True, trace=trace)
+        else:
+            self.dim.inject()
         self.state.dim = DIMState.INJECT
 
-        self.carrier.set_flow_rate(flowrate_ul_min)
-        self.carrier.start_flow()
+        if dry_run:
+            self.carrier.set_flow_rate(flowrate_ul_min, dry_run=True, trace=trace)
+            self.carrier.start_flow(dry_run=True, trace=trace)
+        else:
+            self.carrier.set_flow_rate(flowrate_ul_min)
+            self.carrier.start_flow()
 
         self._set_phase(SegmentationPhase.RUNNING)
 
@@ -181,7 +233,7 @@ class Segmentation:
     # High level slug commands
     # ------------------------------------------------------------------
 
-    def reset_for_next_slug(self):
+    def reset_for_next_slug(self, dry_run=False, trace=None):
         """
         Explicit transition:
         RUNNING → GAS_PRIMED
@@ -194,10 +246,16 @@ class Segmentation:
             )
 
         # Re-establish gas spacer geometry
-        self.fsm.gas_to_dim()
+        if dry_run:
+            self.fsm.gas_to_dim(dry_run=True, trace=trace)
+        else:
+            self.fsm.gas_to_dim()
         self.state.fsm = FSMState.GAS_TO_DIM
 
-        self.dim.inject()
+        if dry_run:
+            self.dim.inject(dry_run=True, trace=trace)
+        else:
+            self.dim.inject()
         self.state.dim = DIMState.INJECT
 
         self._set_phase(SegmentationPhase.GAS_PRIMED)
@@ -209,7 +267,9 @@ class Segmentation:
     flowrate_ul_min,
     air_gap_between=5.0,
     dispense_rate = 0.5,
-    withdraw_rate = None
+    withdraw_rate = None,
+    dry_run=False,
+    trace=None,
 ):
         """
         Executes a single slug cycle.
@@ -232,9 +292,15 @@ class Segmentation:
             air_gap_between=air_gap_between,
             withdraw_rate=withdraw_rate,
             dispense_rate=dispense_rate,
+            dry_run=dry_run,
+            trace=trace,
         )
 
-        self.launch_segment(flowrate_ul_min=flowrate_ul_min)
+        self.launch_segment(
+            flowrate_ul_min=flowrate_ul_min,
+            dry_run=dry_run,
+            trace=trace,
+        )
 
         return {
             "slug_id": slug_id,
@@ -250,7 +316,7 @@ class Segmentation:
     # Stop campaign flow manually
     # ------------------------------------------------------------------
 
-    def stop_flow(self):
+    def stop_flow(self, dry_run=False, trace=None):
         """
         Stop carrier flow and return to READY state.
         """
@@ -263,12 +329,21 @@ class Segmentation:
                 f"Cannot stop flow from {self.state.phase.name}"
             )
 
-        self.carrier.stop_flow()
+        if dry_run:
+            self.carrier.stop_flow(dry_run=True, trace=trace)
+        else:
+            self.carrier.stop_flow()
 
-        self.fsm.carrier_to_dim()
+        if dry_run:
+            self.fsm.carrier_to_dim(dry_run=True, trace=trace)
+        else:
+            self.fsm.carrier_to_dim()
         self.state.fsm = FSMState.CARRIER_TO_DIM
 
-        self.dim.inject()
+        if dry_run:
+            self.dim.inject(dry_run=True, trace=trace)
+        else:
+            self.dim.inject()
         self.state.dim = DIMState.INJECT
 
         self._set_phase(SegmentationPhase.READY)
@@ -310,24 +385,38 @@ class Segmentation:
     # Reset after abort
     # ------------------------------------------------------------------
 
-    def reset(self, flowrate_ul_min, flush_time_sec):
+    def reset(self, flowrate_ul_min, flush_time_sec, dry_run=False, trace=None):
         if self.state.phase != SegmentationPhase.ABORTED:
             raise RuntimeError(
                 "Reset only allowed from ABORTED state."
             )
 
-        self.fsm.carrier_to_dim()
+        if dry_run:
+            self.fsm.carrier_to_dim(dry_run=True, trace=trace)
+        else:
+            self.fsm.carrier_to_dim()
         self.state.fsm = FSMState.CARRIER_TO_DIM
 
-        self.dim.inject()
+        if dry_run:
+            self.dim.inject(dry_run=True, trace=trace)
+        else:
+            self.dim.inject()
         self.state.dim = DIMState.INJECT
 
-        self.carrier.set_flow_rate(flowrate_ul_min)
-        self.carrier.start_flow()
+        if dry_run:
+            self.carrier.set_flow_rate(flowrate_ul_min, dry_run=True, trace=trace)
+            self.carrier.start_flow(dry_run=True, trace=trace)
+        else:
+            self.carrier.set_flow_rate(flowrate_ul_min)
+            self.carrier.start_flow()
 
-        time.sleep(flush_time_sec)
+        if not dry_run:
+            time.sleep(flush_time_sec)
 
-        self.carrier.stop_flow()
+        if dry_run:
+            self.carrier.stop_flow(dry_run=True, trace=trace)
+        else:
+            self.carrier.stop_flow()
 
         self._set_phase(SegmentationPhase.READY)
 

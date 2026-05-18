@@ -1,6 +1,7 @@
 import serial
 import time
 from core.flow_logging import FlowLogger
+from core.tracing import append_trace
 
 logger = FlowLogger()
 log_call = logger.log_call
@@ -128,13 +129,22 @@ class HBElite:
     # Control
     # ------------------------------------------------------------------
 
-    def infuse(self):
+    def infuse(self, dry_run=False, trace=None):
+        if dry_run:
+            append_trace(trace, step="syringe_pump", action="infuse")
+            return []
         return self.command("irun")
 
-    def withdraw(self):
+    def withdraw(self, dry_run=False, trace=None):
+        if dry_run:
+            append_trace(trace, step="syringe_pump", action="withdraw")
+            return []
         return self.command("wrun")
 
-    def stop(self):
+    def stop(self, dry_run=False, trace=None):
+        if dry_run:
+            append_trace(trace, step="syringe_pump", action="stop")
+            return []
         return self.command("stop")
 
     def clear_volume(self):
@@ -144,16 +154,36 @@ class HBElite:
     # ------------------------------------------------------------------
     # Higher level methods
     # ------------------------------------------------------------------
-    def infuse_volume(self, volume_ul, rate_ml_min):
+    def infuse_volume(self, volume_ul, rate_ml_min, dry_run=False, trace=None):
         """
         Infuse a given volume (µL) at a given rate (mL/min)
         """
+        if dry_run:
+            append_trace(
+                trace,
+                step="syringe_pump",
+                action="infuse_volume",
+                volume_uL=volume_ul,
+                rate=rate_ml_min,
+            )
+            return []
+
         self.clear_volume()                  # reset the pump memory
         self.set_irate(rate_ml_min)          # set infusion rate
         self.set_target_volume(volume_ul)    # use the correct variable
         self.infuse()                        # start infusion
 
-    def withdraw_volume(self, volume_ul, rate_ml_min):
+    def withdraw_volume(self, volume_ul, rate_ml_min, dry_run=False, trace=None):
+        if dry_run:
+            append_trace(
+                trace,
+                step="syringe_pump",
+                action="withdraw_volume",
+                volume_uL=volume_ul,
+                rate=rate_ml_min,
+            )
+            return []
+
         self.clear_volume()
         self.set_wrate(rate_ml_min)
         self.set_target_volume(volume_ul)

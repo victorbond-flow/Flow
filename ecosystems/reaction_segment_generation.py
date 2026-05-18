@@ -1,5 +1,7 @@
 import time
 from enum import Enum, auto
+from typing import Optional
+from core.tracing import append_trace
 
 
 class RSGState(Enum):
@@ -119,7 +121,7 @@ class RSG:
             "'module'/'vial' plus 'volume_uL'."
         )
 
-    def initialise(self, air_gap: float = 20.0, rate_wdr: float = 0.25):
+    def initialise(self, air_gap: float = 20.0, rate_wdr: float = 0.25, dry_run=False, trace=None):
         print("[Initialise] Setting up start condition")
 
         self._require_idle()
@@ -131,7 +133,7 @@ class RSG:
                 self.probe.reset()
 
             # Then, physical action
-            self.take_air_gap(volume=air_gap, rate=rate_wdr)
+            self.take_air_gap(volume=air_gap, rate=rate_wdr, dry_run=dry_run, trace=trace)
 
             self.state = RSGState.IDLE
             print("[Initialise] Ready - air gap in place")
@@ -146,17 +148,39 @@ class RSG:
         vial_pos: int,
         volume: float,
         rate: float = 0.05,
+        dry_run=False,
+        trace=None,
     ):
         print(f"[Pickup] {volume}uL from {module_name} vial {vial_pos} @ {rate}mL/min")
 
-        self.gilson.go_into_vial(module_name, vial_pos)
-        self.pump.withdraw_volume(volume, rate)
+        append_trace(
+            trace,
+            step="rsg",
+            action="pickup_from_vial",
+            module=module_name,
+            vial=vial_pos,
+            volume_uL=volume,
+            rate=rate,
+        )
 
-        wait_time = (volume / (rate * 1000)) * 60
-        time.sleep(wait_time + 1)
+        if dry_run:
+            self.pump.withdraw_volume(volume, rate, dry_run=True, trace=trace)
+        else:
+            self.gilson.go_into_vial(module_name, vial_pos)
+            self.pump.withdraw_volume(volume, rate)
+
+            wait_time = (volume / (rate * 1000)) * 60
+            time.sleep(wait_time + 1)
 
         if self.probe is not None:
             self.probe.add("sample", volume)
+            append_trace(
+                trace,
+                step="probe",
+                action="add",
+                volume_uL=volume,
+                notes="sample",
+            )
             print(f"[Probe] {self.probe.status()}")
 
     def dispense_in_vial(
@@ -165,44 +189,86 @@ class RSG:
         vial_pos: int,
         volume: float,
         rate: float = 0.5,
+        dry_run=False,
+        trace=None,
     ):
         print(f"[Dispense] {volume}uL in {module_name} vial {vial_pos} @ {rate}mL/min")
 
-        self.gilson.go_into_vial(module_name, vial_pos)
-        self.pump.infuse_volume(volume, rate)
+        append_trace(
+            trace,
+            step="rsg",
+            action="dispense_in_vial",
+            module=module_name,
+            vial=vial_pos,
+            volume_uL=volume,
+            rate=rate,
+        )
 
-        wait_time = (volume / (rate * 1000)) * 60
-        time.sleep(wait_time + 1)
+        if dry_run:
+            self.pump.infuse_volume(volume, rate, dry_run=True, trace=trace)
+        else:
+            self.gilson.go_into_vial(module_name, vial_pos)
+            self.pump.infuse_volume(volume, rate)
+
+            wait_time = (volume / (rate * 1000)) * 60
+            time.sleep(wait_time + 1)
 
         if self.probe is not None:
             self.probe.consume(volume)
+            append_trace(
+                trace,
+                step="probe",
+                action="consume",
+                volume_uL=volume,
+            )
             print(f"[Probe] {self.probe.status()}")
 
-    def dispense_in_waste(self, volume: float, rate: float = 0.5):
+    def dispense_in_waste(self, volume: float, rate: float = 0.5, dry_run=False, trace=None):
         print(f"[Waste] {volume}uL to waste @ {rate}mL/min")
 
         module_name = "rack2"
         vial_pos = 2
 
-        self.gilson.go_to_vial(module_name, vial_pos)
-        self.gilson.go_into_vial(module_name, vial_pos)
-        self.pump.infuse_volume(volume, rate)
+        append_trace(
+            trace,
+            step="rsg",
+            action="dispense_in_waste",
+            module=module_name,
+            vial=vial_pos,
+            volume_uL=volume,
+            rate=rate,
+        )
 
-        wait_time = (volume / (rate * 1000)) * 60
-        time.sleep(wait_time + 1)
+        if dry_run:
+            self.pump.infuse_volume(volume, rate, dry_run=True, trace=trace)
+        else:
+            self.gilson.go_to_vial(module_name, vial_pos)
+            self.gilson.go_into_vial(module_name, vial_pos)
+            self.pump.infuse_volume(volume, rate)
 
-        self.gilson.ensure_z_safe()
+            wait_time = (volume / (rate * 1000)) * 60
+            time.sleep(wait_time + 1)
+
+            self.gilson.ensure_z_safe()
 
         if self.probe is not None:
             self.probe.consume(volume)
+            append_trace(
+                trace,
+                step="probe",
+                action="consume",
+                volume_uL=volume,
+            )
             print(f"[Probe] {self.probe.status()}")
 
     def dispense_in_dim(
-    self,
-    rate: float = 0.5,
-    volume: float | None = None,
-    front_air_use: float = 10.0,
-):
+        self,
+        rate: float = 0.5,
+        volume: Optional[float] = None,
+        front_air_use: float = 10.0,
+        dry_run=False,
+        trace=None,
+    ):
         print(f"[DIM] ================= START =================")
     
         if self.probe is None:
@@ -272,11 +338,23 @@ class RSG:
         # ------------------------------------------------------------
         # 4. Physical injection
         # ------------------------------------------------------------
-        self.gilson.go_into_dim()
-        self.pump.infuse_volume(inject_volume, rate)
-    
-        wait_time = (inject_volume / (rate * 1000)) * 60
-        time.sleep(wait_time + 1)
+        append_trace(
+            trace,
+            step="rsg",
+            action="dispense_in_dim",
+            module="dim",
+            volume_uL=inject_volume,
+            rate=rate,
+        )
+
+        if dry_run:
+            self.pump.infuse_volume(inject_volume, rate, dry_run=True, trace=trace)
+        else:
+            self.gilson.go_into_dim()
+            self.pump.infuse_volume(inject_volume, rate)
+
+            wait_time = (inject_volume / (rate * 1000)) * 60
+            time.sleep(wait_time + 1)
     
         print("[Step 3] Physical infusion complete")
     
@@ -287,8 +365,29 @@ class RSG:
     
         # consume in correct order from tip side
         self.probe.consume(post_air_vol)
+        append_trace(
+            trace,
+            step="probe",
+            action="consume",
+            volume_uL=post_air_vol,
+            notes="post_air",
+        )
         self.probe.consume(sample_vol)
+        append_trace(
+            trace,
+            step="probe",
+            action="consume",
+            volume_uL=sample_vol,
+            notes="sample",
+        )
         self.probe.consume(front_air_use)
+        append_trace(
+            trace,
+            step="probe",
+            action="consume",
+            volume_uL=front_air_use,
+            notes="front_air",
+        )
     
         print("[Step 5] Post-consume state:")
         print(f"         {self.probe.status()}")
@@ -296,54 +395,89 @@ class RSG:
         # ------------------------------------------------------------
         # 6. Safety / reset motion
         # ------------------------------------------------------------
-        self.gilson.ensure_z_safe()
+        if not dry_run:
+            self.gilson.ensure_z_safe()
     
         print("[DIM] ================= COMPLETE =================")
 
-    def take_air_gap(self, volume: float, rate: float = 0.05):
+    def take_air_gap(self, volume: float, rate: float = 0.05, dry_run=False, trace=None):
         print(f"[Air Gap] {volume}uL @ {rate}mL/min")
 
-        self.gilson.ensure_z_safe()
-        self.pump.withdraw_volume(volume, rate)
+        append_trace(
+            trace,
+            step="rsg",
+            action="take_air_gap",
+            volume_uL=volume,
+            rate=rate,
+        )
 
-        wait_time = (volume / (rate * 1000)) * 60
-        time.sleep(wait_time + 1)
+        if dry_run:
+            self.pump.withdraw_volume(volume, rate, dry_run=True, trace=trace)
+        else:
+            self.gilson.ensure_z_safe()
+            self.pump.withdraw_volume(volume, rate)
+
+            wait_time = (volume / (rate * 1000)) * 60
+            time.sleep(wait_time + 1)
 
         if self.probe is not None:
             self.probe.add("air", volume)
+            append_trace(
+                trace,
+                step="probe",
+                action="add",
+                volume_uL=volume,
+                notes="air",
+            )
             print(f"[Probe] {self.probe.status()}")
 
-    def prepickup(self, volume: float = 10.0, rate: float = 0.05):
+    def prepickup(self, volume: float = 10.0, rate: float = 0.05, dry_run=False, trace=None):
         print(f"[Pre-pickup] {volume}uL from rack2 vial 1 @ {rate} mL/min")
 
         module_name = "rack2"
         vial_pos = 1
 
-        self.gilson.go_into_vial(module_name, vial_pos)
-        self.pump.withdraw_volume(volume, rate)
+        append_trace(
+            trace,
+            step="rsg",
+            action="prepickup",
+            module=module_name,
+            vial=vial_pos,
+            volume_uL=volume,
+            rate=rate,
+        )
 
-        wait_time = (volume / (rate * 1000)) * 60
-        time.sleep(wait_time + 1)
+        if dry_run:
+            self.pump.withdraw_volume(volume, rate, dry_run=True, trace=trace)
+        else:
+            self.gilson.go_into_vial(module_name, vial_pos)
+            self.pump.withdraw_volume(volume, rate)
 
-        self.gilson.ensure_z_safe()
+            wait_time = (volume / (rate * 1000)) * 60
+            time.sleep(wait_time + 1)
+
+            self.gilson.ensure_z_safe()
 
     # ------------------------------------------------------------------
     # Washes
     # ------------------------------------------------------------------
     def needle_wash(
-    self,
-    wash_solvent_volume: float,
-    rate_wdr: float = 0.25,
-    rate_inf: float = 0.5,
-    safety_margin_ul: float = 10.0,
-):
+        self,
+        wash_solvent_volume: float,
+        rate_wdr: float = 0.25,
+        rate_inf: float = 0.5,
+        safety_margin_ul: float = 10.0,
+        dry_run=False,
+        trace=None,
+    ):
         print("\n[Needle Wash] ================= START =================")
     
         # ------------------------------------------------------------
         # 0. Safety positioning
         # ------------------------------------------------------------
         print("[Step 0] Ensuring Z safe...")
-        self.gilson.ensure_z_safe()
+        if not dry_run:
+            self.gilson.ensure_z_safe()
     
         if self.probe is None:
             raise RuntimeError("Probe required for deterministic wash")
@@ -372,6 +506,8 @@ class RSG:
             vial_pos=1,
             volume=wash_solvent_volume,
             rate=rate_wdr,
+            dry_run=dry_run,
+            trace=trace,
         )
     
         # ------------------------------------------------------------
@@ -390,10 +526,23 @@ class RSG:
         # ------------------------------------------------------------
         print("[Step 5] Infusing to waste...")
     
-        self.gilson.go_into_vial("rack2", 2)
-        self.pump.infuse_volume(purge_volume, rate_inf)
-    
-        time.sleep((purge_volume / (rate_inf * 1000)) * 60 + 1)
+        append_trace(
+            trace,
+            step="rsg",
+            action="needle_wash_purge",
+            module="rack2",
+            vial=2,
+            volume_uL=purge_volume,
+            rate=rate_inf,
+        )
+
+        if dry_run:
+            self.pump.infuse_volume(purge_volume, rate_inf, dry_run=True, trace=trace)
+        else:
+            self.gilson.go_into_vial("rack2", 2)
+            self.pump.infuse_volume(purge_volume, rate_inf)
+
+            time.sleep((purge_volume / (rate_inf * 1000)) * 60 + 1)
     
         print("[Step 6] Infusion complete")
     
@@ -402,21 +551,28 @@ class RSG:
         # ------------------------------------------------------------
         print("[Step 7] Resetting probe state...")
         self.probe.reset()
+        append_trace(
+            trace,
+            step="probe",
+            action="reset",
+            notes="needle_wash",
+        )
     
-        self.gilson.ensure_z_safe()
+        if not dry_run:
+            self.gilson.ensure_z_safe()
     
         print("[Needle Wash] ================= COMPLETE =================\n")
         print(f"[Final Probe State] {self.probe.status()}")
 
-    def between_slug_wash(self, rate_wdr: float = 0.25, rate_inf: float = 0.5):
+    def between_slug_wash(self, rate_wdr: float = 0.25, rate_inf: float = 0.5, dry_run=False, trace=None):
         print("[Between Slug Wash] Starting")
 
         self._require_idle()
         self.state = RSGState.RUNNING
 
         try:
-            self.needle_wash(rate_wdr=rate_wdr, rate_inf=rate_inf)
-            self.dim_wash(rate_wdr=rate_wdr, rate_inf=rate_inf)
+            self.needle_wash(rate_wdr=rate_wdr, rate_inf=rate_inf, dry_run=dry_run, trace=trace)
+            self.dim_wash(rate_wdr=rate_wdr, rate_inf=rate_inf, dry_run=dry_run, trace=trace)
             self.state = RSGState.IDLE
             print("[Between Slug Wash] Complete")
         except Exception:
@@ -429,6 +585,8 @@ class RSG:
         air_gap_between: float = 5.0,
         post_pickup_air_gap: float = 5.0,
         withdraw_rate: float = None,
+        dry_run=False,
+        trace=None,
     ):
         self._require_idle()
         self.state = RSGState.RUNNING
@@ -450,16 +608,18 @@ class RSG:
                         if withdraw_rate is not None
                         else component["rate_ml_min"]
                     ),
+                    dry_run=dry_run,
+                    trace=trace,
                 )
 
                 total_volume += component["volume_ul"]
 
                 if i < n - 1 and air_gap_between > 0:
-                    self.take_air_gap(air_gap_between)
+                    self.take_air_gap(air_gap_between, dry_run=dry_run, trace=trace)
                     total_volume += air_gap_between
 
             if post_pickup_air_gap > 0:
-                self.take_air_gap(post_pickup_air_gap)
+                self.take_air_gap(post_pickup_air_gap, dry_run=dry_run, trace=trace)
                 total_volume += post_pickup_air_gap
 
             self.state = RSGState.IDLE
@@ -473,10 +633,12 @@ class RSG:
             self.state = RSGState.ERROR
             raise
 
-    def build_reaction(self, reaction_plan, air_gap_between: float = 5.0):
+    def build_reaction(self, reaction_plan, air_gap_between: float = 5.0, dry_run=False, trace=None):
         return self.assemble_reaction(
             reaction_plan=reaction_plan,
             air_gap_between=air_gap_between,
+            dry_run=dry_run,
+            trace=trace,
         )
 
     def build_rxn_segment(
@@ -485,6 +647,8 @@ class RSG:
         air_gap_between: float = 5.0,
         dispense_rate: float = 0.5,
         withdraw_rate: float = None,
+        dry_run=False,
+        trace=None,
     ):
         self._require_dim()
 
@@ -493,17 +657,24 @@ class RSG:
 
         print(f"[Build Reaction Segment] {slug_id}")
 
-        self.dim.assert_load()
+        if dry_run:
+            self.dim.assert_load(dry_run=True, trace=trace)
+        else:
+            self.dim.assert_load()
 
         result = self.assemble_reaction(
             reaction_plan=reaction_plan,
             air_gap_between=air_gap_between,
             withdraw_rate=withdraw_rate,
+            dry_run=dry_run,
+            trace=trace,
         )
 
         self.dispense_in_dim(
             volume=result["total_volume_ul"],
             rate=dispense_rate,
+            dry_run=dry_run,
+            trace=trace,
         )
 
         return {
@@ -513,9 +684,12 @@ class RSG:
             "air_gap_between_ul": air_gap_between,
         }
 
-    def abort(self):
-        self.pump.stop()
-        self.gilson.ensure_z_safe()
+    def abort(self, dry_run=False, trace=None):
+        if dry_run:
+            append_trace(trace, step="rsg", action="abort")
+        else:
+            self.pump.stop()
+            self.gilson.ensure_z_safe()
         self.state = RSGState.ERROR
 
         if self.probe is not None:
