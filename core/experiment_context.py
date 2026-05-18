@@ -368,7 +368,8 @@ class ExperimentManager:
 
             slugs = self.context.plan["slugs"]
 
-            print(f"[EXPERIMENT] Executing {self.context.experiment_id}")
+            if trace is None:
+                print(f"[EXPERIMENT] Executing {self.context.experiment_id}")
 
             for i in range(self.context.slug_index, len(slugs)):
 
@@ -444,9 +445,10 @@ class ExperimentManager:
                     # SLUG CREATION
                     # -------------------------
 
-                    print("[EXECUTION ENTRY PLAN TYPE]", type(self.context.plan))
+                    if trace is None:
+                        print("[EXECUTION ENTRY PLAN TYPE]", type(self.context.plan))
 
-                    if hasattr(self.context.plan, "head"):
+                    if trace is None and hasattr(self.context.plan, "head"):
                         print("[EXECUTION ENTRY DF SHAPE]", self.context.plan.shape)
                         print("[EXECUTION ENTRY COLUMNS]", self.context.plan.columns.tolist())
                     
@@ -509,10 +511,11 @@ class ExperimentManager:
                         },
                     )
 
-                print(
-                    f"[EXPERIMENT] Completed {result['slug_id']} "
-                    f"({result['dispensed_volume_ul']} uL)"
-                )
+                if trace is None:
+                    print(
+                        f"[EXPERIMENT] Completed {result['slug_id']} "
+                        f"({result['dispensed_volume_ul']} uL)"
+                    )
 
             self.context.state = "completed"
             self.system_state = self.SYSTEM_UNKNOWN
@@ -530,7 +533,8 @@ class ExperimentManager:
                     {"experiment_id": self.context.experiment_id},
                 )
 
-            print(f"[EXPERIMENT] {self.context.experiment_id} completed")
+            if trace is None:
+                print(f"[EXPERIMENT] {self.context.experiment_id} completed")
             return results
 
         except KeyboardInterrupt:
@@ -545,7 +549,8 @@ class ExperimentManager:
                     },
                 )
                 self._abort_seg(seg)
-            print(f"[EXPERIMENT] {self.context.experiment_id} aborted by user")
+            if trace is None:
+                print(f"[EXPERIMENT] {self.context.experiment_id} aborted by user")
             raise
 
         except Exception as exc:
@@ -562,7 +567,8 @@ class ExperimentManager:
                     },
                 )
                 self._abort_seg(seg)
-            print(f"[EXPERIMENT] {self.context.experiment_id} failed: {exc}")
+            if trace is None:
+                print(f"[EXPERIMENT] {self.context.experiment_id} failed: {exc}")
             raise
 
     # ------------------------------------------------------------------

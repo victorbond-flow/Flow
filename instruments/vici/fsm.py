@@ -82,7 +82,8 @@ class FSM:
                 action="go_to_pos",
                 notes=pos,
             )
-            print(f"[FSM] Dry-run valve to {pos} -> state = {self.state.name}")
+            if trace is None:
+                print(f"[FSM] Dry-run valve to {pos} -> state = {self.state.name}")
             return
 
         current = self.read_pos()
@@ -91,7 +92,8 @@ class FSM:
         self._sync_state()
 
         if current == pos:
-            print(f"[FSM] Already at {pos} -> state = {self.state.name}")
+            if trace is None:
+                print(f"[FSM] Already at {pos} -> state = {self.state.name}")
             return
 
         # Perform move
@@ -103,7 +105,8 @@ class FSM:
         # Update state
         self.state = new_state
 
-        print(f"[FSM] Valve moved to {pos} -> state = {self.state.name}")
+        if trace is None:
+            print(f"[FSM] Valve moved to {pos} -> state = {self.state.name}")
 
     @log_call
     def toggle(self):

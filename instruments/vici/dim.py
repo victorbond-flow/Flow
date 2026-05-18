@@ -94,7 +94,8 @@ class DIM:
                 module="dim",
                 notes=pos,
             )
-            print(f"[DIM] Dry-run valve to {pos} -> state = {self.state}")
+            if trace is None:
+                print(f"[DIM] Dry-run valve to {pos} -> state = {self.state}")
             return
 
         current = self.read_pos()
@@ -108,7 +109,8 @@ class DIM:
             self.state = DIMState.UNKNOWN
     
         if current == pos:
-            print(f"[DIM] Valve already at {pos} -> state = {self.state}")
+            if trace is None:
+                print(f"[DIM] Valve already at {pos} -> state = {self.state}")
             return
     
         if pos == "A":
@@ -120,7 +122,8 @@ class DIM:
         else:
             raise ValueError("Position must be 'A' or 'B'")
     
-        print(f"[DIM] Valve moved to {pos} -> state = {self.state}")
+        if trace is None:
+            print(f"[DIM] Valve moved to {pos} -> state = {self.state}")
 
     @log_call
     def toggle(self):

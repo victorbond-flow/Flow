@@ -4,6 +4,11 @@ from typing import Optional
 from core.tracing import append_trace
 
 
+def _trace_print(trace, *args, **kwargs):
+    if trace is None:
+        print(*args, **kwargs)
+
+
 class RSGState(Enum):
     IDLE = auto()
     RUNNING = auto()
@@ -124,7 +129,7 @@ class RSG:
         )
 
     def initialise(self, air_gap: float = 20.0, rate_wdr: float = 0.25, dry_run=False, trace=None):
-        print("[Initialise] Setting up start condition")
+        _trace_print(trace, "[Initialise] Setting up start condition")
 
         self._require_idle()
         self.state = RSGState.RUNNING
@@ -140,7 +145,7 @@ class RSG:
             self.initial_air_gap_rate_mL_min = float(rate_wdr)
 
             self.state = RSGState.IDLE
-            print("[Initialise] Ready - air gap in place")
+            _trace_print(trace, "[Initialise] Ready - air gap in place")
 
         except Exception:
             self.state = RSGState.ERROR
@@ -155,7 +160,7 @@ class RSG:
     dry_run=False,
     trace=None,
 ):
-        print(f"[Pickup] {volume}uL from {module_name} vial {vial_pos} @ {rate}mL/min")
+        _trace_print(trace, f"[Pickup] {volume}uL from {module_name} vial {vial_pos} @ {rate}mL/min")
     
         append_trace(
             trace,
@@ -195,7 +200,7 @@ class RSG:
                 notes=self.probe.status(),
             )
     
-            print(f"[Probe] {self.probe.status()}")
+            _trace_print(trace, f"[Probe] {self.probe.status()}")
 
     def dispense_in_vial(
         self,
@@ -206,7 +211,7 @@ class RSG:
         dry_run=False,
         trace=None,
     ):
-        print(f"[Dispense] {volume}uL in {module_name} vial {vial_pos} @ {rate}mL/min")
+        _trace_print(trace, f"[Dispense] {volume}uL in {module_name} vial {vial_pos} @ {rate}mL/min")
 
         append_trace(
             trace,
@@ -235,10 +240,10 @@ class RSG:
                 action="consume",
                 volume_uL=volume,
             )
-            print(f"[Probe] {self.probe.status()}")
+            _trace_print(trace, f"[Probe] {self.probe.status()}")
 
     def dispense_in_waste(self, volume: float, rate: float = 0.5, dry_run=False, trace=None):
-        print(f"[Waste] {volume}uL to waste @ {rate}mL/min")
+        _trace_print(trace, f"[Waste] {volume}uL to waste @ {rate}mL/min")
 
         module_name = "rack2"
         vial_pos = 2
@@ -273,7 +278,7 @@ class RSG:
                 action="consume",
                 volume_uL=volume,
             )
-            print(f"[Probe] {self.probe.status()}")
+            _trace_print(trace, f"[Probe] {self.probe.status()}")
 
     def dispense_in_dim(
     self,
@@ -283,13 +288,13 @@ class RSG:
     dry_run=False,
     trace=None,
 ):
-        print(f"[DIM] ================= START =================")
+        _trace_print(trace, f"[DIM] ================= START =================")
     
         if self.probe is None:
             raise RuntimeError("Probe required for deterministic DIM dispense")
     
-        print("[Step 1] Reading probe state...")
-        print(f"         Current: {self.probe.status()}")
+        _trace_print(trace, "[Step 1] Reading probe state...")
+        _trace_print(trace, f"         Current: {self.probe.status()}")
     
         contents = self.probe.contents
     
@@ -341,17 +346,17 @@ class RSG:
         # ------------------------------------------------------------
         # DEBUG OUTPUT
         # ------------------------------------------------------------
-        print("\n==============================")
-        print("[RSG DISPENSE DEBUG ENTRY]")
-        print("==============================")
+        _trace_print(trace, "\n==============================")
+        _trace_print(trace, "[RSG DISPENSE DEBUG ENTRY]")
+        _trace_print(trace, "==============================")
     
         for i, s in enumerate(contents):
-            print(i, s)
+            _trace_print(trace, i, s)
     
-        print("\n[IDENTIFIED STRUCTURE]")
-        print("front_air:", front_air)
-        print("sample:", sample)
-        print("post_air:", post_air)
+        _trace_print(trace, "\n[IDENTIFIED STRUCTURE]")
+        _trace_print(trace, "front_air:", front_air)
+        _trace_print(trace, "sample:", sample)
+        _trace_print(trace, "post_air:", post_air)
     
         # ------------------------------------------------------------
         # 4. Compute volume
@@ -384,12 +389,12 @@ class RSG:
             self.pump.infuse_volume(inject_volume, rate)
             time.sleep((inject_volume / (rate * 1000)) * 60 + 1)
     
-        print("[Step 3] Physical infusion complete")
+        _trace_print(trace, "[Step 3] Physical infusion complete")
     
         # ------------------------------------------------------------
         # 6. Deterministic consumption (LIFO-safe)
         # ------------------------------------------------------------
-        print("[Step 4] Updating probe state...")
+        _trace_print(trace, "[Step 4] Updating probe state...")
     
         # post_air
         self.probe.consume(post_air_vol)
@@ -442,16 +447,16 @@ class RSG:
             notes=self.probe.status(),
         )
     
-        print("[Step 5] Post-consume state:")
-        print(f"         {self.probe.status()}")
+        _trace_print(trace, "[Step 5] Post-consume state:")
+        _trace_print(trace, f"         {self.probe.status()}")
     
         if not dry_run:
             self.gilson.ensure_z_safe()
     
-        print("[DIM] ================= COMPLETE =================")
+        _trace_print(trace, "[DIM] ================= COMPLETE =================")
 
     def take_air_gap(self, volume: float, rate: float = 0.05, dry_run=False, trace=None):
-        print(f"[Air Gap] {volume}uL @ {rate}mL/min")
+        _trace_print(trace, f"[Air Gap] {volume}uL @ {rate}mL/min")
 
         append_trace(
             trace,
@@ -479,10 +484,10 @@ class RSG:
                 volume_uL=volume,
                 notes="air",
             )
-            print(f"[Probe] {self.probe.status()}")
+            _trace_print(trace, f"[Probe] {self.probe.status()}")
 
     def prepickup(self, volume: float = 10.0, rate: float = 0.05, dry_run=False, trace=None):
-        print(f"[Pre-pickup] {volume}uL from rack2 vial 1 @ {rate} mL/min")
+        _trace_print(trace, f"[Pre-pickup] {volume}uL from rack2 vial 1 @ {rate} mL/min")
 
         module_name = "rack2"
         vial_pos = 1
@@ -520,20 +525,20 @@ class RSG:
         dry_run=False,
         trace=None,
     ):
-        print("\n[Needle Wash] ================= START =================")
+        _trace_print(trace, "\n[Needle Wash] ================= START =================")
     
         # ------------------------------------------------------------
         # 0. Safety positioning
         # ------------------------------------------------------------
-        print("[Step 0] Ensuring Z safe...")
+        _trace_print(trace, "[Step 0] Ensuring Z safe...")
         if not dry_run:
             self.gilson.ensure_z_safe()
     
         if self.probe is None:
             raise RuntimeError("Probe required for deterministic wash")
     
-        print("[Step 1] Reading probe state...")
-        print(f"         Current: {self.probe.status()}")
+        _trace_print(trace, "[Step 1] Reading probe state...")
+        _trace_print(trace, f"         Current: {self.probe.status()}")
     
         # ------------------------------------------------------------
         # 1. quantify what is currently in probe (from state model)
@@ -544,12 +549,12 @@ class RSG:
             if x["type"] == "air"
         )
     
-        print(f"[Step 2] Air remaining (from state): {air_remaining:.2f} uL")
+        _trace_print(trace, f"[Step 2] Air remaining (from state): {air_remaining:.2f} uL")
     
         # ------------------------------------------------------------
         # 2. acquire wash solvent using REAL pickup method
         # ------------------------------------------------------------
-        print(f"[Step 3] Picking up wash solvent: {wash_solvent_volume} uL")
+        _trace_print(trace, f"[Step 3] Picking up wash solvent: {wash_solvent_volume} uL")
     
         self.pickup_from_vial(
             module_name="rack2",
@@ -565,16 +570,16 @@ class RSG:
         # ------------------------------------------------------------
         purge_volume = wash_solvent_volume + air_remaining + safety_margin_ul
     
-        print(f"[Step 4] Purge calculation:")
-        print(f"         wash solvent: {wash_solvent_volume}")
-        print(f"         air remaining: {air_remaining}")
-        print(f"         safety margin: {safety_margin_ul}")
-        print(f"         => purge total: {purge_volume} uL")
+        _trace_print(trace, f"[Step 4] Purge calculation:")
+        _trace_print(trace, f"         wash solvent: {wash_solvent_volume}")
+        _trace_print(trace, f"         air remaining: {air_remaining}")
+        _trace_print(trace, f"         safety margin: {safety_margin_ul}")
+        _trace_print(trace, f"         => purge total: {purge_volume} uL")
     
         # ------------------------------------------------------------
         # 4. infuse to waste
         # ------------------------------------------------------------
-        print("[Step 5] Infusing to waste...")
+        _trace_print(trace, "[Step 5] Infusing to waste...")
     
         append_trace(
             trace,
@@ -594,12 +599,12 @@ class RSG:
 
             time.sleep((purge_volume / (rate_inf * 1000)) * 60 + 1)
     
-        print("[Step 6] Infusion complete")
+        _trace_print(trace, "[Step 6] Infusion complete")
     
         # ------------------------------------------------------------
         # 5. reset probe state (clean slate after deterministic purge)
         # ------------------------------------------------------------
-        print("[Step 7] Resetting probe state...")
+        _trace_print(trace, "[Step 7] Resetting probe state...")
         self.probe.reset()
         append_trace(
             trace,
@@ -611,11 +616,11 @@ class RSG:
         if not dry_run:
             self.gilson.ensure_z_safe()
     
-        print("[Needle Wash] ================= COMPLETE =================\n")
-        print(f"[Final Probe State] {self.probe.status()}")
+        _trace_print(trace, "[Needle Wash] ================= COMPLETE =================\n")
+        _trace_print(trace, f"[Final Probe State] {self.probe.status()}")
 
     def between_slug_wash(self, rate_wdr: float = 0.25, rate_inf: float = 0.5, dry_run=False, trace=None):
-        print("[Between Slug Wash] Starting")
+        _trace_print(trace, "[Between Slug Wash] Starting")
 
         self._require_idle()
         self.state = RSGState.RUNNING
@@ -624,7 +629,7 @@ class RSG:
             self.needle_wash(rate_wdr=rate_wdr, rate_inf=rate_inf, dry_run=dry_run, trace=trace)
             self.dim_wash(rate_wdr=rate_wdr, rate_inf=rate_inf, dry_run=dry_run, trace=trace)
             self.state = RSGState.IDLE
-            print("[Between Slug Wash] Complete")
+            _trace_print(trace, "[Between Slug Wash] Complete")
         except Exception:
             self.state = RSGState.ERROR
             raise
@@ -658,11 +663,11 @@ class RSG:
             # ---------------------------------------------------
             # 1. BUILD CORE STREAM
             # ---------------------------------------------------
-            print("\n[ASSEMBLE REACTION INPUT]")
-            print(reaction_plan)
+            _trace_print(trace, "\n[ASSEMBLE REACTION INPUT]")
+            _trace_print(trace, reaction_plan)
             
             for i, component in enumerate(reaction_plan):
-                print(f"[COMPONENT {i}] {component}")
+                _trace_print(trace, f"[COMPONENT {i}] {component}")
             for i, component in enumerate(reaction_plan):
 
                 self.pickup_from_vial(
@@ -724,7 +729,7 @@ class RSG:
         reaction_plan = self._reaction_plan_from_slug(slug_plan)
         slug_id = slug_plan.get("slug_id", "untracked-segment")
 
-        print(f"[Build Reaction Segment] {slug_id}")
+        _trace_print(trace, f"[Build Reaction Segment] {slug_id}")
 
         if dry_run:
             self.dim.assert_load(dry_run=True, trace=trace)

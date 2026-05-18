@@ -113,7 +113,7 @@ class Segmentation:
         else:
             self.carrier.stop_flow()
 
-        self._set_phase(SegmentationPhase.READY)
+        self._set_phase(SegmentationPhase.READY, trace=trace)
 
     # ------------------------------------------------------------------
     # Gas spacer generation
@@ -155,7 +155,7 @@ class Segmentation:
         if not dry_run:
             time.sleep(duration_s)
 
-        self._set_phase(SegmentationPhase.GAS_PRIMED)
+        self._set_phase(SegmentationPhase.GAS_PRIMED, trace=trace)
 
     # ------------------------------------------------------------------
     # Load reaction segment into loop
@@ -175,7 +175,7 @@ class Segmentation:
         """
 
         self._require_phase(SegmentationPhase.GAS_PRIMED)
-        self._set_phase(SegmentationPhase.LOOP_LOADING)
+        self._set_phase(SegmentationPhase.LOOP_LOADING, trace=trace)
 
         if dry_run:
             self.dim.load(dry_run=True, trace=trace)
@@ -192,7 +192,7 @@ class Segmentation:
             trace=trace,
         )
 
-        self._set_phase(SegmentationPhase.LOOP_LOADED)
+        self._set_phase(SegmentationPhase.LOOP_LOADED, trace=trace)
 
         return result
 
@@ -222,12 +222,13 @@ class Segmentation:
             self.carrier.set_flow_rate(flowrate_ul_min)
             self.carrier.start_flow()
 
-        self._set_phase(SegmentationPhase.RUNNING)
+        self._set_phase(SegmentationPhase.RUNNING, trace=trace)
 
-        print(
-            f"[Segmentation] Segment launched at "
-            f"{flowrate_ul_min} µL/min"
-        )
+        if trace is None:
+            print(
+                f"[Segmentation] Segment launched at "
+                f"{flowrate_ul_min} µL/min"
+            )
 
     # ------------------------------------------------------------------
     # High level slug commands
@@ -258,7 +259,7 @@ class Segmentation:
             self.dim.inject()
         self.state.dim = DIMState.INJECT
 
-        self._set_phase(SegmentationPhase.GAS_PRIMED)
+        self._set_phase(SegmentationPhase.GAS_PRIMED, trace=trace)
 
     def create_slug(
     self,
@@ -346,7 +347,7 @@ class Segmentation:
             self.dim.inject()
         self.state.dim = DIMState.INJECT
 
-        self._set_phase(SegmentationPhase.READY)
+        self._set_phase(SegmentationPhase.READY, trace=trace)
 
     # ------------------------------------------------------------------
     # Abort
@@ -418,9 +419,10 @@ class Segmentation:
         else:
             self.carrier.stop_flow()
 
-        self._set_phase(SegmentationPhase.READY)
+        self._set_phase(SegmentationPhase.READY, trace=trace)
 
-        print("[Segmentation] Reset complete.")
+        if trace is None:
+            print("[Segmentation] Reset complete.")
 
     # ------------------------------------------------------------------
     # Helpers
@@ -433,10 +435,11 @@ class Segmentation:
                 f"current = {self.state.phase.name}"
             )
 
-    def _set_phase(self, new_phase):
-        print(
-            f"[Segmentation] Phase: "
-            f"{self.state.phase.name} -> {new_phase.name}"
-        )
+    def _set_phase(self, new_phase, trace=None):
+        if trace is None:
+            print(
+                f"[Segmentation] Phase: "
+                f"{self.state.phase.name} -> {new_phase.name}"
+            )
         self.state.phase = new_phase
 
