@@ -5,6 +5,7 @@ from datetime import datetime
 import copy
 import json
 import time
+import copy
 
 from core.experiment_validator import ExperimentValidator
 from core.tracing import append_trace
@@ -796,6 +797,22 @@ class ExperimentManager:
         if state_name == "CARRIER_TO_DIM":
             return "B"
         return None
+
+
+    def snapshot_context(self):
+        """
+        Create a fully isolated copy of the current experiment context.
+    
+        This is used for preview_execution only and must NOT mutate real state.
+        """
+    
+        if self.context is None:
+            raise RuntimeError("No context loaded to snapshot")
+    
+        # Deep copy ensures ProbeState, FSM state, segmentation state etc are isolated
+        shadow_context = copy.deepcopy(self.context)
+    
+        return shadow_context
 
     # ------------------------------------------------------------------
     # Status

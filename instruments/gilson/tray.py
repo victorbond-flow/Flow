@@ -64,8 +64,8 @@ class Tray:
                 "allowed_modules": {
 
                     "rack_209": {
-                        "x_offset": 155.5,
-                        "y_offset": 10,
+                        "x_offset": 156,
+                        "y_offset": 9,
 
                         "x_min": 145,
                         "x_max": 250,
@@ -107,7 +107,7 @@ class Tray:
 
                     "dim": {
 
-                        "x_offset": 9,
+                        "x_offset": 10,
                         "y_offset": 104,
 
                         "x_min": 0,
