@@ -1,12 +1,73 @@
 {
   "experiment_id": "VB-1E-9_test",
-  "created_at": "2026-05-19T09:19:52",
+  "created_at": "2026-05-19T15:18:57",
   "events": [
     {
-      "timestamp": "2026-05-19T09:19:53",
+      "timestamp": "2026-05-19T15:18:57",
       "event_type": "experiment_loaded",
       "payload": {
         "experiment_id": "VB-1E-9_test"
+      }
+    },
+    {
+      "timestamp": "2026-05-19T15:37:47",
+      "event_type": "reactor_ready",
+      "payload": {
+        "flowrate_ul_min": 1000,
+        "stabilisation_time_s": 60
+      }
+    },
+    {
+      "timestamp": "2026-05-19T15:38:06",
+      "event_type": "rsg_ready",
+      "payload": {
+        "air_gap_uL": 20.0,
+        "rate_wdr_mL_min": 0.1
+      }
+    },
+    {
+      "timestamp": "2026-05-19T15:38:24",
+      "event_type": "experiment_armed",
+      "payload": {
+        "experiment_id": "VB-1E-9_test"
+      }
+    },
+    {
+      "timestamp": "2026-05-19T15:47:00",
+      "event_type": "slug_started",
+      "payload": {
+        "slug_index": 0,
+        "slug_number": 1,
+        "slug_id": "block_1_slug_1"
+      }
+    },
+    {
+      "timestamp": "2026-05-19T15:48:53",
+      "event_type": "slug_created",
+      "payload": {
+        "slug_index": 0,
+        "slug_number": 1,
+        "slug_id": "block_1_slug_1",
+        "dispensed_volume_ul": 110.0,
+        "num_components": 1,
+        "launched": true
+      }
+    },
+    {
+      "timestamp": "2026-05-19T15:48:53",
+      "event_type": "slug_started",
+      "payload": {
+        "slug_index": 1,
+        "slug_number": 2,
+        "slug_id": "block_1_slug_2"
+      }
+    },
+    {
+      "timestamp": "2026-05-19T15:50:33",
+      "event_type": "user_aborted",
+      "payload": {
+        "experiment_id": "VB-1E-9_test",
+        "slug_index": 1
       }
     }
   ]
