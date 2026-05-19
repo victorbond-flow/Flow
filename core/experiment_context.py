@@ -275,34 +275,52 @@ class ExperimentManager:
         print("[SYSTEM] RSG READY")
 
     # ------------------------------------------------------------------
-    # Preview Execution (full trace)
+    # Preview Execution - simplified version
     # ------------------------------------------------------------------
-    def preview_execution(
-        self,
-        seg,
-        gas_prime_s=None,
-        flowrate_ul_min=None,
-        air_gap_between=None,
-        wash_policy="none",
-        dry_run=True,
-    ):
+    def preview_execution(self):
 
         if self.context is None:
-            raise Exception("No experiment loaded")
-
-        self.trace = []
-
-        self.execute_experiment(
-            seg=seg,
-            gas_prime_s=gas_prime_s,
-            flowrate_ul_min=flowrate_ul_min,
-            air_gap_between=air_gap_between,
-            wash_policy=wash_policy,
-            dry_run=dry_run,
-            trace=self.trace,
-        )
-
-        return self.trace
+            raise RuntimeError("No experiment loaded")
+    
+        plan = self.context.plan
+        conditions = plan["global_conditions"]
+    
+        print("\n========== EXPERIMENT PREVIEW ==========\n")
+    
+        print(f"Experiment: {plan['experiment_id']}")
+        print(f"Description: {plan['description']}\n")
+    
+        print("[GLOBAL CONDITIONS]")
+        print(f"  Flowrate: {conditions['flowrate_ul_min']} uL/min")
+        print(f"  Withdraw rate: {conditions['withdraw_rate_ml_min']} mL/min")
+        print(f"  Dispense rate: {conditions['dispense_rate_ml_min']} mL/min")
+        print(f"  Gas prime: {conditions['gas_prime_s']} s")
+        print(f"  Needle wash: {conditions['needle_wash_volume_ul']} uL")
+        print(f"  Between slug wash: {conditions['between_slug_wash_volume_ul']} uL")
+    
+        print("\n----------------------------------------\n")
+    
+        for i, slug in enumerate(plan["slugs"], start=1):
+    
+            print(f"[SLUG {i}] {slug['slug_id']}")
+    
+            total_volume = 0
+    
+            for step in slug["reaction_plan"]:
+    
+                volume = step["volume_uL"]
+                total_volume += volume
+    
+                print(
+                    f"  Load {volume} uL "
+                    f"of {step['component']} "
+                    f"from {step['module']} vial {step['vial']}"
+                )
+    
+            print(f"  Reaction volume: {total_volume} uL")
+            print()
+    
+        print("========================================\n")
     # ------------------------------------------------------------------
     # Execute
     # ------------------------------------------------------------------
