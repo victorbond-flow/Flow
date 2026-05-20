@@ -288,8 +288,48 @@ class RSG:
     dry_run=False,
     trace=None,
 ):
-        _trace_print(trace, f"[DIM] ================= START =================")
+        # ------------------------------------------------------------
+        # TEMPORARY MANUAL-ORCHESTRATION VERSION
+        #
+        # Goal:
+        # Preserve original topology/tracing logic for future recovery,
+        # but temporarily reduce this method to a deterministic physical
+        # dispense primitive suitable for reliable experimental runs.
+        #
+        # Current philosophy:
+        # - explicit choreography in notebook script
+        # - explicit topology management by user
+        # - minimal hidden logic
+        # - no automatic probe movement
+        # ------------------------------------------------------------
     
+        _trace_print(
+            trace,
+            f"[DIM Dispense] {volume}uL @ {rate}mL/min"
+        )
+    
+        # ------------------------------------------------------------
+        # ORIGINAL TRACE LOGIC
+        # TEMPORARILY DISABLED
+        # ------------------------------------------------------------
+    
+        """
+        append_trace(
+            trace,
+            step="rsg",
+            action="dispense_in_dim",
+            module="dim",
+            volume_uL=volume,
+            rate=rate,
+        )
+        """
+    
+        # ------------------------------------------------------------
+        # ORIGINAL TOPOLOGY INFERENCE LOGIC
+        # TEMPORARILY DISABLED
+        # ------------------------------------------------------------
+    
+        """
         if self.probe is None:
             raise RuntimeError("Probe required for deterministic DIM dispense")
     
@@ -369,35 +409,92 @@ class RSG:
     
         if inject_volume < sample_vol + post_air_vol:
             raise ValueError("Inject volume too small for payload + post-air")
+        """
     
         # ------------------------------------------------------------
-        # 5. Physical injection
+        # TEMPORARY SIMPLE DISPENSE BEHAVIOUR
         # ------------------------------------------------------------
-        append_trace(
-            trace,
-            step="rsg",
-            action="dispense_in_dim",
-            module="dim",
-            volume_uL=inject_volume,
-            rate=rate,
-        )
+    
+        if volume is None:
+            raise ValueError(
+                "Manual orchestration mode requires explicit dispense volume"
+            )
+    
+        inject_volume = volume
+    
+        # ------------------------------------------------------------
+        # PHYSICAL INFUSION
+        # ------------------------------------------------------------
     
         if dry_run:
-            self.pump.infuse_volume(inject_volume, rate, dry_run=True, trace=trace)
+    
+            self.pump.infuse_volume(
+                inject_volume,
+                rate,
+                dry_run=True,
+                trace=trace,
+            )
+    
         else:
+    
             self.gilson.go_into_dim()
+    
             self.pump.infuse_volume(inject_volume, rate)
-            time.sleep((inject_volume / (rate * 1000)) * 60 + 1)
     
-        _trace_print(trace, "[Step 3] Physical infusion complete")
+            wait_time = (inject_volume / (rate * 1000)) * 60
+    
+            time.sleep(wait_time + 1)
+    
+        _trace_print(trace, "[DIM] Physical infusion complete")
     
         # ------------------------------------------------------------
-        # 6. Deterministic consumption (LIFO-safe)
+        # TEMPORARY SIMPLE PROBE BOOKKEEPING
         # ------------------------------------------------------------
+    
+        # We intentionally consume ONLY the explicitly
+        # dispensed volume.
+        #
+        # No topology inference.
+        # No front/post air interpretation.
+        # No automatic structural reasoning.
+        #
+        # The notebook orchestration script is now responsible
+        # for defining topology deterministically.
+    
+        if self.probe is not None:
+    
+            self.probe.consume(inject_volume)
+    
+            # --------------------------------------------------------
+            # ORIGINAL TRACE LOGIC
+            # TEMPORARILY DISABLED
+            # --------------------------------------------------------
+    
+            """
+            append_trace(
+                trace,
+                step="probe",
+                action="consume",
+                volume_uL=inject_volume,
+            )
+            """
+    
+            _trace_print(
+                trace,
+                f"[Probe] {self.probe.status()}"
+            )
+    
+        # ------------------------------------------------------------
+        # ORIGINAL DETERMINISTIC TOPOLOGY CONSUMPTION LOGIC
+        # TEMPORARILY DISABLED
+        # ------------------------------------------------------------
+    
+        """
         _trace_print(trace, "[Step 4] Updating probe state...")
     
         # post_air
         self.probe.consume(post_air_vol)
+    
         append_trace(
             trace,
             step="probe",
@@ -415,6 +512,7 @@ class RSG:
     
         # sample
         self.probe.consume(sample_vol)
+    
         append_trace(
             trace,
             step="probe",
@@ -432,6 +530,7 @@ class RSG:
     
         # front air
         self.probe.consume(front_air_use)
+    
         append_trace(
             trace,
             step="probe",
@@ -449,9 +548,25 @@ class RSG:
     
         _trace_print(trace, "[Step 5] Post-consume state:")
         _trace_print(trace, f"         {self.probe.status()}")
+        """
     
+        # ------------------------------------------------------------
+        # IMPORTANT:
+        # DO NOT RETRACT PROBE HERE
+        #
+        # Probe must remain seated during:
+        # - valve switching
+        # - slug launch
+        # - launch dwell
+        #
+        # Probe movement should occur ONLY AFTER
+        # the launch dwell completes.
+        # ------------------------------------------------------------
+    
+        """
         if not dry_run:
             self.gilson.ensure_z_safe()
+        """
     
         _trace_print(trace, "[DIM] ================= COMPLETE =================")
 

@@ -154,3 +154,36 @@ class FSM:
         self.ser.write((cmd + "\r").encode("ascii"))
         resp = self.ser.readline().decode(errors="ignore")
         return resp.strip()
+
+    # -------------------------------------------------------------------------------------
+    # Fast methods for slug launch (avoids latency with timeouts or position reads
+    # Essentially "fire and forget" methods
+    # -------------------------------------------------------------------------------------
+
+    def go_to_pos_fast(self, pos: str):
+        """
+        Fast non-blocking valve move.
+    
+        Intended ONLY for launch choreography.
+        """
+    
+        pos = pos.upper()
+    
+        if pos == "A":
+            self.ser.write(b"CW\r")
+            self.state = FSMState.GAS_TO_DIM
+    
+        elif pos == "B":
+            self.ser.write(b"CC\r")
+            self.state = FSMState.CARRIER_TO_DIM
+    
+        else:
+            raise ValueError("Position must be 'A' or 'B'")
+
+    def gas_to_dim_fast(self):
+        self.go_to_pos_fast("A")
+    
+    def carrier_to_dim_fast(self):
+        self.go_to_pos_fast("B")
+
+        

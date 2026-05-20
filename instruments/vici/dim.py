@@ -201,3 +201,37 @@ class DIM:
                 f"DIM must be in INJECT to launch flow. "
                 f"Current valve position: {pos}, internal state: {self.state}"
             )
+
+    # -------------------------------------------------------------------------------------
+    # Fast methods for slug launch (avoids latency with timeouts or position reads
+    # Essentially "fire and forget" methods
+    # -------------------------------------------------------------------------------------
+
+    def go_to_pos_fast(self, pos: str):
+        """
+        Fast non-blocking valve move.
+    
+        Intended ONLY for launch choreography where:
+        - valve state is already trusted
+        - minimal latency is desired
+        - no serial verification should occur
+        """
+    
+        pos = pos.upper()
+    
+        if pos == "A":
+            self.ser.write(b"CW\r")
+            self.state = DIMState.INJECT
+    
+        elif pos == "B":
+            self.ser.write(b"CC\r")
+            self.state = DIMState.LOAD
+    
+        else:
+            raise ValueError("Position must be 'A' or 'B'")
+
+    def inject_fast(self):
+        self.go_to_pos_fast("A")
+
+    def load_fast(self):
+        self.go_to_pos_fast("B")
