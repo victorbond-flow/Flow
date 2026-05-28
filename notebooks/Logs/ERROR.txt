@@ -95,3 +95,4 @@
 [08/05/26 13:00:40] | ERROR | EXP:VB-1E-7 | EXCEPTION in move_xy after 0.001s: Unknown module identifier: <instruments.gilson.rack.Rack_3dp object at 0x000001A9769E0890>. Known aliases: ['rack1', 'rack2', 'dim']
 [08/05/26 13:00:40] | ERROR | EXP:VB-1E-7 | EXCEPTION in go_to_vial after 0.001s: Unknown module identifier: <instruments.gilson.rack.Rack_3dp object at 0x000001A9769E0890>. Known aliases: ['rack1', 'rack2', 'dim']
 [08/05/26 13:00:40] | ERROR | EXP:VB-1E-7 | EXCEPTION in go_into_vial after 0.002s: Unknown module identifier: <instruments.gilson.rack.Rack_3dp object at 0x000001A9769E0890>. Known aliases: ['rack1', 'rack2', 'dim']
+[28/05/26 12:24:27] | ERROR | EXP:VB-1E-9 | EXCEPTION in go_into_vial after 0.003s: No vial with position rack2
